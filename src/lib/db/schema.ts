@@ -37,7 +37,6 @@ export const orders = pgTable('orders', {
   salesStartDt: date('sales_start_dt').notNull(),
   salesEndDt: date('sales_end_dt'),
   amount: decimal('amount', { precision: 15, scale: 2 }).notNull(),
-  currency: varchar('currency', { length: 3 }).notNull().default('JPY'),
   isPaid: boolean('is_paid').notNull().default(false),
   description: text('description'),
   createdAt: timestamp('created_at').defaultNow().notNull(),

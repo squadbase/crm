@@ -598,6 +598,22 @@ export const translations = {
     ja: '注文に関する詳細情報があれば入力してください',
     en: 'Enter detailed information about the order if any'
   },
+  datePlaceholder: {
+    ja: 'yyyy-mm-dd',
+    en: 'yyyy-mm-dd'
+  },
+  startDatePlaceholder: {
+    ja: '開始日を選択',
+    en: 'Select start date'
+  },
+  endDatePlaceholder: {
+    ja: '終了日を選択',
+    en: 'Select end date'
+  },
+  dateFormatPlaceholder: {
+    ja: '年/月/日',
+    en: 'yyyy/mm/dd'
+  },
   create: {
     ja: '作成',
     en: 'Create'

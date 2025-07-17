@@ -32,7 +32,7 @@ interface OrderFormProps {
 }
 
 export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFormProps) {
-  const { t } = useClientI18n();
+  const { t, getLanguage } = useClientI18n();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [formData, setFormData] = useState({
     customerId: '',
@@ -344,6 +344,8 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
                   type="date"
                   value={formData.salesStartDt}
                   onChange={(e) => handleInputChange('salesStartDt', e.target.value)}
+                  placeholder={t('startDatePlaceholder')}
+                  lang={getLanguage() === 'ja' ? 'ja' : 'en'}
                   required
                   style={{
                     width: '100%',
@@ -370,6 +372,8 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
                   type="date"
                   value={formData.salesEndDt}
                   onChange={(e) => handleInputChange('salesEndDt', e.target.value)}
+                  placeholder={t('endDatePlaceholder')}
+                  lang={getLanguage() === 'ja' ? 'ja' : 'en'}
                   style={{
                     width: '100%',
                     padding: '8px 12px',

@@ -14,7 +14,7 @@ interface PeriodSelectorProps {
 }
 
 export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
-  const { t } = useClientI18n();
+  const { t, getLanguage } = useClientI18n();
   const [period, setPeriod] = useState<PeriodValues>({
     salesStartDt: '',
     salesEndDt: ''
@@ -215,6 +215,8 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
             type="date"
             value={period.salesStartDt}
             onChange={(e) => handlePeriodChange('salesStartDt', e.target.value)}
+            placeholder={t('startDatePlaceholder')}
+            lang={getLanguage() === 'ja' ? 'ja' : 'en'}
             style={{
               width: '100%',
               padding: '8px 10px',
@@ -241,6 +243,8 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
             type="date"
             value={period.salesEndDt}
             onChange={(e) => handlePeriodChange('salesEndDt', e.target.value)}
+            placeholder={t('endDatePlaceholder')}
+            lang={getLanguage() === 'ja' ? 'ja' : 'en'}
             style={{
               width: '100%',
               padding: '8px 10px',
