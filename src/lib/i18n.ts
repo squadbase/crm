@@ -1,0 +1,703 @@
+/**
+ * 国際化ユーティリティ
+ */
+
+type Language = 'ja' | 'en';
+type Currency = 'JPY' | 'USD';
+
+// サーバーサイド専用の設定取得（APIルートでのみ使用）
+export const getServerLanguage = (): Language => {
+  const lang = process.env.LANGUAGE || 'en';
+  return lang.toLowerCase() === 'ja' ? 'ja' : 'en';
+};
+
+export const getServerCurrency = (): Currency => {
+  const currency = process.env.CURRENCY || 'usd';
+  return currency.toLowerCase() === 'jpy' ? 'JPY' : 'USD';
+};
+
+// 非推奨：直接使用せず、useClientI18nフックを使用してください
+export const getLanguage = (): Language => {
+  throw new Error('getLanguage() should not be used directly. Use useClientI18n() hook instead.');
+};
+
+export const getCurrency = (): Currency => {
+  throw new Error('getCurrency() should not be used directly. Use useClientI18n() hook instead.');
+};
+
+// テキスト翻訳
+export const translations = {
+  // Dashboard
+  dashboard: {
+    ja: 'ダッシュボード',
+    en: 'Dashboard'
+  },
+  welcome: {
+    ja: 'おかえりなさい！今日のビジネス状況をご確認ください。',
+    en: "Welcome back! Here's what's happening with your business today."
+  },
+
+  // Navigation
+  orders: {
+    ja: '注文管理',
+    en: 'Orders'
+  },
+  settings: {
+    ja: '設定',
+    en: 'Settings'
+  },
+  
+  // Metrics
+  totalRevenue: {
+    ja: '総売上',
+    en: 'Total Revenue'
+  },
+  totalCustomers: {
+    ja: '顧客数',
+    en: 'Total Customers'
+  },
+  totalOrders: {
+    ja: '注文数',
+    en: 'Total Orders'
+  },
+  unpaidOrders: {
+    ja: '未払い注文',
+    en: 'Unpaid Orders'
+  },
+  unpaidRate: {
+    ja: '未払い率',
+    en: 'Unpaid Rate'
+  },
+  
+  // Customer Management
+  customers: {
+    ja: '顧客管理',
+    en: 'Customer Management'
+  },
+  customerManagement: {
+    ja: '顧客情報の管理と分析を行います',
+    en: 'Manage and analyze customer information'
+  },
+  addCustomer: {
+    ja: '顧客追加',
+    en: 'Add Customer'
+  },
+  customerName: {
+    ja: '顧客名',
+    en: 'Customer Name'
+  },
+  orderCount: {
+    ja: '注文数',
+    en: 'Orders'
+  },
+  revenue: {
+    ja: '売上',
+    en: 'Revenue'
+  },
+  lastOrder: {
+    ja: '最終注文',
+    en: 'Last Order'
+  },
+  actions: {
+    ja: 'アクション',
+    en: 'Actions'
+  },
+  allCustomers: {
+    ja: '全顧客',
+    en: 'All Customers'
+  },
+  totalCustomersCount: {
+    ja: '総顧客数',
+    en: 'Total Customers'
+  },
+  topCustomers: {
+    ja: 'トップ顧客',
+    en: 'Top Customers'
+  },
+  created: {
+    ja: '作成日',
+    en: 'Created'
+  },
+  
+  // Orders Management
+  orderManagementTitle: {
+    ja: '注文管理',
+    en: 'Order Management'
+  },
+  orderManagement: {
+    ja: '注文情報の管理と売上分析を行います',
+    en: 'Manage orders and analyze sales data'
+  },
+  addOrder: {
+    ja: '注文追加',
+    en: 'Add Order'
+  },
+  orderId: {
+    ja: '注文ID',
+    en: 'Order ID'
+  },
+  amount: {
+    ja: '金額',
+    en: 'Amount'
+  },
+  serviceType: {
+    ja: 'サービス種別',
+    en: 'Service Type'
+  },
+  paymentType: {
+    ja: '支払い形態',
+    en: 'Payment Type'
+  },
+  salesStartDate: {
+    ja: '売上開始日',
+    en: 'Sales Start Date'
+  },
+  salesEndDate: {
+    ja: '売上終了日',
+    en: 'Sales End Date'
+  },
+  isPaid: {
+    ja: '支払い状況',
+    en: 'Payment Status'
+  },
+  paid: {
+    ja: '支払済',
+    en: 'Paid'
+  },
+  unpaid: {
+    ja: '未払',
+    en: 'Unpaid'
+  },
+  
+  // Common
+  search: {
+    ja: '検索',
+    en: 'Search'
+  },
+  edit: {
+    ja: '編集',
+    en: 'Edit'
+  },
+  delete: {
+    ja: '削除',
+    en: 'Delete'
+  },
+  save: {
+    ja: '保存',
+    en: 'Save'
+  },
+  cancel: {
+    ja: 'キャンセル',
+    en: 'Cancel'
+  },
+  loading: {
+    ja: '読み込み中...',
+    en: 'Loading...'
+  },
+  noData: {
+    ja: 'データがありません',
+    en: 'No data available'
+  },
+  
+  // Chart labels
+  monthlySales: {
+    ja: '月別売上推移',
+    en: 'Monthly Sales Trend'
+  },
+  monthlySalesDescription: {
+    ja: '合計・プロジェクト・Squadbase別の売上変化',
+    en: 'Sales changes by Total, Project, and Squadbase'
+  },
+  total: {
+    ja: '合計',
+    en: 'Total'
+  },
+  project: {
+    ja: 'プロジェクト',
+    en: 'Project'
+  },
+  squadbase: {
+    ja: 'Squadbase',
+    en: 'Squadbase'
+  },
+  
+  // Time periods
+  thisMonth: {
+    ja: '今月',
+    en: 'This Month'
+  },
+  lastMonth: {
+    ja: '先月',
+    en: 'Last Month'
+  },
+  vsLastMonth: {
+    ja: 'vs 前月',
+    en: 'vs Last Month'
+  },
+  
+  // Units
+  people: {
+    ja: '人',
+    en: ' people'
+  },
+  orders_unit: {
+    ja: '件',
+    en: ' orders'
+  },
+  percent: {
+    ja: '%',
+    en: '%'
+  },
+  
+  // Period Selector
+  period: {
+    ja: '期間',
+    en: 'Period'
+  },
+  halfYear: {
+    ja: '半年',
+    en: '6 Months'
+  },
+  oneYear: {
+    ja: '一年',
+    en: '1 Year'
+  },
+  allPeriod: {
+    ja: '全期間',
+    en: 'All Time'
+  },
+  startDate: {
+    ja: '開始日',
+    en: 'Start Date'
+  },
+  endDate: {
+    ja: '終了日',
+    en: 'End Date'
+  },
+  
+  // Data status
+  noDataText: {
+    ja: 'データなし',
+    en: 'No Data'
+  },
+  countVsLastMonth: {
+    ja: '件 vs 前月',
+    en: ' vs Last Month'
+  },
+  rateVsLastMonth: {
+    ja: '率 vs 前月',
+    en: 'Rate vs Last Month'
+  },
+  
+  // Recent Orders
+  recentOrders: {
+    ja: '最近の注文',
+    en: 'Recent Orders'
+  },
+  viewAll: {
+    ja: '全て表示',
+    en: 'View All'
+  },
+  subscription: {
+    ja: 'サブスクリプション',
+    en: 'Subscription'
+  },
+  oneTime: {
+    ja: '一回払い',
+    en: 'One-time'
+  },
+  squadbaseService: {
+    ja: 'Squadbase',
+    en: 'Squadbase'
+  },
+  projectService: {
+    ja: 'プロジェクト',
+    en: 'Project'
+  },
+  
+  // Orders page
+  newOrder: {
+    ja: '新規注文',
+    en: 'New Order'
+  },
+  orderDescription: {
+    ja: '売上データの管理と各注文のステータス追跡を行うページ。支払い状況や売上実績の把握が可能。',
+    en: 'Manage sales data and track order status. Monitor payment status and sales performance.'
+  },
+  
+  // Pagination
+  previous: {
+    ja: '前へ',
+    en: 'Previous'
+  },
+  next: {
+    ja: '次へ',
+    en: 'Next'
+  },
+  
+  // Settings page  
+  currentSettings: {
+    ja: '現在の設定',
+    en: 'Current Settings'
+  },
+  language: {
+    ja: '言語',
+    en: 'Language'
+  },
+  currency: {
+    ja: '通貨',
+    en: 'Currency'
+  },
+  japanese: {
+    ja: '日本語',
+    en: 'Japanese'
+  },
+  english: {
+    ja: '英語',
+    en: 'English'
+  },
+  yen: {
+    ja: '円',
+    en: 'Yen (JPY)'
+  },
+  dollar: {
+    ja: 'ドル',
+    en: 'Dollar (USD)'
+  },
+  
+  // Period selection for Orders
+  aggregationPeriod: {
+    ja: '集計期間',
+    en: 'Aggregation Period'
+  },
+  reset: {
+    ja: 'リセット',
+    en: 'Reset'
+  },
+  currentMonth: {
+    ja: '今月',
+    en: 'This Month'
+  },
+  previousMonth: {
+    ja: '前月',
+    en: 'Last Month'
+  },
+  contractStartDate: {
+    ja: '契約開始日（以上）',
+    en: 'Contract Start Date (From)'
+  },
+  contractEndDate: {
+    ja: '契約終了日（以前）',
+    en: 'Contract End Date (To)'
+  },
+  
+  // Settings page detailed
+  settingsDescription: {
+    ja: 'システムの設定を確認・管理します',
+    en: 'View and manage system settings'
+  },
+  languageSettings: {
+    ja: '言語設定',
+    en: 'Language Settings'
+  },
+  systemDisplayLanguage: {
+    ja: 'システムの表示言語',
+    en: 'System display language'
+  },
+  currencySettings: {
+    ja: '通貨設定',
+    en: 'Currency Settings'
+  },
+  currencyDisplayUnit: {
+    ja: '金額表示の通貨単位',
+    en: 'Currency unit for amount display'
+  },
+  environmentVariable: {
+    ja: '環境変数',
+    en: 'Environment Variable'
+  },
+  settingsChangeInfo: {
+    ja: '設定変更について',
+    en: 'About Settings Changes'
+  },
+  settingsChangeDescription: {
+    ja: '言語と通貨の設定を変更するには、.envファイルで以下の環境変数を編集してください：',
+    en: 'To change language and currency settings, edit the following environment variables in the .env file:'
+  },
+  restartRequired: {
+    ja: '※ 設定変更後はアプリケーションの再起動が必要です',
+    en: '* Application restart is required after changing settings'
+  },
+  
+  // Filter and search
+  filterSearch: {
+    ja: 'フィルター・検索',
+    en: 'Filter & Search'
+  },
+  clear: {
+    ja: 'クリア',
+    en: 'Clear'
+  },
+  all: {
+    ja: 'すべて',
+    en: 'All'
+  },
+  searchCustomerDescription: {
+    ja: '検索（顧客名・説明文）',
+    en: 'Search (Customer Name & Description)'
+  },
+  searchPlaceholder: {
+    ja: '検索キーワードを入力...',
+    en: 'Enter search keywords...'
+  },
+  
+  // Table headers and UI
+  customerNameHeader: {
+    ja: '顧客名',
+    en: 'Customer Name'
+  },
+  service: {
+    ja: 'サービス',
+    en: 'Service'
+  },
+  paymentTypeHeader: {
+    ja: '支払い形態',
+    en: 'Payment Type'
+  },
+  periodHeader: {
+    ja: '期間',
+    en: 'Period'
+  },
+  amountHeader: {
+    ja: '金額',
+    en: 'Amount'
+  },
+  paymentStatus: {
+    ja: '支払い状況',
+    en: 'Payment Status'
+  },
+  serviceTypeHeader: {
+    ja: 'サービス種別',
+    en: 'Service Type'
+  },
+  ongoing: {
+    ja: '継続中',
+    en: 'Ongoing'
+  },
+  
+  // Sales summary
+  totalOrdersCount: {
+    ja: '総注文数',
+    en: 'Total Orders'
+  },
+  totalSales: {
+    ja: '総売上',
+    en: 'Total Sales'
+  },
+  paidAmount: {
+    ja: '支払済',
+    en: 'Paid'
+  },
+  unpaidAmount: {
+    ja: '未払',
+    en: 'Unpaid'
+  },
+  
+  // Customer detail page
+  customerNotFound: {
+    ja: '顧客が見つかりません',
+    en: 'Customer not found'
+  },
+  dataFetchFailed: {
+    ja: 'データの取得に失敗しました',
+    en: 'Failed to fetch data'
+  },
+  customerDetail: {
+    ja: '顧客詳細',
+    en: 'Customer Detail'
+  },
+  customerDetailDescription: {
+    ja: '顧客の詳細情報と注文履歴',
+    en: 'Customer details and order history'
+  },
+  orderHistory: {
+    ja: '注文履歴',
+    en: 'Order History'
+  },
+  noOrderHistory: {
+    ja: '注文履歴がありません',
+    en: 'No order history'
+  },
+  payment: {
+    ja: '支払い',
+    en: 'Payment'
+  },
+  paidCount: {
+    ja: '支払済み',
+    en: 'Paid'
+  },
+  unpaidCount: {
+    ja: '未払い',
+    en: 'Unpaid'
+  },
+  ordersUnit: {
+    ja: '件',
+    en: ' orders'
+  },
+  back: {
+    ja: '戻る',
+    en: 'Back'
+  },
+  registrationDate: {
+    ja: '登録日',
+    en: 'Registration Date'
+  },
+  updateDate: {
+    ja: '更新日',
+    en: 'Update Date'
+  },
+  
+  // Order Form Modal
+  newOrderModal: {
+    ja: '新規注文',
+    en: 'New Order'
+  },
+  editOrder: {
+    ja: '注文編集',
+    en: 'Edit Order'
+  },
+  customer: {
+    ja: '顾客',
+    en: 'Customer'
+  },
+  selectCustomer: {
+    ja: '顾客を選択してください',
+    en: 'Please select a customer'
+  },
+  contractStartDateModal: {
+    ja: '契約開始日',
+    en: 'Contract Start Date'
+  },
+  contractEndDateModal: {
+    ja: '契約終了日',
+    en: 'Contract End Date'
+  },
+  currencyModal: {
+    ja: '通貨',
+    en: 'Currency'
+  },
+  isPaidLabel: {
+    ja: '支払い済み',
+    en: 'Paid'
+  },
+  description: {
+    ja: '説明',
+    en: 'Description'
+  },
+  descriptionPlaceholder: {
+    ja: '注文に関する詳細情報があれば入力してください',
+    en: 'Enter detailed information about the order if any'
+  },
+  create: {
+    ja: '作成',
+    en: 'Create'
+  },
+  update: {
+    ja: '更新',
+    en: 'Update'
+  },
+  saving: {
+    ja: '保存中...',
+    en: 'Saving...'
+  },
+  requiredFieldsError: {
+    ja: '必須項目を入力してください',
+    en: 'Please fill in all required fields'
+  },
+  amountValidationError: {
+    ja: '金額は正の数値を入力してください',
+    en: 'Please enter a positive number for the amount'
+  },
+  saveFailedError: {
+    ja: '保存に失敗しました',
+    en: 'Failed to save'
+  },
+  
+  // Delete Confirmation Dialog
+  deleteOrder: {
+    ja: '注文の削除',
+    en: 'Delete Order'
+  },
+  deleteConfirmMessage: {
+    ja: '以下の注文を削除しようとしています：',
+    en: 'You are about to delete the following order:'
+  },
+  deleteWarning: {
+    ja: 'この操作は取り消すことができません。注文に関連するデータも完全に削除されます。',
+    en: 'This action cannot be undone. All data related to this order will be permanently deleted.'
+  },
+  warning: {
+    ja: '警告',
+    en: 'Warning'
+  },
+  deleteAction: {
+    ja: '削除する',
+    en: 'Delete'
+  },
+  deleting: {
+    ja: '削除中...',
+    en: 'Deleting...'
+  }
+};
+
+export type TranslationKey = keyof typeof translations;
+
+/**
+ * 翻訳テキストを取得
+ */
+export const t = (key: TranslationKey): string => {
+  const language = getLanguage();
+  return translations[key][language] || translations[key]['en'] || key;
+};
+
+/**
+ * 通貨フォーマット
+ */
+export const formatCurrency = (amount: number): string => {
+  const currency = getCurrency();
+  const language = getLanguage();
+  
+  const locale = language === 'ja' ? 'ja-JP' : 'en-US';
+  
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: currency === 'JPY' ? 0 : 2
+  }).format(amount);
+};
+
+/**
+ * 数値フォーマット（カンマ区切り）
+ */
+export const formatNumber = (value: number): string => {
+  const language = getLanguage();
+  const locale = language === 'ja' ? 'ja-JP' : 'en-US';
+  
+  return new Intl.NumberFormat(locale).format(value);
+};
+
+/**
+ * 日付フォーマット
+ */
+export const formatDate = (date: string | Date): string => {
+  const language = getLanguage();
+  const locale = language === 'ja' ? 'ja-JP' : 'en-US';
+  
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  
+  return dateObj.toLocaleDateString(locale, {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+};
