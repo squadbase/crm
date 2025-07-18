@@ -20,7 +20,6 @@ export async function PUT(
         salesStartDt: body.salesStartDt,
         salesEndDt: body.salesEndDt,
         amount: body.amount,
-        currency: body.currency,
         isPaid: body.isPaid,
         description: body.description,
       })

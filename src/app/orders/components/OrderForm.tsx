@@ -19,7 +19,6 @@ interface Order {
   salesStartDt: string;
   salesEndDt: string | null;
   amount: string;
-  currency: string;
   isPaid: boolean;
   description: string | null;
 }
@@ -41,7 +40,6 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
     salesStartDt: '',
     salesEndDt: '',
     amount: '',
-    currency: 'JPY',
     isPaid: false,
     description: ''
   });
@@ -65,7 +63,6 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
         salesStartDt: editingOrder.salesStartDt,
         salesEndDt: editingOrder.salesEndDt || '',
         amount: editingOrder.amount,
-        currency: editingOrder.currency,
         isPaid: editingOrder.isPaid,
         description: editingOrder.description || ''
       });
@@ -78,7 +75,6 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
         salesStartDt: '',
         salesEndDt: '',
         amount: '',
-        currency: 'JPY',
         isPaid: false,
         description: ''
       });
@@ -420,26 +416,6 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
                 />
               </div>
 
-              <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  marginBottom: '6px'
-                }}>
-                  {t('currency')}
-                </label>
-                <CustomSelect
-                  options={[
-                    { value: 'JPY', label: 'JPY' },
-                    { value: 'USD', label: 'USD' },
-                    { value: 'EUR', label: 'EUR' }
-                  ]}
-                  value={formData.currency}
-                  onChange={(value) => handleInputChange('currency', value)}
-                />
-              </div>
             </div>
 
             {/* 支払い状況 */}

@@ -120,9 +120,9 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
 
   // グラフの描画設定
   // const chartWidth = '100%'; // Currently not used
-  const chartHeight = 300;
-  const padding = { top: 20, right: 60, bottom: 60, left: 80 };
-  const graphWidth = 800 - padding.left - padding.right;
+  const chartHeight = 350;
+  const padding = { top: 20, right: 80, bottom: 60, left: 120 };
+  const graphWidth = 900 - padding.left - padding.right;
   const graphHeight = chartHeight - padding.top - padding.bottom;
 
   // 最大値を計算
@@ -280,14 +280,14 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
 
       {/* グラフ */}
       <div style={{ overflowX: 'auto', position: 'relative', width: '100%' }}>
-        <svg width="100%" height={chartHeight} style={{ display: 'block', minWidth: '800px' }} viewBox="0 0 800 300" preserveAspectRatio="none">
+        <svg width="100%" height={chartHeight} style={{ display: 'block', minWidth: '900px' }} viewBox="0 0 900 350" preserveAspectRatio="none">
           {/* 背景グリッド */}
           <defs>
             <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
               <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f1f5f9" strokeWidth="1"/>
             </pattern>
           </defs>
-          <rect width="800" height="300" fill="url(#grid)" />
+          <rect width="900" height="350" fill="url(#grid)" />
 
           {/* Y軸ラベル */}
           {[0, 0.25, 0.5, 0.75, 1].map((ratio, index) => {

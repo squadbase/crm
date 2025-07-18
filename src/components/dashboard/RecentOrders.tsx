@@ -2,12 +2,12 @@
 
 import { ArrowUpRight, Calendar, CreditCard } from 'lucide-react';
 import { useClientI18n } from '@/hooks/useClientI18n';
+import { useState, useEffect } from 'react';
 
 interface Order {
   orderId: string;
   customerName: string | null;
   amount: string;
-  currency: string;
   paymentType: string;
   serviceType: string;
   isPaid: boolean;
@@ -16,7 +16,12 @@ interface Order {
 }
 
 export function RecentOrders({ orders: recentOrders }: { orders: Order[] }) {
-  const { t, formatCurrency, formatDate } = useClientI18n();
+  const { t, formatCurrency, formatDate, isClient } = useClientI18n();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <div style={{ 
@@ -120,7 +125,7 @@ export function RecentOrders({ orders: recentOrders }: { orders: Order[] }) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <Calendar style={{ height: '11px', width: '11px', color: '#6b7280' }} />
                   <span style={{ fontSize: '11px', color: '#6b7280' }}>
-{order.salesStartDt ? formatDate(order.salesStartDt) : 'N/A'}
+{order.salesStartDt ? (mounted && isClient ? formatDate(order.salesStartDt) : new Date(order.salesStartDt).toISOString().split('T')[0]) : 'N/A'}
                   </span>
                 </div>
               </div>

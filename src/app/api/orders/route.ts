@@ -66,7 +66,6 @@ export async function GET(request: NextRequest) {
           salesStartDt: orders.salesStartDt,
           salesEndDt: orders.salesEndDt,
           amount: orders.amount,
-          currency: orders.currency,
           isPaid: orders.isPaid,
           description: orders.description,
           createdAt: orders.createdAt,
@@ -115,7 +114,6 @@ export async function POST(request: NextRequest) {
       salesStartDt: body.salesStartDt,
       salesEndDt: body.salesEndDt,
       amount: body.amount,
-      currency: body.currency || 'JPY',
       isPaid: body.isPaid || false,
       description: body.description,
     }).returning();

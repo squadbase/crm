@@ -14,7 +14,6 @@ type OrderData = {
   customerName: string | null;
   customerId: string | null;
   amount: string;
-  currency: string;
   paymentType: string;
   serviceType: string;
   isPaid: boolean;
@@ -51,8 +50,7 @@ const columns: ColumnDef<OrderData>[] = [
     header: '金額',
     cell: ({ row }) => (
       <div className="text-body font-semibold text-foreground">
-        {row.original.currency === 'JPY' ? '¥' : row.original.currency}
-        {Number(row.original.amount).toLocaleString()}
+        ¥{Number(row.original.amount).toLocaleString()}
       </div>
     ),
   },
