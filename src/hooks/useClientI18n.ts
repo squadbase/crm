@@ -42,8 +42,8 @@ export function useClientI18n() {
   // 翻訳関数
   const t = (key: TranslationKey): string => {
     if (!isClient || isLoading) {
-      // SSR中やロード中はキーをそのまま返す
-      return key;
+      // SSR中やロード中は設定されたデフォルト言語を返す（プレースホルダー回避）
+      return translations[key][settings.language] || translations[key]['en'] || key;
     }
     return translations[key][settings.language] || translations[key]['en'] || key;
   };

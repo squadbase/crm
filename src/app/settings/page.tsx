@@ -6,14 +6,12 @@ import { useClientI18n } from '@/hooks/useClientI18n';
 import { Settings, Globe, DollarSign } from 'lucide-react';
 
 export default function SettingsPage() {
-  const { t, settings, isLoading, isClient } = useClientI18n();
+  const { t, settings, isLoading } = useClientI18n();
   
   // ページタイトル設定
   useEffect(() => {
-    if (isClient) {
-      document.title = t('settingsTitle');
-    }
-  }, [t, isClient]);
+    document.title = t('settingsTitle');
+  }, [t]);
 
   const languageDisplay = {
     ja: t('japanese'),

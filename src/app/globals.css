@@ -123,4 +123,15 @@
   .transition-colors {
     transition: color 150ms ease-in-out, background-color 150ms ease-in-out, border-color 150ms ease-in-out;
   }
+
+  /* Loading spinner animation */
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
 }

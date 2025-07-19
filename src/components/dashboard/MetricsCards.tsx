@@ -61,9 +61,17 @@ export function MetricsCards() {
   const formatGrowth = (growth: MetricGrowth, isRevenue: boolean = false, isRate: boolean = false, isUnpaid: boolean = false) => {
     if (!growth || typeof growth.rate !== 'number' || typeof growth.count !== 'number') {
       return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#6b7280' }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px',
+          color: '#6b7280'
+        }}>
           <TrendingUp size={14} />
-          <span style={{ fontSize: '12px', fontWeight: '500' }}>
+          <span style={{
+            fontSize: '12px',
+            fontWeight: '500'
+          }}>
             {t('noDataText')}
           </span>
         </div>
@@ -76,7 +84,7 @@ export function MetricsCards() {
     // 未払い系の場合は良し悪しの色を逆転
     const actuallyPositive = isUnpaid ? !isPositive : isPositive;
     const icon = isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />;
-    const color = actuallyPositive ? '#10b981' : '#ef4444';
+    const color = actuallyPositive ? '#059669' : '#ef4444';
     const sign = isPositive ? '+' : '';
     
     let countDisplay = '';
@@ -89,9 +97,17 @@ export function MetricsCards() {
     }
     
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '4px',
+        color: color
+      }}>
         {icon}
-        <span style={{ fontSize: '12px', fontWeight: '500' }}>
+        <span style={{
+          fontSize: '12px',
+          fontWeight: '500'
+        }}>
           {sign}{rate.toFixed(1)}% ({countDisplay})
         </span>
       </div>
@@ -136,18 +152,18 @@ export function MetricsCards() {
 
   if (loading) {
     return (
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', 
-        gap: '16px', 
-        marginBottom: '20px' 
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+        gap: '16px',
+        marginBottom: '20px'
       }}>
         {[1, 2, 3].map((i) => (
-          <div key={i} style={{ 
-            backgroundColor: 'white', 
-            border: '1px solid #e2e8f0', 
-            borderRadius: '8px', 
-            padding: '16px',
+          <div key={i} style={{
+            backgroundColor: 'white',
+            border: '1px solid #e2e8f0',
+            borderRadius: '12px',
+            padding: '20px',
             boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
             height: '120px',
             display: 'flex',
@@ -157,7 +173,7 @@ export function MetricsCards() {
             <div style={{
               width: '40px',
               height: '40px',
-              border: '4px solid #f3f4f6',
+              border: '4px solid #e5e7eb',
               borderTop: '4px solid #2563eb',
               borderRadius: '50%',
               animation: 'spin 1s linear infinite'
@@ -170,25 +186,28 @@ export function MetricsCards() {
 
   if (!data) {
     return (
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', 
-        gap: '16px', 
-        marginBottom: '20px' 
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+        gap: '16px',
+        marginBottom: '20px'
       }}>
         {metricsConfig.map((config) => (
-          <div key={config.key} style={{ 
-            backgroundColor: 'white', 
-            border: '1px solid #e2e8f0', 
-            borderRadius: '8px', 
-            padding: '16px',
+          <div key={config.key} style={{
+            backgroundColor: 'white',
+            border: '1px solid #e2e8f0',
+            borderRadius: '12px',
+            padding: '20px',
             boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
             height: '120px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <div style={{ textAlign: 'center', color: '#6b7280' }}>
+            <div style={{
+              textAlign: 'center',
+              color: '#6b7280'
+            }}>
               <p style={{ margin: 0, fontSize: '14px' }}>{t('noData')}</p>
             </div>
           </div>
@@ -198,55 +217,88 @@ export function MetricsCards() {
   }
 
   return (
-    <div style={{ 
-      display: 'grid', 
-      gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', 
-      gap: '16px', 
-      marginBottom: '20px' 
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+      gap: '16px',
+      marginBottom: '20px'
     }}>
       {metricsConfig.map((config) => {
         const metric = data.metrics[config.key];
         const Icon = config.icon;
         
         return (
-          <div key={config.key} style={{ 
-            backgroundColor: 'white', 
-            border: '1px solid #e2e8f0', 
-            borderRadius: '8px', 
-            padding: '16px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' 
+          <div key={config.key} style={{
+            backgroundColor: 'white',
+            border: '1px solid #e2e8f0',
+            borderRadius: '12px',
+            padding: '20px',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '12px'
+            }}>
               <div>
-                <p style={{ fontSize: '12px', fontWeight: '500', color: '#64748b', margin: 0 }}>
+                <p style={{
+                  fontSize: '12px',
+                  fontWeight: '500',
+                  color: '#6b7280',
+                  margin: 0
+                }}>
                   {config.title}
                 </p>
-                <p style={{ fontSize: '20px', fontWeight: '600', color: '#0f172a', marginTop: '4px', margin: 0 }}>
+                <p style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: '#0f172a',
+                  marginTop: '4px',
+                  margin: 0
+                }}>
                   {metric && metric.value !== undefined && metric.value !== null ? config.formatter(typeof metric.value === 'string' ? parseInt(metric.value) : metric.value) : t('noData')}
                 </p>
               </div>
-              <div style={{ 
-                height: '40px', 
-                width: '40px', 
-                backgroundColor: config.iconBg, 
-                borderRadius: '50%', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center' 
+              <div style={{
+                height: '40px',
+                width: '40px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: config.iconBg
               }}>
-                <Icon style={{ height: '20px', width: '20px', color: config.iconColor }} />
+                <Icon style={{
+                  height: '20px',
+                  width: '20px',
+                  color: config.iconColor
+                }} />
               </div>
             </div>
             <div style={{ marginTop: '8px' }}>
               {metric && metric.growth ? formatGrowth(metric.growth, config.isRevenue, config.isRate, config.isUnpaid) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#6b7280' }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  color: '#6b7280'
+                }}>
                   <TrendingUp size={14} />
-                  <span style={{ fontSize: '12px', fontWeight: '500' }}>
+                  <span style={{
+                    fontSize: '12px',
+                    fontWeight: '500'
+                  }}>
                     {t('noData')}
                   </span>
                 </div>
               )}
-              <p style={{ fontSize: '11px', color: '#6b7280', margin: '2px 0 0 0' }}>
+              <p style={{
+                fontSize: '11px',
+                color: '#6b7280',
+                marginTop: '2px',
+                marginBottom: 0
+              }}>
                 {t('vsLastMonth')}
               </p>
             </div>

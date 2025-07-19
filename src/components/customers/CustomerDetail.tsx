@@ -56,6 +56,15 @@ export function CustomerDetail({ customerId }: CustomerDetailProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customerId]);
 
+  // ページタイトル設定
+  useEffect(() => {
+    if (data?.customer?.customerName) {
+      document.title = `${data.customer.customerName} - ${t('customerDetail')}`;
+    } else {
+      document.title = t('customerDetail');
+    }
+  }, [data?.customer?.customerName, t]);
+
   const fetchCustomerDetail = async () => {
     try {
       setLoading(true);

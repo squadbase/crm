@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { orders, customers } from '@/lib/db/schema';
-import { desc, count, asc, ilike, and, eq, gte, lte, or } from 'drizzle-orm';
+import { getOrders, getOrderCount, createOrder } from '@/app/models/orders';
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,78 +10,45 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50');
     const sort = searchParams.get('sort') || 'created';
     const direction = searchParams.get('direction') || 'desc';
-    const sortOrder = searchParams.get('sortOrder') || direction;
-    const paymentType = searchParams.get('paymentType');
-    const serviceType = searchParams.get('serviceType');
+    const paymentType = searchParams.get('paymentType') as 'onetime' | 'subscription' | undefined;
+    const serviceType = searchParams.get('serviceType') as 'product' | 'project' | undefined;
     const isPaid = searchParams.get('isPaid');
     const salesStartDt = searchParams.get('salesStartDt');
     const salesEndDt = searchParams.get('salesEndDt');
     const search = searchParams.get('search');
 
-    // WHERE条件を構築
-    const conditions = [];
+    // フィルター構築
+    const filters = {
+      ...(paymentType && { paymentType }),
+      ...(serviceType && { serviceType }),
+      ...(isPaid !== null && isPaid !== '' && { isPaid: isPaid === 'true' }),
+      ...(salesStartDt && { startDate: new Date(salesStartDt) }),
+      ...(salesEndDt && { endDate: new Date(salesEndDt) }),
+      ...(search && { search })
+    };
+
+    // ソート設定
+    const sortField = sort === 'created' ? 'created' :
+                     sort === 'amount' ? 'amount' :
+                     sort === 'customer' ? 'customer' :
+                     'payment';
     
-    if (paymentType && (paymentType === 'onetime' || paymentType === 'subscription')) {
-      conditions.push(eq(orders.paymentType, paymentType));
-    }
-    
-    if (serviceType && (serviceType === 'product' || serviceType === 'project')) {
-      conditions.push(eq(orders.serviceType, serviceType));
-    }
-    
-    if (isPaid !== null && isPaid !== '') {
-      conditions.push(eq(orders.isPaid, isPaid === 'true'));
-    }
-    
-    if (salesStartDt) {
-      conditions.push(gte(orders.salesStartDt, salesStartDt));
-    }
-    
-    if (salesEndDt) {
-      conditions.push(lte(orders.salesStartDt, salesEndDt));
-    }
-    
-    if (search) {
-      conditions.push(
-        or(
-          ilike(customers.customerName, `%${search}%`),
-          ilike(orders.description, `%${search}%`)
-        )
-      );
-    }
+    const sortOptions = {
+      field: sortField as 'created' | 'amount' | 'customer' | 'payment',
+      direction: direction as 'asc' | 'desc'
+    };
 
     // データ取得
     const offset = (page - 1) * limit;
-    const orderClause = sortOrder === 'desc' ? desc(orders.createdAt) : asc(orders.createdAt);
-
+    
     const [ordersData, totalCount] = await Promise.all([
-      db
-        .select({
-          orderId: orders.orderId,
-          customerId: orders.customerId,
-          customerName: customers.customerName,
-          paymentType: orders.paymentType,
-          serviceType: orders.serviceType,
-          salesStartDt: orders.salesStartDt,
-          salesEndDt: orders.salesEndDt,
-          amount: orders.amount,
-          isPaid: orders.isPaid,
-          description: orders.description,
-          createdAt: orders.createdAt,
-          updatedAt: orders.updatedAt,
-        })
-        .from(orders)
-        .innerJoin(customers, eq(orders.customerId, customers.customerId))
-        .where(conditions.length > 0 ? and(...conditions) : undefined)
-        .orderBy(orderClause)
-        .limit(limit)
-        .offset(offset),
-      
-      db
-        .select({ count: count() })
-        .from(orders)
-        .innerJoin(customers, eq(orders.customerId, customers.customerId))
-        .where(conditions.length > 0 ? and(...conditions) : undefined)
+      getOrders({
+        filters,
+        sort: sortOptions,
+        limit,
+        offset
+      }),
+      getOrderCount(filters)
     ]);
 
     return NextResponse.json({
@@ -91,8 +56,8 @@ export async function GET(request: NextRequest) {
       pagination: {
         page,
         limit,
-        total: totalCount[0].count,
-        totalPages: Math.ceil(totalCount[0].count / limit),
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / limit),
       },
     });
   } catch (error) {
@@ -108,8 +73,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
-    const newOrder = await db.insert(orders).values({
+    const newOrder = await createOrder({
       customerId: body.customerId,
+      customerName: body.customerName, // Required by schema
       paymentType: body.paymentType,
       serviceType: body.serviceType,
       salesStartDt: body.salesStartDt,
@@ -117,9 +83,9 @@ export async function POST(request: NextRequest) {
       amount: body.amount,
       isPaid: body.isPaid || false,
       description: body.description,
-    }).returning();
+    });
 
-    return NextResponse.json(newOrder[0], { status: 201 });
+    return NextResponse.json(newOrder, { status: 201 });
   } catch (error) {
     console.error('Create order error:', error);
     return NextResponse.json(

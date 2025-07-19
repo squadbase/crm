@@ -23,7 +23,6 @@
 | order_id | UUID | PRIMARY KEY | 注文ID |
 | customer_id | UUID | FOREIGN KEY | 顧客ID (customers.customer_id) |
 | payment_type | ENUM | NOT NULL | 支払い形態 (onetime, subscription) |
-| service_type | ENUM | NOT NULL | サービス種別 (product, project) |
 | sales_start_dt | DATE | NOT NULL | 売上開始日 |
 | sales_end_dt | DATE | | 売上終了日 (onetimeの場合はsales_start_dtと同じ) |
 | amount | DECIMAL(15,2) | NOT NULL | 金額 |
@@ -39,7 +38,6 @@ payment_typeとservice_typeの組み合わせごとの入力テンプレート�
 |---------|-----|------|-----|
 | template_id | UUID | PRIMARY KEY | テンプレートID |
 | payment_type | ENUM | NOT NULL | 支払い形態 (onetime, subscription) |
-| service_type | ENUM | NOT NULL | サービス種別 (product, project) |
 | template_name | VARCHAR(255) | NOT NULL | テンプレート名 |
 | amount | DECIMAL(15,2) | NOT NULL | デフォルト金額 |
 | description | TEXT | | デフォルト説明・備考 |

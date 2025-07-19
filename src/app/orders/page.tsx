@@ -47,15 +47,13 @@ interface PaginationInfo {
 }
 
 export default function OrdersPage() {
-  const { t, isClient } = useClientI18n();
+  const { t } = useClientI18n();
   const router = useRouter();
   
   // ページタイトル設定
   useEffect(() => {
-    if (isClient) {
-      document.title = t('ordersTitle');
-    }
-  }, [t, isClient]);
+    document.title = t('ordersTitle');
+  }, [t]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<FilterValues>({

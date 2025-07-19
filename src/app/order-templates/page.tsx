@@ -32,15 +32,13 @@ interface PaginationInfo {
 }
 
 export default function OrderTemplatesPage() {
-  const { t, isClient } = useClientI18n();
+  const { t } = useClientI18n();
   const router = useRouter();
   
   // ページタイトル設定
   useEffect(() => {
-    if (isClient) {
-      document.title = t('orderTemplatesTitle');
-    }
-  }, [t, isClient]);
+    document.title = t('orderTemplatesTitle');
+  }, [t]);
   const [templates, setTemplates] = useState<OrderTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);

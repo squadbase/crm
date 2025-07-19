@@ -73,6 +73,15 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
     }
   }, [orderId, fetchOrderDetail]);
 
+  // ページタイトル設定
+  useEffect(() => {
+    if (order?.customerName) {
+      document.title = `${order.customerName} - ${t('orderDetails')}`;
+    } else {
+      document.title = t('orderDetails');
+    }
+  }, [order?.customerName, t]);
+
   const handleEdit = () => {
     setIsEditDialogOpen(true);
   };

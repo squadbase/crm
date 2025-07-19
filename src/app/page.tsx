@@ -10,14 +10,12 @@ import { MonthlySalesChart } from '@/components/dashboard/MonthlySalesChart';
 import { MetricsCards } from '@/components/dashboard/MetricsCards';
 
 export default function HomePage() {
-  const { t, isClient } = useClientI18n();
+  const { t } = useClientI18n();
   
   // ページタイトル設定
   useEffect(() => {
-    if (isClient) {
-      document.title = t('dashboardTitle');
-    }
-  }, [t, isClient]);
+    document.title = t('dashboardTitle');
+  }, [t]);
   const [period, setPeriod] = useState({
     startDate: '',
     endDate: ''
@@ -98,7 +96,7 @@ export default function HomePage() {
   const headerActions = null;
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'white' }}>
+    <div className="min-h-screen bg-white">
       <PageHeader
         title={t('dashboard')}
         description={t('welcome')}
@@ -106,7 +104,7 @@ export default function HomePage() {
       />
 
       {/* Content */}
-      <div style={{ padding: '16px' }}>
+      <div className="p-4">
         {/* Metrics Cards */}
         <MetricsCards />
 
@@ -114,16 +112,12 @@ export default function HomePage() {
         <PeriodSelector onPeriodChange={handlePeriodChange} />
 
         {/* Monthly Sales Chart */}
-        <div style={{ marginBottom: '20px' }}>
+        <div className="mb-5">
           <MonthlySalesChart period={period} />
         </div>
 
         {/* Content Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-          gap: '16px'
-        }}>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(350px,1fr))] gap-4">
           <RecentOrders orders={recentOrders} loading={loadingOrders} />
 
           <CustomerList customers={customerStats} loading={loadingCustomers} />
