@@ -347,7 +347,7 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
                   resize: 'vertical',
                   boxSizing: 'border-box'
                 }}
-                placeholder={t('descriptionPlaceholder')}
+                placeholder={t('templateDescriptionPlaceholder')}
               />
             </div>
 

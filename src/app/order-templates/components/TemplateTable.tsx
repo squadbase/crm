@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Eye, Edit, Trash2, PlayCircle, ToggleLeft, ToggleRight } from 'lucide-react';
 import { useClientI18n } from '@/hooks/useClientI18n';
 

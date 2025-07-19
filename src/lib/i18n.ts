@@ -756,7 +756,7 @@ export const translations = {
     ja: '説明',
     en: 'Description',
   },
-  descriptionPlaceholder: {
+  templateDescriptionPlaceholder: {
     ja: 'テンプレートの説明（オプション）',
     en: 'Template description (optional)',
   },
