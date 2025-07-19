@@ -236,6 +236,7 @@ export default function OrdersPage() {
           onDelete={handleDelete}
           onPaymentStatusToggle={handlePaymentStatusToggle}
           onView={handleView}
+          onCreateNew={handleAddOrder}
         />
 
         {/* モーダル */}

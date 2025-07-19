@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Edit, Trash2, Eye } from 'lucide-react';
+import { Edit, Trash2, Eye, Plus } from 'lucide-react';
 import { StatusBadge, ServiceTypeBadge, PaymentTypeBadge } from './StatusBadge';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
@@ -27,6 +27,7 @@ interface OrdersTableProps {
   onDelete: (order: Order) => void;
   onPaymentStatusToggle: (orderId: string, isPaid: boolean) => void;
   onView?: (orderId: string) => void;
+  onCreateNew?: () => void;
 }
 
 export function OrdersTable({ 
@@ -35,6 +36,7 @@ export function OrdersTable({
   onEdit, 
   onDelete, 
   onPaymentStatusToggle,
+  onCreateNew,
   onView
 }: OrdersTableProps) {
   const { t, formatCurrency, formatDate } = useClientI18n();
@@ -90,7 +92,7 @@ export function OrdersTable({
             animation: 'spin 1s linear infinite',
             margin: '0 auto 16px'
           }} />
-          <p style={{ color: '#6b7280', margin: 0 }}>読み込み中...</p>
+          <p style={{ color: '#6b7280', margin: 0 }}>{t('loadingOrders')}</p>
         </div>
       </div>
     );
@@ -106,9 +108,54 @@ export function OrdersTable({
         textAlign: 'center',
         boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
       }}>
-        <p style={{ color: '#6b7280', margin: 0, fontSize: '16px' }}>
-          注文データがありません
-        </p>
+        <div style={{
+          marginBottom: '16px'
+        }}>
+          <h3 style={{ 
+            color: '#374151', 
+            margin: '0 0 8px 0', 
+            fontSize: '18px',
+            fontWeight: '600'
+          }}>
+            {t('noOrdersFound')}
+          </h3>
+          <p style={{ 
+            color: '#6b7280', 
+            margin: 0, 
+            fontSize: '14px',
+            lineHeight: '1.5'
+          }}>
+            {t('noOrdersFoundDescription')}
+          </p>
+        </div>
+        {onCreateNew && (
+          <button
+            onClick={onCreateNew}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '12px 24px',
+              fontSize: '14px',
+              fontWeight: '500',
+              color: 'white',
+              backgroundColor: '#2563eb',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#1d4ed8';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#2563eb';
+            }}
+          >
+            <Plus size={16} />
+            {t('createFirstOrder')}
+          </button>
+        )}
       </div>
     );
   }

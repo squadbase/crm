@@ -10,8 +10,9 @@ export async function GET(request: NextRequest) {
     // パラメータ取得
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '50');
-    // const sortBy = searchParams.get('sortBy') || 'created_at'; // Currently not used
-    const sortOrder = searchParams.get('sortOrder') || 'desc';
+    const sort = searchParams.get('sort') || 'created';
+    const direction = searchParams.get('direction') || 'desc';
+    const sortOrder = searchParams.get('sortOrder') || direction;
     const paymentType = searchParams.get('paymentType');
     const serviceType = searchParams.get('serviceType');
     const isPaid = searchParams.get('isPaid');

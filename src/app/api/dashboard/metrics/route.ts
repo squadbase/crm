@@ -9,6 +9,14 @@ export async function GET(request: NextRequest) {
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
 
+    // データベースの日付範囲を一度だけ取得
+    const dateRangeResult = !startDate || !endDate ? await db
+      .select({
+        minDate: sql<string>`MIN(${orders.salesStartDt})`,
+        maxDate: sql<string>`MAX(${orders.salesStartDt})`
+      })
+      .from(orders) : null;
+
     // 比較期間の計算（選択された期間と同じ長さの前の期間）
     let previousPeriodConditions = [];
     
@@ -32,31 +40,64 @@ export async function GET(request: NextRequest) {
         lte(orders.salesStartDt, formatDate(previousEnd))
       ];
     } else {
-      // 期間が指定されていない場合は前月と比較
-      const now = new Date();
-      const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-      const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
-      
-      const formatDate = (date: Date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      };
+      // 期間が指定されていない場合は全データの半分の期間と比較
+      if (dateRangeResult && dateRangeResult[0] && dateRangeResult[0].minDate && dateRangeResult[0].maxDate) {
+        const minDate = new Date(dateRangeResult[0].minDate);
+        const maxDate = new Date(dateRangeResult[0].maxDate);
+        const totalPeriod = maxDate.getTime() - minDate.getTime();
+        const halfPeriod = totalPeriod / 2;
+        
+        const midPoint = new Date(minDate.getTime() + halfPeriod);
+        
+        const formatDate = (date: Date) => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
 
-      previousPeriodConditions = [
-        gte(orders.salesStartDt, formatDate(lastMonthStart)),
-        lte(orders.salesStartDt, formatDate(lastMonthEnd))
-      ];
+        previousPeriodConditions = [
+          gte(orders.salesStartDt, formatDate(minDate)),
+          lte(orders.salesStartDt, formatDate(midPoint))
+        ];
+      } else {
+        // データが存在しない場合は空の条件
+        previousPeriodConditions = [];
+      }
     }
 
     // 期間フィルターの条件を構築
     const currentPeriodConditions = [];
-    if (startDate) {
+    if (startDate && endDate) {
       currentPeriodConditions.push(gte(orders.salesStartDt, startDate));
-    }
-    if (endDate) {
       currentPeriodConditions.push(lte(orders.salesStartDt, endDate));
+    } else if (!startDate && !endDate) {
+      // 期間が指定されていない場合は後半データを現在期間とする
+      if (dateRangeResult && dateRangeResult[0] && dateRangeResult[0].minDate && dateRangeResult[0].maxDate) {
+        const minDate = new Date(dateRangeResult[0].minDate);
+        const maxDate = new Date(dateRangeResult[0].maxDate);
+        const totalPeriod = maxDate.getTime() - minDate.getTime();
+        const halfPeriod = totalPeriod / 2;
+        
+        const midPoint = new Date(minDate.getTime() + halfPeriod);
+        
+        const formatDate = (date: Date) => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+
+        currentPeriodConditions.push(gte(orders.salesStartDt, formatDate(midPoint)));
+        currentPeriodConditions.push(lte(orders.salesStartDt, formatDate(maxDate)));
+      }
+    } else {
+      if (startDate) {
+        currentPeriodConditions.push(gte(orders.salesStartDt, startDate));
+      }
+      if (endDate) {
+        currentPeriodConditions.push(lte(orders.salesStartDt, endDate));
+      }
     }
 
     // 現在選択された期間の集計
@@ -88,9 +129,12 @@ export async function GET(request: NextRequest) {
 
     // 増加率と増加数を計算
     const calculateGrowth = (current: number, previous: number) => {
-      if (previous === 0) return { rate: 0, count: current };
-      const rate = ((current - previous) / previous) * 100;
       const count = current - previous;
+      if (previous === 0) {
+        // 前期間が0の場合、現在値があれば100%増加として扱う
+        return { rate: current > 0 ? 100 : 0, count };
+      }
+      const rate = ((current - previous) / previous) * 100;
       return { rate, count };
     };
 

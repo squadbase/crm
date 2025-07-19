@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { customers, orders } from '@/lib/db/schema';
-import { eq, ilike, count, sql } from 'drizzle-orm';
+import { eq, ilike, count, sql, desc, asc } from 'drizzle-orm';
 import { z } from 'zod';
 
 const createCustomerSchema = z.object({
@@ -17,6 +17,8 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const search = searchParams.get('search') || '';
+    const sort = searchParams.get('sort') || 'created';
+    const direction = searchParams.get('direction') || 'desc';
     const offset = (page - 1) * limit;
 
     const whereClause = search ? ilike(customers.customerName, `%${search}%`) : undefined;
@@ -35,7 +37,15 @@ export async function GET(request: NextRequest) {
         .leftJoin(orders, eq(customers.customerId, orders.customerId))
         .where(whereClause)
         .groupBy(customers.customerId, customers.customerName, customers.createdAt, customers.updatedAt)
-        .orderBy(customers.createdAt)
+        .orderBy(
+          sort === 'revenue' 
+            ? direction === 'desc' 
+              ? desc(sql<number>`COALESCE(SUM(CASE WHEN ${orders.isPaid} = true THEN ${orders.amount} ELSE 0 END), 0)`)
+              : asc(sql<number>`COALESCE(SUM(CASE WHEN ${orders.isPaid} = true THEN ${orders.amount} ELSE 0 END), 0)`)
+            : direction === 'desc'
+              ? desc(customers.createdAt)
+              : asc(customers.createdAt)
+        )
         .limit(limit)
         .offset(offset),
       db.select({ count: count() }).from(customers)

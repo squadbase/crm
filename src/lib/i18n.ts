@@ -938,6 +938,23 @@ export const translations = {
     ja: 'Squadbase CRM',
     en: 'Squadbase CRM',
   },
+  // Empty State Messages  
+  noOrdersFound: {
+    ja: '注文データがありません',
+    en: 'No orders found',
+  },
+  noOrdersFoundDescription: {
+    ja: '新しい注文を作成して売上管理を始めましょう',
+    en: 'Create your first order to start managing sales',
+  },
+  createFirstOrder: {
+    ja: '最初の注文を作成',
+    en: 'Create First Order',
+  },
+  loadingOrders: {
+    ja: '注文を読み込み中...',
+    en: 'Loading orders...',
+  },
 };
 
 export type TranslationKey = keyof typeof translations;

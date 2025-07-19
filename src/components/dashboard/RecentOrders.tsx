@@ -15,7 +15,7 @@ interface Order {
   description: string | null;
 }
 
-export function RecentOrders({ orders: recentOrders }: { orders: Order[] }) {
+export function RecentOrders({ orders: recentOrders, loading }: { orders: Order[]; loading: boolean }) {
   const { t, formatCurrency, formatDate } = useClientI18n();
   const [mounted, setMounted] = useState(false);
 
@@ -61,8 +61,36 @@ export function RecentOrders({ orders: recentOrders }: { orders: Order[] }) {
           <ArrowUpRight style={{ height: '14px', width: '14px', marginLeft: '4px' }} />
         </button>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {recentOrders.map((order) => (
+      
+      {loading ? (
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          padding: '40px 0' 
+        }}>
+          <div style={{
+            width: '32px',
+            height: '32px',
+            border: '3px solid #f3f4f6',
+            borderTop: '3px solid #2563eb',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }} />
+        </div>
+      ) : recentOrders.length === 0 ? (
+        <div style={{ 
+          textAlign: 'center', 
+          padding: '40px 20px', 
+          color: '#6b7280' 
+        }}>
+          <p style={{ fontSize: '14px', margin: '0' }}>
+            {t('noOrdersFound')}
+          </p>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {recentOrders.map((order) => (
           <div
             key={order.orderId}
             style={{
@@ -153,7 +181,8 @@ export function RecentOrders({ orders: recentOrders }: { orders: Order[] }) {
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -12,7 +12,7 @@ interface Customer {
   createdAt: Date;
 }
 
-export function CustomerList({ customers: customerStats }: { customers: Customer[] }) {
+export function CustomerList({ customers: customerStats, loading }: { customers: Customer[]; loading: boolean }) {
   const { t, formatCurrency, formatDate } = useClientI18n();
   const [mounted, setMounted] = useState(false);
 
@@ -58,8 +58,36 @@ export function CustomerList({ customers: customerStats }: { customers: Customer
           <ArrowUpRight style={{ height: '14px', width: '14px', marginLeft: '4px' }} />
         </button>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {customerStats.map((customer) => (
+      
+      {loading ? (
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          padding: '40px 0' 
+        }}>
+          <div style={{
+            width: '32px',
+            height: '32px',
+            border: '3px solid #f3f4f6',
+            borderTop: '3px solid #2563eb',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }} />
+        </div>
+      ) : customerStats.length === 0 ? (
+        <div style={{ 
+          textAlign: 'center', 
+          padding: '40px 20px', 
+          color: '#6b7280' 
+        }}>
+          <p style={{ fontSize: '14px', margin: '0' }}>
+            {t('noData')}
+          </p>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {customerStats.map((customer) => (
           <div
             key={customer.customerId}
             style={{
@@ -136,7 +164,8 @@ export function CustomerList({ customers: customerStats }: { customers: Customer
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

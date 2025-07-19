@@ -27,48 +27,74 @@ export default function HomePage() {
     setPeriod(newPeriod);
   };
 
-  // Static data for display (since this is now a client component)
-  const recentOrders = [
-    {
-      orderId: '1001',
-      customerName: 'サンプル顧客A',
-      amount: '500000',
-      currency: 'JPY',
-      paymentType: 'bank_transfer',
-      serviceType: 'project',
-      isPaid: true,
-      salesStartDt: new Date('2024-01-15'),
-      description: 'プロジェクト開発'
-    },
-    {
-      orderId: '1002',
-      customerName: 'サンプル顧客B',
-      amount: '300000',
-      currency: 'JPY',
-      paymentType: 'credit_card',
-      serviceType: 'product',
-      isPaid: false,
-      salesStartDt: new Date('2024-01-10'),
-      description: 'Squadbaseサービス'
-    }
-  ];
+  // Dynamic data state
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [customerStats, setCustomerStats] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [loadingCustomers, setLoadingCustomers] = useState(true);
 
-  const customerStats = [
-    {
-      customerId: '1',
-      customerName: 'サンプル顧客A',
-      orderCount: 5,
-      totalRevenue: 2500000,
-      createdAt: new Date('2024-01-01')
-    },
-    {
-      customerId: '2',
-      customerName: 'サンプル顧客B',
-      orderCount: 3,
-      totalRevenue: 1500000,
-      createdAt: new Date('2024-01-02')
+  // Fetch recent orders
+  const fetchRecentOrders = async () => {
+    setLoadingOrders(true);
+    try {
+      const response = await fetch('/api/orders?limit=5&sort=created&direction=desc');
+      const data = await response.json();
+      
+      if (data.orders && data.orders.length > 0) {
+        const formattedOrders = data.orders.map((order: any) => ({
+          orderId: order.orderId,
+          customerName: order.customerName,
+          amount: order.amount,
+          paymentType: order.paymentType,
+          serviceType: order.serviceType,
+          isPaid: order.isPaid,
+          salesStartDt: new Date(order.salesStartDt),
+          description: order.description
+        }));
+        setRecentOrders(formattedOrders);
+      } else {
+        setRecentOrders([]);
+      }
+    } catch (error) {
+      console.error('Failed to fetch recent orders:', error);
+      setRecentOrders([]);
+    } finally {
+      setLoadingOrders(false);
     }
-  ];
+  };
+
+  // Fetch top customers
+  const fetchTopCustomers = async () => {
+    setLoadingCustomers(true);
+    try {
+      const response = await fetch('/api/customers?limit=5&sort=revenue&direction=desc');
+      const data = await response.json();
+      
+      if (data.customers && data.customers.length > 0) {
+        const formattedCustomers = data.customers.map((customer: any) => ({
+          customerId: customer.customerId,
+          customerName: customer.customerName,
+          orderCount: customer.orderCount || 0,
+          totalRevenue: customer.totalRevenue || 0,
+          createdAt: new Date(customer.createdAt)
+        }));
+        setCustomerStats(formattedCustomers);
+      } else {
+        setCustomerStats([]);
+      }
+    } catch (error) {
+      console.error('Failed to fetch top customers:', error);
+      setCustomerStats([]);
+    } finally {
+      setLoadingCustomers(false);
+    }
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchRecentOrders();
+    fetchTopCustomers();
+  }, []);
   const headerActions = null;
 
   return (
@@ -98,9 +124,9 @@ export default function HomePage() {
           gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
           gap: '16px'
         }}>
-          <RecentOrders orders={recentOrders} />
+          <RecentOrders orders={recentOrders} loading={loadingOrders} />
 
-          <CustomerList customers={customerStats} />
+          <CustomerList customers={customerStats} loading={loadingCustomers} />
         </div>
       </div>
     </div>
