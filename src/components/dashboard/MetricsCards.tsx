@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { DollarSign, Users, ShoppingCart, AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react';
+import { DollarSign, Users, ShoppingCart, TrendingUp, TrendingDown } from 'lucide-react';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
 interface MetricGrowth {
@@ -18,8 +18,6 @@ interface MetricsData {
   totalRevenue: MetricData;
   totalOrders: MetricData;
   totalCustomers: MetricData;
-  unpaidOrders: MetricData;
-  unpaidRate: MetricData;
 }
 
 interface MetricsResponse {
@@ -28,43 +26,28 @@ interface MetricsResponse {
     totalRevenue: number;
     totalOrders: number;
     totalCustomers: number;
-    unpaidOrders: number;
-    unpaidRate: number;
   };
 }
 
 interface MetricsCardsProps {
-  period?: {
-    startDate: string;
-    endDate: string;
-  };
+  // 期間は削除 - メトリクスは常に最新の全体状況を表示
 }
 
-export function MetricsCards({ period }: MetricsCardsProps) {
+export function MetricsCards() {
   const { t, formatCurrency } = useClientI18n();
   const [data, setData] = useState<MetricsResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [period]);
+  }, []);
 
   const fetchData = async () => {
     try {
       setLoading(true);
       
-      // Build query parameters if period is provided
-      const queryParams = new URLSearchParams();
-      if (period?.startDate) {
-        queryParams.set('startDate', period.startDate);
-      }
-      if (period?.endDate) {
-        queryParams.set('endDate', period.endDate);
-      }
-      
-      const url = `/api/dashboard/metrics${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-      const response = await fetch(url);
+      // 期間パラメータは不要 - 常に最新のメトリクスを取得
+      const response = await fetch('/api/dashboard/metrics');
       const result = await response.json();
       setData(result);
     } catch (error) {
@@ -159,7 +142,7 @@ export function MetricsCards({ period }: MetricsCardsProps) {
         gap: '16px', 
         marginBottom: '20px' 
       }}>
-        {[1, 2, 3, 4].map((i) => (
+        {[1, 2, 3].map((i) => (
           <div key={i} style={{ 
             backgroundColor: 'white', 
             border: '1px solid #e2e8f0', 
@@ -271,73 +254,6 @@ export function MetricsCards({ period }: MetricsCardsProps) {
         );
       })}
       
-      {/* 未払い統合カード */}
-      <div style={{ 
-        backgroundColor: 'white', 
-        border: '1px solid #e2e8f0', 
-        borderRadius: '8px', 
-        padding: '16px',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' 
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-          <div>
-            <p style={{ fontSize: '12px', fontWeight: '500', color: '#64748b', margin: 0 }}>
-              {t('unpaidOrders')}
-            </p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px' }}>
-              <div>
-                <p style={{ fontSize: '16px', fontWeight: '600', color: '#0f172a', margin: 0 }}>
-                  {data.metrics.unpaidOrders && data.metrics.unpaidOrders.value !== undefined && data.metrics.unpaidOrders.value !== null
-                    ? `${(typeof data.metrics.unpaidOrders.value === 'string' ? parseInt(data.metrics.unpaidOrders.value) : data.metrics.unpaidOrders.value).toLocaleString()}${t('orders_unit')}` 
-                    : t('noData')}
-                </p>
-                <p style={{ fontSize: '10px', color: '#6b7280', margin: 0 }}>{t('unpaidOrders')}</p>
-              </div>
-              <div>
-                <p style={{ fontSize: '16px', fontWeight: '600', color: '#0f172a', margin: 0 }}>
-                  {data.metrics.unpaidRate && data.metrics.unpaidRate.value !== undefined && data.metrics.unpaidRate.value !== null
-                    ? `${(typeof data.metrics.unpaidRate.value === 'string' ? parseFloat(data.metrics.unpaidRate.value) : data.metrics.unpaidRate.value).toFixed(1)}${t('percent')}` 
-                    : t('noData')}
-                </p>
-                <p style={{ fontSize: '10px', color: '#6b7280', margin: 0 }}>{t('unpaidRate')}</p>
-              </div>
-            </div>
-          </div>
-          <div style={{ 
-            height: '40px', 
-            width: '40px', 
-            backgroundColor: '#fee2e2', 
-            borderRadius: '50%', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center' 
-          }}>
-            <AlertTriangle style={{ height: '20px', width: '20px', color: '#ef4444' }} />
-          </div>
-        </div>
-        <div style={{ marginTop: '8px' }}>
-          <div style={{ display: 'flex', gap: '16px' }}>
-            <div style={{ flex: 1 }}>
-              {data.metrics.unpaidOrders && data.metrics.unpaidOrders.growth ? formatGrowth(data.metrics.unpaidOrders.growth, false, false, true) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#6b7280' }}>
-                  <TrendingUp size={12} />
-                  <span style={{ fontSize: '10px', fontWeight: '500' }}>{t('noDataText')}</span>
-                </div>
-              )}
-              <p style={{ fontSize: '9px', color: '#6b7280', margin: '2px 0 0 0' }}>{t('orders')}{t('countVsLastMonth')}</p>
-            </div>
-            <div style={{ flex: 1 }}>
-              {data.metrics.unpaidRate && data.metrics.unpaidRate.growth ? formatGrowth(data.metrics.unpaidRate.growth, false, true, true) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#6b7280' }}>
-                  <TrendingUp size={12} />
-                  <span style={{ fontSize: '10px', fontWeight: '500' }}>{t('noDataText')}</span>
-                </div>
-              )}
-              <p style={{ fontSize: '9px', color: '#6b7280', margin: '2px 0 0 0' }}>{t('rateVsLastMonth')}</p>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

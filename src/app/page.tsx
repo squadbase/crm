@@ -108,7 +108,7 @@ export default function HomePage() {
       {/* Content */}
       <div style={{ padding: '16px' }}>
         {/* Metrics Cards */}
-        <MetricsCards period={period} />
+        <MetricsCards />
 
         {/* Period Selector */}
         <PeriodSelector onPeriodChange={handlePeriodChange} />
