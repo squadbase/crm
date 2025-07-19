@@ -913,6 +913,31 @@ export const translations = {
     ja: '設定',
     en: 'Settings',
   },
+  // Page Titles
+  dashboardTitle: {
+    ja: 'ダッシュボード - Squadbase CRM',
+    en: 'Dashboard - Squadbase CRM',
+  },
+  ordersTitle: {
+    ja: '注文管理 - Squadbase CRM',
+    en: 'Orders - Squadbase CRM',
+  },
+  customersTitle: {
+    ja: '顧客管理 - Squadbase CRM',
+    en: 'Customer Management - Squadbase CRM',
+  },
+  orderTemplatesTitle: {
+    ja: 'テンプレート管理 - Squadbase CRM',
+    en: 'Order Templates - Squadbase CRM',
+  },
+  settingsTitle: {
+    ja: '設定 - Squadbase CRM',
+    en: 'Settings - Squadbase CRM',
+  },
+  defaultTitle: {
+    ja: 'Squadbase CRM',
+    en: 'Squadbase CRM',
+  },
 };
 
 export type TranslationKey = keyof typeof translations;

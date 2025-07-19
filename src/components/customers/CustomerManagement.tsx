@@ -26,7 +26,14 @@ interface PaginationData {
 }
 
 export function CustomerManagement() {
-  const { t } = useClientI18n();
+  const { t, isClient } = useClientI18n();
+  
+  // ページタイトル設定
+  useEffect(() => {
+    if (isClient) {
+      document.title = t('customersTitle');
+    }
+  }, [t, isClient]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

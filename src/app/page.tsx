@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { RecentOrders } from '@/components/dashboard/RecentOrders';
 import { CustomerList } from '@/components/dashboard/CustomerList';
 import { PageHeader } from '@/components/layout/PageHeader';
@@ -10,7 +10,14 @@ import { MonthlySalesChart } from '@/components/dashboard/MonthlySalesChart';
 import { MetricsCards } from '@/components/dashboard/MetricsCards';
 
 export default function HomePage() {
-  const { t } = useClientI18n();
+  const { t, isClient } = useClientI18n();
+  
+  // ページタイトル設定
+  useEffect(() => {
+    if (isClient) {
+      document.title = t('dashboardTitle');
+    }
+  }, [t, isClient]);
   const [period, setPeriod] = useState({
     startDate: '',
     endDate: ''
