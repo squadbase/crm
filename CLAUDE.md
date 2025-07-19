@@ -22,6 +22,7 @@ Required environment variables (in .env file):
 - `POSTGRES_USER`
 - `POSTGRES_PASSWORD`
 - `POSTGRES_DATABASE`
+- `POSTGRES_SSL` (optional: 'true', 'false', 'require' - auto-detected if not set)
 
 ## Important Notes
 

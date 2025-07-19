@@ -14,7 +14,6 @@ interface Order {
   salesStartDt: string;
   salesEndDt: string | null;
   amount: string;
-  currency: string;
   isPaid: boolean;
   description: string | null;
   createdAt: string;

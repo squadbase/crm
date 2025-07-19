@@ -42,9 +42,9 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
       
       if (!response.ok) {
         if (response.status === 404) {
-          setError(t('orderNotFound'));
+          setError('Order not found');
         } else {
-          setError(t('dataFetchFailed'));
+          setError('Failed to fetch data');
         }
         return;
       }
@@ -53,11 +53,11 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
       setOrder(data.order);
     } catch (error) {
       console.error('Failed to fetch order detail:', error);
-      setError(t('dataFetchFailed'));
+      setError('Failed to fetch data');
     } finally {
       setLoading(false);
     }
-  }, [orderId, t]);
+  }, [orderId]);
 
   useEffect(() => {
     const initializeParams = async () => {
