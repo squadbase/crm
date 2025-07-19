@@ -1,7 +1,7 @@
 # 顧客管理ページ - 実装方針
 
 ## ページタイトル
-Customer Management
+Customers
 
 ## レイアウト構成
 

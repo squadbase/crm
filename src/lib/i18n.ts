@@ -76,7 +76,7 @@ export const translations = {
   // Customer Management
   customers: {
     ja: '顧客管理',
-    en: 'Customer Management',
+    en: 'Customers',
   },
   customerManagement: {
     ja: '顧客情報の管理と分析を行います',
@@ -713,6 +713,196 @@ export const translations = {
   details: {
     ja: '詳細',
     en: 'Details',
+  },
+
+  // Order Templates
+  orderTemplates: {
+    ja: '注文テンプレート',
+    en: 'Order Templates',
+  },
+  orderTemplateManagement: {
+    ja: '注文テンプレートの管理と効率的な注文作成を行います',
+    en: 'Manage order templates for efficient order creation',
+  },
+  addTemplate: {
+    ja: 'テンプレート追加',
+    en: 'Add Template',
+  },
+  templateName: {
+    ja: 'テンプレート名',
+    en: 'Template Name',
+  },
+  templateNamePlaceholder: {
+    ja: 'テンプレート名を入力',
+    en: 'Enter template name',
+  },
+  serviceTypeTemplate: {
+    ja: 'サービス種別',
+    en: 'Service Type',
+  },
+  paymentTypeTemplate: {
+    ja: '支払い形態',
+    en: 'Payment Type',
+  },
+  amountTemplate: {
+    ja: '金額',
+    en: 'Amount',
+  },
+  amountPlaceholder: {
+    ja: '金額を入力',
+    en: 'Enter amount',
+  },
+  descriptionTemplate: {
+    ja: '説明',
+    en: 'Description',
+  },
+  descriptionPlaceholder: {
+    ja: 'テンプレートの説明（オプション）',
+    en: 'Template description (optional)',
+  },
+  statusTemplate: {
+    ja: 'ステータス',
+    en: 'Status',
+  },
+  lastUpdatedTemplate: {
+    ja: '最終更新',
+    en: 'Last Updated',
+  },
+  actionsTemplate: {
+    ja: 'アクション',
+    en: 'Actions',
+  },
+  active: {
+    ja: 'アクティブ',
+    en: 'Active',
+  },
+  inactive: {
+    ja: '非アクティブ',
+    en: 'Inactive',
+  },
+  productTemplate: {
+    ja: 'プロダクト',
+    en: 'Product',
+  },
+  projectTemplate: {
+    ja: 'プロジェクト',
+    en: 'Project',
+  },
+  subscriptionTemplate: {
+    ja: 'サブスクリプション',
+    en: 'Subscription',
+  },
+  onetimeTemplate: {
+    ja: '一回払い',
+    en: 'One-time',
+  },
+  viewTemplate: {
+    ja: '詳細表示',
+    en: 'View Details',
+  },
+  useTemplate: {
+    ja: 'テンプレートを使用',
+    en: 'Use Template',
+  },
+  editTemplate: {
+    ja: '編集',
+    en: 'Edit',
+  },
+  deleteTemplate: {
+    ja: '削除',
+    en: 'Delete',
+  },
+  activateTemplate: {
+    ja: 'アクティブにする',
+    en: 'Activate',
+  },
+  deactivateTemplate: {
+    ja: '非アクティブにする',
+    en: 'Deactivate',
+  },
+  createTemplate: {
+    ja: 'テンプレート作成',
+    en: 'Create Template',
+  },
+  editTemplateTitle: {
+    ja: 'テンプレート編集',
+    en: 'Edit Template',
+  },
+  templateDetails: {
+    ja: 'テンプレート詳細',
+    en: 'Template Details',
+  },
+  deleteTemplateTitle: {
+    ja: 'テンプレート削除',
+    en: 'Delete Template',
+  },
+  deleteTemplateConfirm: {
+    ja: '以下のテンプレートを完全に削除しますか？',
+    en: 'Are you sure you want to permanently delete the following template?',
+  },
+  deleteTemplateWarning: {
+    ja: '削除されたテンプレートは復元できません。関連する注文履歴への影響はありませんが、今後このテンプレートを使用することはできなくなります。',
+    en: 'Deleted templates cannot be restored. This will not affect related order history, but you will no longer be able to use this template.',
+  },
+  deleteTemplateAction: {
+    ja: '削除する',
+    en: 'Delete',
+  },
+  createOrderFromTemplate: {
+    ja: 'テンプレートから注文を作成',
+    en: 'Create Order from Template',
+  },
+  createOrderFromTemplateDescription: {
+    ja: 'このテンプレートの設定値を使用して新しい注文を作成します。注文作成ページで顧客選択と必要に応じた調整を行えます。',
+    en: "Create a new order using this template's settings. You can select a customer and make adjustments on the order creation page.",
+  },
+  nextSteps: {
+    ja: '次のステップ',
+    en: 'Next Steps',
+  },
+  createOrderPageRedirect: {
+    ja: '注文作成ページへ',
+    en: 'Go to Order Creation',
+  },
+  templateNotFound: {
+    ja: 'テンプレートが見つかりませんでした',
+    en: 'Template not found',
+  },
+  noTemplatesFound: {
+    ja: 'テンプレートが見つかりませんでした',
+    en: 'No templates found',
+  },
+  noTemplatesFoundDescription: {
+    ja: '新しいテンプレートを作成するか、フィルターを調整してください',
+    en: 'Create a new template or adjust your filters',
+  },
+  loadingTemplates: {
+    ja: '読み込み中...',
+    en: 'Loading...',
+  },
+  templateSaved: {
+    ja: 'テンプレートが保存されました',
+    en: 'Template saved successfully',
+  },
+  templateSaveError: {
+    ja: 'テンプレートの保存に失敗しました',
+    en: 'Failed to save template',
+  },
+  templateDeleted: {
+    ja: 'テンプレートが削除されました',
+    en: 'Template deleted successfully',
+  },
+  templateDeleteError: {
+    ja: 'テンプレートの削除に失敗しました',
+    en: 'Failed to delete template',
+  },
+  requiredFieldError: {
+    ja: '必須項目を入力してください',
+    en: 'Please fill in all required fields',
+  },
+  amountValidationErrorTemplate: {
+    ja: '金額は正の数値を入力してください',
+    en: 'Please enter a positive number for the amount',
   },
 };
 

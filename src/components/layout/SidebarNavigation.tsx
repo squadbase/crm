@@ -8,14 +8,26 @@ import {
   Clock,
   Users,
   ShoppingCart,
+  FileText,
   Settings
 } from 'lucide-react';
 
-const getNavigationItems = (t: (key: TranslationKey) => string) => [
-  { name: t('dashboard'), href: '/', icon: Clock },
-  { name: t('orders'), href: '/orders', icon: ShoppingCart },
-  { name: t('customers'), href: '/customers', icon: Users },
-  { name: t('settings'), href: '/settings', icon: Settings },
+const getNavigationSections = (t: (key: TranslationKey) => string) => [
+  {
+    title: '売上管理',
+    items: [
+      { name: t('dashboard'), href: '/', icon: Clock },
+      { name: t('orders'), href: '/orders', icon: ShoppingCart },
+      { name: t('customers'), href: '/customers', icon: Users },
+    ]
+  },
+  {
+    title: 'Settings',
+    items: [
+      { name: t('orderTemplates'), href: '/order-templates', icon: FileText },
+      { name: t('settings'), href: '/settings', icon: Settings },
+    ]
+  }
 ];
 
 interface SidebarItemProps {
@@ -77,8 +89,30 @@ function SidebarItem({ item, isActive }: SidebarItemProps) {
 
 export function SidebarNavigation() {
   const pathname = usePathname();
-  const { t } = useClientI18n();
-  const navigationItems = getNavigationItems(t);
+  const { t, isClient, isLoading } = useClientI18n();
+  
+  // ハイドレーション中は固定の英語表示を使用
+  const getStaticNavigationSections = () => [
+    {
+      title: '売上管理',
+      items: [
+        { name: 'Dashboard', href: '/', icon: Clock },
+        { name: 'Orders', href: '/orders', icon: ShoppingCart },
+        { name: 'Customer Management', href: '/customers', icon: Users },
+      ]
+    },
+    {
+      title: 'Settings',
+      items: [
+        { name: 'Order Templates', href: '/order-templates', icon: FileText },
+        { name: 'Settings', href: '/settings', icon: Settings },
+      ]
+    }
+  ];
+
+  const navigationSections = (!isClient || isLoading) 
+    ? getStaticNavigationSections() 
+    : getNavigationSections(t);
 
   return (
     <div style={{
@@ -115,14 +149,38 @@ export function SidebarNavigation() {
         <div style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '4px'
+          gap: '20px'
         }}>
-          {navigationItems.map((item) => (
-            <SidebarItem
-              key={item.name}
-              item={item}
-              isActive={pathname === item.href}
-            />
+          {navigationSections.map((section) => (
+            <div key={section.title}>
+              {/* Section Header */}
+              <div style={{
+                fontSize: '11px',
+                fontWeight: '600',
+                color: '#6b7280',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: '8px',
+                paddingLeft: '16px'
+              }}>
+                {section.title}
+              </div>
+              
+              {/* Section Items */}
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '4px'
+              }}>
+                {section.items.map((item) => (
+                  <SidebarItem
+                    key={item.name}
+                    item={item}
+                    isActive={pathname === item.href}
+                  />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </nav>
