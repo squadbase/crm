@@ -48,7 +48,7 @@ export function StatusBadge({ status, size = 'md' }: StatusBadgeProps) {
 }
 
 interface ServiceTypeBadgeProps {
-  serviceType: 'squadbase' | 'project';
+  serviceType: 'product' | 'project';
   size?: 'sm' | 'md';
 }
 
@@ -67,20 +67,20 @@ export function ServiceTypeBadge({ serviceType, size = 'md' }: ServiceTypeBadgeP
     }
   };
 
-  const isSquadbase = serviceType === 'squadbase';
+  const isProduct = serviceType === 'product';
 
   return (
     <span style={{
       ...styles[size],
-      backgroundColor: isSquadbase ? '#eff6ff' : '#f0f9ff',
-      color: isSquadbase ? '#1d4ed8' : '#0284c7',
-      border: `1px solid ${isSquadbase ? '#dbeafe' : '#bae6fd'}`,
+      backgroundColor: isProduct ? '#eff6ff' : '#f0f9ff',
+      color: isProduct ? '#1d4ed8' : '#0284c7',
+      border: `1px solid ${isProduct ? '#dbeafe' : '#bae6fd'}`,
       borderRadius: '6px',
       display: 'inline-flex',
       alignItems: 'center',
       lineHeight: '1'
     }}>
-{isSquadbase ? t('squadbaseService') : t('projectService')}
+{isProduct ? t('product') : t('projectType')}
     </span>
   );
 }

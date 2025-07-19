@@ -125,7 +125,7 @@ export function RecentOrders({ orders: recentOrders }: { orders: Order[] }) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <Calendar style={{ height: '11px', width: '11px', color: '#6b7280' }} />
                   <span style={{ fontSize: '11px', color: '#6b7280' }}>
-{order.salesStartDt ? (mounted && isClient ? formatDate(order.salesStartDt) : new Date(order.salesStartDt).toISOString().split('T')[0]) : 'N/A'}
+{order.salesStartDt ? (mounted ? formatDate(order.salesStartDt) : new Date(order.salesStartDt).toLocaleDateString('ja-JP')) : 'N/A'}
                   </span>
                 </div>
               </div>
@@ -143,12 +143,12 @@ export function RecentOrders({ orders: recentOrders }: { orders: Order[] }) {
                 fontWeight: '500',
                 padding: '2px 6px',
                 borderRadius: '4px',
-                backgroundColor: order.serviceType === 'squadbase' ? '#2563eb' : '#64748b',
+                backgroundColor: order.serviceType === 'product' ? '#2563eb' : '#64748b',
                 color: 'white',
                 marginTop: '4px',
                 display: 'inline-block'
               }}>
-{order.serviceType === 'squadbase' ? t('squadbaseService') : t('projectService')}
+{order.serviceType === 'product' ? t('productService') : t('projectService')}
               </span>
             </div>
           </div>

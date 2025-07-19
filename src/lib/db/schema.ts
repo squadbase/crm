@@ -16,7 +16,7 @@ export const paymentTypeEnum = pgEnum('payment_type', [
   'onetime',
   'subscription',
 ]);
-export const serviceTypeEnum = pgEnum('service_type', ['squadbase', 'project']);
+export const serviceTypeEnum = pgEnum('service_type', ['product', 'project']);
 
 // Customers table
 export const customers = pgTable('customers', {
@@ -39,6 +39,19 @@ export const orders = pgTable('orders', {
   amount: decimal('amount', { precision: 15, scale: 2 }).notNull(),
   isPaid: boolean('is_paid').notNull().default(false),
   description: text('description'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Order templates table
+export const orderTemplates = pgTable('order_templates', {
+  templateId: uuid('template_id').defaultRandom().primaryKey(),
+  paymentType: paymentTypeEnum('payment_type').notNull(),
+  serviceType: serviceTypeEnum('service_type').notNull(),
+  templateName: varchar('template_name', { length: 255 }).notNull(),
+  amount: decimal('amount', { precision: 15, scale: 2 }).notNull(),
+  description: text('description'),
+  isActive: boolean('is_active').notNull().default(true),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

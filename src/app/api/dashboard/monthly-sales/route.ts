@@ -18,16 +18,16 @@ export async function GET(request: NextRequest) {
       conditions.push(lte(orders.salesStartDt, endDate));
     }
 
-    // 月別売上データを取得（合計、プロジェクト、Squadbase別）
+    // 月別売上データを取得（合計、プロジェクト、Product別）
     const monthlySales = await db
       .select({
         month: sql<string>`TO_CHAR(${orders.salesStartDt}, 'YYYY-MM')`,
         totalAmount: sum(orders.amount),
         projectAmount: sql<string>`SUM(CASE WHEN ${orders.serviceType} = 'project' THEN ${orders.amount} ELSE 0 END)`,
-        squadbaseAmount: sql<string>`SUM(CASE WHEN ${orders.serviceType} = 'squadbase' THEN ${orders.amount} ELSE 0 END)`,
+        productAmount: sql<string>`SUM(CASE WHEN ${orders.serviceType} = 'product' THEN ${orders.amount} ELSE 0 END)`,
         orderCount: sql<string>`COUNT(*)`,
         projectCount: sql<string>`COUNT(CASE WHEN ${orders.serviceType} = 'project' THEN 1 END)`,
-        squadbaseCount: sql<string>`COUNT(CASE WHEN ${orders.serviceType} = 'squadbase' THEN 1 END)`
+        productCount: sql<string>`COUNT(CASE WHEN ${orders.serviceType} = 'product' THEN 1 END)`
       })
       .from(orders)
       .where(conditions.length > 0 ? and(...conditions) : undefined)
@@ -39,10 +39,10 @@ export async function GET(request: NextRequest) {
       month: item.month,
       totalAmount: parseFloat(item.totalAmount || '0'),
       projectAmount: parseFloat(item.projectAmount || '0'),
-      squadbaseAmount: parseFloat(item.squadbaseAmount || '0'),
+      productAmount: parseFloat(item.productAmount || '0'),
       orderCount: parseInt(item.orderCount || '0'),
       projectCount: parseInt(item.projectCount || '0'),
-      squadbaseCount: parseInt(item.squadbaseCount || '0')
+      productCount: parseInt(item.productCount || '0')
     }));
 
     return NextResponse.json({
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
       summary: {
         totalPeriodSales: processedData.reduce((sum, item) => sum + item.totalAmount, 0),
         totalProjectSales: processedData.reduce((sum, item) => sum + item.projectAmount, 0),
-        totalSquadbaseSales: processedData.reduce((sum, item) => sum + item.squadbaseAmount, 0),
+        totalProductSales: processedData.reduce((sum, item) => sum + item.productAmount, 0),
         totalOrders: processedData.reduce((sum, item) => sum + item.orderCount, 0),
         monthCount: processedData.length
       }

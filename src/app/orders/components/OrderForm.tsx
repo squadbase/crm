@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { CustomSelect } from './CustomSelect';
+import { SearchableCustomerSelect } from './SearchableCustomerSelect';
+import { AmountInput } from './AmountInput';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
 interface Customer {
@@ -10,12 +12,21 @@ interface Customer {
   customerName: string;
 }
 
+interface OrderTemplate {
+  templateId: string;
+  paymentType: 'onetime' | 'subscription';
+  serviceType: 'product' | 'project';
+  templateName: string;
+  amount: string;
+  description: string | null;
+}
+
 interface Order {
   orderId: string;
   customerId: string;
   customerName: string;
   paymentType: 'onetime' | 'subscription';
-  serviceType: 'squadbase' | 'project';
+  serviceType: 'product' | 'project';
   salesStartDt: string;
   salesEndDt: string | null;
   amount: string;
@@ -33,10 +44,12 @@ interface OrderFormProps {
 export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFormProps) {
   const { t, getLanguage } = useClientI18n();
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [templates, setTemplates] = useState<OrderTemplate[]>([]);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
   const [formData, setFormData] = useState({
     customerId: '',
     paymentType: 'onetime' as 'onetime' | 'subscription',
-    serviceType: 'squadbase' as 'squadbase' | 'project',
+    serviceType: 'product' as 'product' | 'project',
     salesStartDt: '',
     salesEndDt: '',
     amount: '',
@@ -50,8 +63,16 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
   useEffect(() => {
     if (isOpen) {
       fetchCustomers();
+      fetchTemplates();
     }
   }, [isOpen]);
+
+  // 初回読み込み時に全テンプレートを取得
+  useEffect(() => {
+    if (isOpen && !editingOrder) {
+      fetchTemplates();
+    }
+  }, [isOpen, editingOrder]);
 
   // 編集時にフォームデータを設定
   useEffect(() => {
@@ -71,7 +92,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
       setFormData({
         customerId: '',
         paymentType: 'onetime',
-        serviceType: 'squadbase',
+        serviceType: 'product',
         salesStartDt: '',
         salesEndDt: '',
         amount: '',
@@ -80,6 +101,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
       });
     }
     setError('');
+    setSelectedTemplate(''); // テンプレート選択をリセット
   }, [editingOrder, isOpen]);
 
   const fetchCustomers = async () => {
@@ -92,6 +114,18 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
     }
   };
 
+  const fetchTemplates = async () => {
+    try {
+      // パラメーターなしで全テンプレートを取得
+      const response = await fetch('/api/order-templates');
+      const data = await response.json();
+      setTemplates(data.templates || []);
+    } catch (error) {
+      console.error('Failed to fetch templates:', error);
+      setTemplates([]);
+    }
+  };
+
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({
       ...prev,
@@ -99,9 +133,26 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
     }));
   };
 
+  const handleTemplateSelect = (templateId: string) => {
+    setSelectedTemplate(templateId);
+    
+    if (templateId) {
+      const template = templates.find(t => t.templateId === templateId);
+      if (template) {
+        setFormData(prev => ({
+          ...prev,
+          paymentType: template.paymentType,
+          serviceType: template.serviceType,
+          amount: template.amount,
+          description: template.description || ''
+        }));
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.customerId || !formData.salesStartDt || !formData.amount) {
       setError(t('requiredFieldsError'));
       return;
@@ -116,12 +167,12 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
     setError('');
 
     try {
-      const url = editingOrder 
+      const url = editingOrder
         ? `/api/orders/${editingOrder.orderId}`
         : '/api/orders';
-      
+
       const method = editingOrder ? 'PUT' : 'POST';
-      
+
       const requestData = {
         ...formData,
         amount: Number(formData.amount),
@@ -159,7 +210,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
   };
 
   return (
-    <div 
+    <div
       style={{
         position: 'fixed',
         top: 0,
@@ -245,6 +296,32 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
             display: 'grid',
             gap: '20px'
           }}>
+            {/* テンプレート選択 */}
+            {!editingOrder && templates.length > 0 && (
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: '#374151',
+                  marginBottom: '6px'
+                }}>
+                  {t('selectTemplate')}
+                </label>
+                <CustomSelect
+                  options={[
+                    { value: '', label: t('noTemplate') },
+                    ...templates.map(template => ({
+                      value: template.templateId,
+                      label: `${template.templateName} (¥${Number(template.amount).toLocaleString()})`
+                    }))
+                  ]}
+                  value={selectedTemplate}
+                  onChange={handleTemplateSelect}
+                />
+              </div>
+            )}
+
             {/* 顧客選択 */}
             <div>
               <label style={{
@@ -256,14 +333,8 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
               }}>
                 {t('customer')} <span style={{ color: '#dc2626' }}>*</span>
               </label>
-              <CustomSelect
-                options={[
-                  { value: '', label: t('selectCustomer') },
-                  ...customers.map(customer => ({
-                    value: customer.customerId,
-                    label: customer.customerName
-                  }))
-                ]}
+              <SearchableCustomerSelect
+                customers={customers}
                 value={formData.customerId}
                 onChange={(value) => handleInputChange('customerId', value)}
                 placeholder={t('selectCustomer')}
@@ -310,11 +381,11 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
                 </label>
                 <CustomSelect
                   options={[
-                    { value: 'squadbase', label: t('squadbaseService') },
+                    { value: 'product', label: t('productService') },
                     { value: 'project', label: t('projectService') }
                   ]}
                   value={formData.serviceType}
-                  onChange={(value) => handleInputChange('serviceType', value as 'squadbase' | 'project')}
+                  onChange={(value) => handleInputChange('serviceType', value as 'product' | 'project')}
                   required
                 />
               </div>
@@ -382,62 +453,24 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
               </div>
             </div>
 
-            {/* 金額と通貨 */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '2fr 1fr',
-              gap: '16px'
-            }}>
-              <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  marginBottom: '6px'
-                }}>
-                  {t('amount')} <span style={{ color: '#dc2626' }}>*</span>
-                </label>
-                <input
-                  type="number"
-                  value={formData.amount}
-                  onChange={(e) => handleInputChange('amount', e.target.value)}
-                  required
-                  min="1"
-                  step="1"
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-
-            </div>
-
-            {/* 支払い状況 */}
+            {/* 金額 */}
             <div>
               <label style={{
-                display: 'flex',
-                alignItems: 'center',
+                display: 'block',
                 fontSize: '14px',
                 fontWeight: '500',
                 color: '#374151',
-                cursor: 'pointer'
+                marginBottom: '6px'
               }}>
-                <input
-                  type="checkbox"
-                  checked={formData.isPaid}
-                  onChange={(e) => handleInputChange('isPaid', e.target.checked)}
-                  style={{
-                    marginRight: '8px'
-                  }}
-                />
-                {t('isPaidLabel')}
+                {t('amount')} <span style={{ color: '#dc2626' }}>*</span>
               </label>
+              <AmountInput
+                value={formData.amount}
+                onChange={(value) => handleInputChange('amount', value)}
+                placeholder="0"
+                required
+              />
+
             </div>
 
             {/* 説明 */}
@@ -468,6 +501,28 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
               />
             </div>
           </div>
+
+          {/* 支払い状況 */}
+          <div>
+              <label style={{
+                display: 'flex',
+                alignItems: 'center',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#374151',
+                cursor: 'pointer'
+              }}>
+                <input
+                  type="checkbox"
+                  checked={formData.isPaid}
+                  onChange={(e) => handleInputChange('isPaid', e.target.checked)}
+                  style={{
+                    marginRight: '8px'
+                  }}
+                />
+                {t('isPaidLabel')}
+              </label>
+            </div>
 
           {/* ボタン */}
           <div style={{

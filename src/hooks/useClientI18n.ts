@@ -85,6 +85,7 @@ export function useClientI18n() {
 
   const getLanguage = () => settings.language;
   const getCurrency = () => settings.currency === 'jpy' ? 'JPY' : 'USD';
+  const getCurrencySymbol = () => settings.currency === 'jpy' ? '¥' : '$';
 
   return {
     t,
@@ -92,6 +93,7 @@ export function useClientI18n() {
     formatDate,
     getLanguage,
     getCurrency,
+    getCurrencySymbol,
     isClient,
     isLoading,
     settings

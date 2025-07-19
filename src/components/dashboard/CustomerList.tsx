@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { ArrowUpRight, Building, Calendar, ShoppingBag } from 'lucide-react';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
@@ -13,6 +14,11 @@ interface Customer {
 
 export function CustomerList({ customers: customerStats }: { customers: Customer[] }) {
   const { t, formatCurrency, formatDate } = useClientI18n();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <div style={{ 
@@ -107,7 +113,7 @@ export function CustomerList({ customers: customerStats }: { customers: Customer
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Calendar style={{ height: '11px', width: '11px', color: '#6b7280' }} />
                     <span style={{ fontSize: '11px', color: '#6b7280' }}>
-                      {formatDate(customer.createdAt)}
+                      {mounted ? formatDate(customer.createdAt) : new Date(customer.createdAt).toLocaleDateString('ja-JP')}
                     </span>
                   </div>
                 </div>

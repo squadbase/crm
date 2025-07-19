@@ -1,7 +1,76 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { orders } from '@/lib/db/schema';
+import { orders, customers } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ orderId: string }> }
+) {
+  try {
+    const { orderId } = await params;
+
+    if (!orderId) {
+      return NextResponse.json(
+        { error: 'Order ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // 注文詳細を顧客情報と一緒に取得
+    const orderDetails = await db
+      .select({
+        orderId: orders.orderId,
+        customerId: orders.customerId,
+        customerName: customers.customerName,
+        paymentType: orders.paymentType,
+        serviceType: orders.serviceType,
+        salesStartDt: orders.salesStartDt,
+        salesEndDt: orders.salesEndDt,
+        amount: orders.amount,
+        isPaid: orders.isPaid,
+        description: orders.description,
+        createdAt: orders.createdAt,
+        updatedAt: orders.updatedAt,
+      })
+      .from(orders)
+      .leftJoin(customers, eq(orders.customerId, customers.customerId))
+      .where(eq(orders.orderId, orderId))
+      .limit(1);
+
+    if (orderDetails.length === 0) {
+      return NextResponse.json(
+        { error: 'Order not found' },
+        { status: 404 }
+      );
+    }
+
+    const order = orderDetails[0];
+
+    return NextResponse.json({
+      order: {
+        orderId: order.orderId,
+        customerId: order.customerId,
+        customerName: order.customerName,
+        paymentType: order.paymentType,
+        serviceType: order.serviceType,
+        salesStartDt: order.salesStartDt,
+        salesEndDt: order.salesEndDt,
+        amount: order.amount.toString(),
+        isPaid: order.isPaid,
+        description: order.description,
+        createdAt: order.createdAt?.toISOString(),
+        updatedAt: order.updatedAt?.toISOString(),
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching order details:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch order details' },
+      { status: 500 }
+    );
+  }
+}
 
 export async function PUT(
   request: NextRequest,

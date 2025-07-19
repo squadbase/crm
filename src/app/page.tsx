@@ -39,7 +39,7 @@ export default function HomePage() {
       amount: '300000',
       currency: 'JPY',
       paymentType: 'credit_card',
-      serviceType: 'squadbase',
+      serviceType: 'product',
       isPaid: false,
       salesStartDt: new Date('2024-01-10'),
       description: 'Squadbaseサービス'

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, Eye } from 'lucide-react';
 import { StatusBadge, ServiceTypeBadge, PaymentTypeBadge } from './StatusBadge';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
@@ -10,7 +10,7 @@ interface Order {
   customerId: string;
   customerName: string;
   paymentType: 'onetime' | 'subscription';
-  serviceType: 'squadbase' | 'project';
+  serviceType: 'product' | 'project';
   salesStartDt: string;
   salesEndDt: string | null;
   amount: string;
@@ -27,6 +27,7 @@ interface OrdersTableProps {
   onEdit: (order: Order) => void;
   onDelete: (order: Order) => void;
   onPaymentStatusToggle: (orderId: string, isPaid: boolean) => void;
+  onView?: (orderId: string) => void;
 }
 
 export function OrdersTable({ 
@@ -34,7 +35,8 @@ export function OrdersTable({
   loading, 
   onEdit, 
   onDelete, 
-  onPaymentStatusToggle 
+  onPaymentStatusToggle,
+  onView
 }: OrdersTableProps) {
   const { t, formatCurrency, formatDate } = useClientI18n();
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
@@ -333,6 +335,24 @@ export function OrdersTable({
                 </td>
                 <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                   <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
+                    {onView && (
+                      <button
+                        onClick={() => onView(order.orderId)}
+                        style={{
+                          padding: '6px',
+                          backgroundColor: 'transparent',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                        title={t('details')}
+                      >
+                        <Eye size={14} color="#2563eb" />
+                      </button>
+                    )}
                     <button
                       onClick={() => onEdit(order)}
                       style={{

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Plus } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { SalesSummary } from './components/SalesSummary';
@@ -48,6 +49,7 @@ interface PaginationInfo {
 
 export default function OrdersPage() {
   const { t } = useClientI18n();
+  const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<FilterValues>({
@@ -175,6 +177,10 @@ export default function OrdersPage() {
     setIsCreateDialogOpen(true);
   };
 
+  const handleView = (orderId: string) => {
+    router.push(`/orders/${orderId}`);
+  };
+
   const handleFormSuccess = () => {
     fetchOrders();
   };
@@ -223,6 +229,7 @@ export default function OrdersPage() {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onPaymentStatusToggle={handlePaymentStatusToggle}
+          onView={handleView}
         />
 
         {/* モーダル */}

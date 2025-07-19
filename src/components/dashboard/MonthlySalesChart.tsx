@@ -8,10 +8,10 @@ interface MonthlySalesData {
   month: string;
   totalAmount: number;
   projectAmount: number;
-  squadbaseAmount: number;
+  productAmount: number;
   orderCount: number;
   projectCount: number;
-  squadbaseCount: number;
+  productCount: number;
 }
 
 interface MonthlySalesResponse {
@@ -19,7 +19,7 @@ interface MonthlySalesResponse {
   summary: {
     totalPeriodSales: number;
     totalProjectSales: number;
-    totalSquadbaseSales: number;
+    totalProductSales: number;
     totalOrders: number;
     monthCount: number;
   };
@@ -38,7 +38,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
   const [loading, setLoading] = useState(true);
   const [hoveredBar, setHoveredBar] = useState<{
     monthIndex: number;
-    barType: 'total' | 'project' | 'squadbase';
+    barType: 'total' | 'project' | 'product';
   } | null>(null);
 
   useEffect(() => {
@@ -125,8 +125,8 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
   const graphWidth = 900 - padding.left - padding.right;
   const graphHeight = chartHeight - padding.top - padding.bottom;
 
-  // 最大値を計算
-  const maxAmount = Math.max(...monthlySales.map(item => item.totalAmount));
+  // 最大値を計算 - データが空の場合のエラーを防ぐ
+  const maxAmount = monthlySales.length > 0 ? Math.max(...monthlySales.map(item => item.totalAmount)) : 0;
   const yAxisMax = Math.ceil(maxAmount * 1.1 / 100000) * 100000; // 10万円単位で切り上げ
 
   // 棒グラフ用の座標計算関数
@@ -143,7 +143,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
   const getBarY = (amount: number) => padding.top + graphHeight - (amount / yAxisMax) * graphHeight;
   const getBarHeight = (amount: number) => (amount / yAxisMax) * graphHeight;
 
-  const getBarColor = (baseColor: string, monthIndex: number, barType: 'total' | 'project' | 'squadbase') => {
+  const getBarColor = (baseColor: string, monthIndex: number, barType: 'total' | 'project' | 'product') => {
     const isHovered = hoveredBar?.monthIndex === monthIndex && hoveredBar?.barType === barType;
     if (isHovered) {
       // ホバー時に明るくする
@@ -157,16 +157,16 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
     return baseColor;
   };
 
-  const getTooltipContent = (item: MonthlySalesData, barType: 'total' | 'project' | 'squadbase') => {
+  const getTooltipContent = (item: MonthlySalesData, barType: 'total' | 'project' | 'product') => {
     const values = {
       total: item.totalAmount,
       project: item.projectAmount,
-      squadbase: item.squadbaseAmount
+      product: item.productAmount
     };
     const labels = {
       total: '合計',
       project: 'プロジェクト',
-      squadbase: 'Squadbase'
+      product: 'Product'
     };
     return {
       label: labels[barType],
@@ -237,7 +237,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
               backgroundColor: '#dc2626',
               borderRadius: '2px'
             }} />
-            <span style={{ fontSize: '12px', color: '#374151' }}>{t('squadbase')}</span>
+            <span style={{ fontSize: '12px', color: '#374151' }}>{t('product')}</span>
           </div>
         </div>
       </div>
@@ -265,9 +265,9 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
           </p>
         </div>
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 4px 0' }}>{t('squadbase')}</p>
+          <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 4px 0' }}>{t('product')}</p>
           <p style={{ fontSize: '16px', fontWeight: '600', color: '#dc2626', margin: 0 }}>
-            {formatCurrency(summary.totalSquadbaseSales)}
+            {formatCurrency(summary.totalProductSales)}
           </p>
         </div>
         <div style={{ textAlign: 'center' }}>
@@ -361,16 +361,16 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
                   onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'project' })}
                   onMouseLeave={() => setHoveredBar(null)}
                 />
-                {/* Squadbaseの棒 */}
+                {/* Productの棒 */}
                 <rect
                   x={getBarX(index, 2)}
-                  y={getBarY(item.squadbaseAmount)}
+                  y={getBarY(item.productAmount)}
                   width={groupWidth}
-                  height={getBarHeight(item.squadbaseAmount)}
-                  fill={getBarColor('#dc2626', index, 'squadbase')}
+                  height={getBarHeight(item.productAmount)}
+                  fill={getBarColor('#dc2626', index, 'product')}
                   rx="2"
                   style={{ cursor: 'pointer', transition: 'fill 0.2s ease' }}
-                  onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'squadbase' })}
+                  onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'product' })}
                   onMouseLeave={() => setHoveredBar(null)}
                 />
               </g>
@@ -385,7 +385,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
               position: 'absolute',
               top: getBarY(monthlySales[hoveredBar.monthIndex]?.[
                 hoveredBar.barType === 'total' ? 'totalAmount' : 
-                hoveredBar.barType === 'project' ? 'projectAmount' : 'squadbaseAmount'
+                hoveredBar.barType === 'project' ? 'projectAmount' : 'productAmount'
               ] || 0) - 60,
               left: getBarX(hoveredBar.monthIndex, 
                 hoveredBar.barType === 'total' ? 0 : 

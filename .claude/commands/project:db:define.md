@@ -10,6 +10,7 @@ description: データベースのテーブルを作成する
 使用例: `claude project:db:define`
 
 `docs/database.md`にデータベースの定義を参考にテーブル定義、シードデータを作成してください。
+テーブル定義の差分を確認して、`docs/database.md`を正としてテーブル定義、シードデータを更新してください。
 
 ## 操作対象
 

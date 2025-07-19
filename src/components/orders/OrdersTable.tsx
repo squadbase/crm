@@ -67,8 +67,8 @@ const columns: ColumnDef<OrderData>[] = [
     accessorKey: 'serviceType',
     header: 'サービス',
     cell: ({ row }) => (
-      <Badge variant={row.original.serviceType === 'squadbase' ? 'default' : 'secondary'}>
-        {row.original.serviceType === 'squadbase' ? 'Squadbase' : 'プロジェクト'}
+      <Badge variant={row.original.serviceType === 'product' ? 'default' : 'secondary'}>
+        {row.original.serviceType === 'product' ? 'プロダクト' : 'プロジェクト'}
       </Badge>
     ),
   },

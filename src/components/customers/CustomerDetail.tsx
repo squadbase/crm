@@ -17,7 +17,7 @@ interface Order {
   orderId: string;
   customerId: string;
   paymentType: 'onetime' | 'subscription';
-  serviceType: 'squadbase' | 'project';
+  serviceType: 'product' | 'project';
   salesStartDt: string;
   salesEndDt: string | null;
   amount: string;
@@ -86,7 +86,7 @@ export function CustomerDetail({ customerId }: CustomerDetailProps) {
   };
 
   const getServiceTypeLabel = (serviceType: string) => {
-    return serviceType === 'squadbase' ? t('squadbaseService') : t('projectService');
+    return serviceType === 'product' ? t('product') : t('projectType');
   };
 
   const headerActions = (
@@ -408,7 +408,16 @@ export function CustomerDetail({ customerId }: CustomerDetailProps) {
                       <tr key={order.orderId} style={{ borderBottom: '1px solid #f1f5f9' }}>
                         <td style={{ padding: '12px 6px' }}>
                           <div>
-                            <p style={{ fontSize: '13px', fontWeight: '500', color: '#0f172a', margin: 0 }}>
+                            <p style={{ 
+                              fontSize: '13px', 
+                              fontWeight: '500', 
+                              color: '#2563eb', 
+                              margin: 0, 
+                              cursor: 'pointer',
+                              textDecoration: 'underline'
+                            }}
+                              onClick={() => router.push(`/orders/${order.orderId}`)}
+                            >
                               {order.orderId.slice(0, 8)}...
                             </p>
                             {order.description && (
@@ -423,8 +432,8 @@ export function CustomerDetail({ customerId }: CustomerDetailProps) {
                             fontSize: '12px',
                             padding: '2px 6px',
                             borderRadius: '4px',
-                            backgroundColor: order.serviceType === 'squadbase' ? '#dbeafe' : '#f3e8ff',
-                            color: order.serviceType === 'squadbase' ? '#2563eb' : '#7c3aed'
+                            backgroundColor: order.serviceType === 'product' ? '#dbeafe' : '#f3e8ff',
+                            color: order.serviceType === 'product' ? '#2563eb' : '#7c3aed'
                           }}>
                             {getServiceTypeLabel(order.serviceType)}
                           </span>

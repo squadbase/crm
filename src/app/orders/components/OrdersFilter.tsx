@@ -167,7 +167,7 @@ export function OrdersFilter({ onFilterChange }: OrdersFilterProps) {
             }}
           >
             <option value="">{t('all')}</option>
-            <option value="squadbase">{t('squadbaseService')}</option>
+            <option value="product">{t('productService')}</option>
             <option value="project">{t('projectService')}</option>
           </select>
         </div>
