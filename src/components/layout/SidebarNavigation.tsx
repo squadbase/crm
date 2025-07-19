@@ -14,7 +14,7 @@ import {
 
 const getNavigationSections = (t: (key: TranslationKey) => string) => [
   {
-    title: '売上管理',
+    title: t('salesManagementSection'),
     items: [
       { name: t('dashboard'), href: '/', icon: Clock },
       { name: t('orders'), href: '/orders', icon: ShoppingCart },
@@ -22,7 +22,7 @@ const getNavigationSections = (t: (key: TranslationKey) => string) => [
     ]
   },
   {
-    title: 'Settings',
+    title: t('settingsSection'),
     items: [
       { name: t('orderTemplates'), href: '/order-templates', icon: FileText },
       { name: t('settings'), href: '/settings', icon: Settings },
@@ -90,8 +90,8 @@ function SidebarItem({ item, isActive }: SidebarItemProps) {
 export function SidebarNavigation() {
   const pathname = usePathname();
   const { t, isClient, isLoading } = useClientI18n();
-  
-  // ハイドレーション中は固定の英語表示を使用
+
+  // ハイドレーション中は固定の日本語表示を使用
   const getStaticNavigationSections = () => [
     {
       title: '売上管理',
@@ -102,7 +102,7 @@ export function SidebarNavigation() {
       ]
     },
     {
-      title: 'Settings',
+      title: '設定',
       items: [
         { name: 'Order Templates', href: '/order-templates', icon: FileText },
         { name: 'Settings', href: '/settings', icon: Settings },
@@ -110,8 +110,8 @@ export function SidebarNavigation() {
     }
   ];
 
-  const navigationSections = (!isClient || isLoading) 
-    ? getStaticNavigationSections() 
+  const navigationSections = (!isClient || isLoading)
+    ? getStaticNavigationSections()
     : getNavigationSections(t);
 
   return (
@@ -165,7 +165,7 @@ export function SidebarNavigation() {
               }}>
                 {section.title}
               </div>
-              
+
               {/* Section Items */}
               <div style={{
                 display: 'flex',

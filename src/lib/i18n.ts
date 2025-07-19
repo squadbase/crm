@@ -904,6 +904,15 @@ export const translations = {
     ja: '金額は正の数値を入力してください',
     en: 'Please enter a positive number for the amount',
   },
+  // Navigation Sections
+  salesManagementSection: {
+    ja: '売上管理',
+    en: 'Sales Management',
+  },
+  settingsSection: {
+    ja: '設定',
+    en: 'Settings',
+  },
 };
 
 export type TranslationKey = keyof typeof translations;
