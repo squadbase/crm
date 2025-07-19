@@ -16,7 +16,7 @@ interface Order {
 }
 
 export function RecentOrders({ orders: recentOrders }: { orders: Order[] }) {
-  const { t, formatCurrency, formatDate, isClient } = useClientI18n();
+  const { t, formatCurrency, formatDate } = useClientI18n();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

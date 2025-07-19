@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1752652751202,
-      "tag": "0000_bizarre_zzzax",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1752770874632,
-      "tag": "0001_loud_ink",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1752900751081,
-      "tag": "0002_easy_lucky_pierre",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1752901304651,
-      "tag": "0003_needy_stone_men",
+      "when": 1752908874268,
+      "tag": "0000_perpetual_swordsman",
       "breakpoints": true
     }
   ]

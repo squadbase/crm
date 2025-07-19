@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       conditions.push(eq(orders.paymentType, paymentType));
     }
     
-    if (serviceType && (serviceType === 'squadbase' || serviceType === 'project')) {
+    if (serviceType && (serviceType === 'product' || serviceType === 'project')) {
       conditions.push(eq(orders.serviceType, serviceType));
     }
     

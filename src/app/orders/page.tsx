@@ -17,7 +17,7 @@ interface Order {
   customerId: string;
   customerName: string;
   paymentType: 'onetime' | 'subscription';
-  serviceType: 'squadbase' | 'project';
+  serviceType: 'product' | 'project';
   salesStartDt: string;
   salesEndDt: string | null;
   amount: string;

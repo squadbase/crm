@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     const serviceType = searchParams.get('serviceType');
 
     // フィルタリング条件がある場合のみフィルタリングを適用
-    let whereConditions = [eq(orderTemplates.isActive, true)];
+    const whereConditions = [eq(orderTemplates.isActive, true)];
 
     if (paymentType) {
       whereConditions.push(eq(orderTemplates.paymentType, paymentType as 'onetime' | 'subscription'));

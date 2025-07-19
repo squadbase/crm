@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Edit, Trash2, CreditCard, Calendar, DollarSign, User, FileText, Clock } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, CreditCard, DollarSign, User, Clock } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { OrderForm } from '../components/OrderForm';
 import { DeleteConfirmDialog } from '../components/DeleteConfirmDialog';
@@ -33,21 +33,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  useEffect(() => {
-    const initializeParams = async () => {
-      const resolvedParams = await params;
-      setOrderId(resolvedParams.orderId);
-    };
-    initializeParams();
-  }, [params]);
-
-  useEffect(() => {
-    if (orderId) {
-      fetchOrderDetail();
-    }
-  }, [orderId]);
-
-  const fetchOrderDetail = async () => {
+  const fetchOrderDetail = useCallback(async () => {
     if (!orderId) return;
     
     try {
@@ -71,7 +57,21 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
     } finally {
       setLoading(false);
     }
-  };
+  }, [orderId, t]);
+
+  useEffect(() => {
+    const initializeParams = async () => {
+      const resolvedParams = await params;
+      setOrderId(resolvedParams.orderId);
+    };
+    initializeParams();
+  }, [params]);
+
+  useEffect(() => {
+    if (orderId) {
+      fetchOrderDetail();
+    }
+  }, [orderId, fetchOrderDetail]);
 
   const handleEdit = () => {
     setIsEditDialogOpen(true);
