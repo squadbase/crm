@@ -5,7 +5,6 @@ import { Search, Filter } from 'lucide-react';
 
 interface FilterValues {
   paymentType: string;
-  serviceType: string;
   isActive: string;
   search: string;
 }
@@ -17,7 +16,6 @@ interface TemplateFilterProps {
 export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
   const [filters, setFilters] = useState<FilterValues>({
     paymentType: '',
-    serviceType: '',
     isActive: '',
     search: ''
   });
@@ -31,7 +29,6 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
   const clearFilters = () => {
     const clearedFilters = {
       paymentType: '',
-      serviceType: '',
       isActive: '',
       search: ''
     };
@@ -117,36 +114,6 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
           </div>
         </div>
 
-        {/* サービス種別フィルター */}
-        <div>
-          <label style={{
-            display: 'block',
-            fontSize: '12px',
-            fontWeight: '500',
-            color: '#374151',
-            marginBottom: '4px'
-          }}>
-            サービス種別
-          </label>
-          <select
-            value={filters.serviceType}
-            onChange={(e) => handleFilterUpdate('serviceType', e.target.value)}
-            style={{
-              width: '100%',
-              padding: '8px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '14px',
-              backgroundColor: 'white',
-              outline: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            <option value="">すべて</option>
-            <option value="product">プロダクト</option>
-            <option value="project">プロジェクト</option>
-          </select>
-        </div>
 
         {/* 支払い形態フィルター */}
         <div>

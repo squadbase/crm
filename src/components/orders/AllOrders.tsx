@@ -10,11 +10,8 @@ export async function AllOrders() {
       customerName: customers.customerName,
       customerId: customers.customerId,
       amount: orders.amount,
-      paymentType: orders.paymentType,
-      serviceType: orders.serviceType,
       isPaid: orders.isPaid,
-      salesStartDt: orders.salesStartDt,
-      salesEndDt: orders.salesEndDt,
+      salesAt: orders.salesAt,
       description: orders.description,
       createdAt: orders.createdAt,
     })

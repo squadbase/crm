@@ -7,7 +7,6 @@ interface OrderTemplate {
   templateId: string;
   templateName: string;
   paymentType: 'onetime' | 'subscription';
-  serviceType: 'product' | 'project';
   amount: string;
   description: string | null;
   isActive: boolean;
@@ -39,24 +38,6 @@ function StatusBadge({ isActive }: { isActive: boolean }) {
   );
 }
 
-function ServiceTypeBadge({ serviceType }: { serviceType: 'product' | 'project' }) {
-  const { t } = useClientI18n();
-  const isProduct = serviceType === 'product';
-  return (
-    <span style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      padding: '4px 12px',
-      fontSize: '14px',
-      fontWeight: '500',
-      borderRadius: '9999px',
-      backgroundColor: isProduct ? '#dbeafe' : '#fef3c7',
-      color: isProduct ? '#1e40af' : '#92400e'
-    }}>
-      {isProduct ? t('productTemplate') : t('projectTemplate')}
-    </span>
-  );
-}
 
 function PaymentTypeBadge({ paymentType }: { paymentType: 'onetime' | 'subscription' }) {
   const { t } = useClientI18n();
@@ -165,22 +146,6 @@ export function TemplateDetailModal({ isOpen, onClose, template }: TemplateDetai
                 gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                 gap: '16px'
               }}>
-                <div style={{
-                  padding: '16px',
-                  backgroundColor: '#f9fafb',
-                  borderRadius: '8px',
-                  border: '1px solid #e5e7eb'
-                }}>
-                  <div style={{
-                    fontSize: '12px',
-                    fontWeight: '500',
-                    color: '#6b7280',
-                    marginBottom: '4px'
-                  }}>
-                    {t('serviceTypeTemplate')}
-                  </div>
-                  <ServiceTypeBadge serviceType={template.serviceType} />
-                </div>
 
                 <div style={{
                   padding: '16px',

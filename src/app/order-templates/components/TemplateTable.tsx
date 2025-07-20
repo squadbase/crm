@@ -8,7 +8,6 @@ interface OrderTemplate {
   templateId: string;
   templateName: string;
   paymentType: 'onetime' | 'subscription';
-  serviceType: 'product' | 'project';
   amount: string;
   description: string | null;
   isActive: boolean;
@@ -44,24 +43,6 @@ function StatusBadge({ isActive }: { isActive: boolean }) {
   );
 }
 
-function ServiceTypeBadge({ serviceType }: { serviceType: 'product' | 'project' }) {
-  const { t } = useClientI18n();
-  const isProduct = serviceType === 'product';
-  return (
-    <span style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      padding: '2px 8px',
-      fontSize: '12px',
-      fontWeight: '500',
-      borderRadius: '9999px',
-      backgroundColor: isProduct ? '#dbeafe' : '#fef3c7',
-      color: isProduct ? '#1e40af' : '#92400e'
-    }}>
-      {isProduct ? t('productTemplate') : t('projectTemplate')}
-    </span>
-  );
-}
 
 function PaymentTypeBadge({ paymentType }: { paymentType: 'onetime' | 'subscription' }) {
   const { t } = useClientI18n();
@@ -160,18 +141,6 @@ export function TemplateTable({
                 fontWeight: '500',
                 color: '#374151',
                 borderBottom: '1px solid #e5e7eb',
-                minWidth: '120px',
-                whiteSpace: 'nowrap'
-              }}>
-                {t('serviceTypeTemplate')}
-              </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'left',
-                fontSize: '12px',
-                fontWeight: '500',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb',
                 minWidth: '140px',
                 whiteSpace: 'nowrap'
               }}>
@@ -255,15 +224,6 @@ export function TemplateTable({
                   }}>
                     {template.templateName}
                   </div>
-                </td>
-                <td style={{
-                  padding: '12px 16px',
-                  borderBottom: '1px solid #f3f4f6',
-                  verticalAlign: 'middle',
-                  minWidth: '120px',
-                  whiteSpace: 'nowrap'
-                }}>
-                  <ServiceTypeBadge serviceType={template.serviceType} />
                 </td>
                 <td style={{
                   padding: '12px 16px',

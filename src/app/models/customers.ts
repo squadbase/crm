@@ -1,11 +1,13 @@
 import { db } from '@/lib/db';
-import { customers, orders } from '@/lib/db/schema';
-import { eq, desc, asc, like, sql, and } from 'drizzle-orm';
+import { customers, orders, subscriptions, subscriptionPaid } from '@/lib/db/schema';
+import { eq, desc, asc, like, sql } from 'drizzle-orm';
 
 export interface CustomerSummary {
   customerId: string;
   customerName: string;
   orderCount: number;
+  onetimeRevenue: number;
+  subscriptionRevenue: number;
   totalRevenue: number;
   createdAt: Date;
 }
@@ -36,22 +38,27 @@ export async function getCustomers({
   try {
     console.log('Building customer query with params:', { filters, sort, limit, offset });
     
-    // Build the base query with customer aggregations
+    // Build the base query with customer aggregations including subscription revenue
     let query = db
       .select({
         customerId: customers.customerId,
         customerName: customers.customerName,
-        orderCount: sql<number>`COUNT(${orders.orderId})`,
-        totalRevenue: sql<number>`COALESCE(SUM(CASE WHEN ${orders.isPaid} = true THEN ${orders.amount} ELSE 0 END), 0)`,
+        orderCount: sql<number>`COUNT(DISTINCT ${orders.orderId})`,
+        onetimeRevenue: sql<number>`COALESCE(SUM(CASE WHEN ${orders.isPaid} = true THEN ${orders.amount} ELSE 0 END), 0)`,
+        subscriptionRevenue: sql<number>`COALESCE(SUM(CASE WHEN ${subscriptionPaid.isPaid} = true THEN ${subscriptionPaid.amount} ELSE 0 END), 0)`,
+        totalRevenue: sql<number>`COALESCE(SUM(CASE WHEN ${orders.isPaid} = true THEN ${orders.amount} ELSE 0 END), 0) + COALESCE(SUM(CASE WHEN ${subscriptionPaid.isPaid} = true THEN ${subscriptionPaid.amount} ELSE 0 END), 0)`,
         createdAt: customers.createdAt
       })
       .from(customers)
       .leftJoin(orders, eq(customers.customerId, orders.customerId))
+      .leftJoin(subscriptions, eq(customers.customerId, subscriptions.customerId))
+      .leftJoin(subscriptionPaid, eq(subscriptions.subscriptionId, subscriptionPaid.subscriptionId))
       .groupBy(customers.customerId, customers.customerName, customers.createdAt);
 
     // Apply search filter
     if (filters.search && filters.search.trim() !== '') {
-      query = query.where(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      query = (query as any).where(
         like(customers.customerName, `%${filters.search.trim()}%`)
       );
     }
@@ -64,26 +71,29 @@ export async function getCustomers({
         break;
       case 'revenue':
         orderByClause = sort.direction === 'desc' 
-          ? desc(sql`COALESCE(SUM(CASE WHEN ${orders.isPaid} = true THEN ${orders.amount} ELSE 0 END), 0)`)
-          : asc(sql`COALESCE(SUM(CASE WHEN ${orders.isPaid} = true THEN ${orders.amount} ELSE 0 END), 0)`);
+          ? desc(sql`COALESCE(SUM(CASE WHEN ${orders.isPaid} = true THEN ${orders.amount} ELSE 0 END), 0) + COALESCE(SUM(CASE WHEN ${subscriptionPaid.isPaid} = true THEN ${subscriptionPaid.amount} ELSE 0 END), 0)`)
+          : asc(sql`COALESCE(SUM(CASE WHEN ${orders.isPaid} = true THEN ${orders.amount} ELSE 0 END), 0) + COALESCE(SUM(CASE WHEN ${subscriptionPaid.isPaid} = true THEN ${subscriptionPaid.amount} ELSE 0 END), 0)`);
         break;
       case 'orders':
         orderByClause = sort.direction === 'desc' 
-          ? desc(sql`COUNT(${orders.orderId})`)
-          : asc(sql`COUNT(${orders.orderId})`);
+          ? desc(sql`COUNT(DISTINCT ${orders.orderId})`)
+          : asc(sql`COUNT(DISTINCT ${orders.orderId})`);
         break;
       default:
         orderByClause = sort.direction === 'desc' ? desc(customers.createdAt) : asc(customers.createdAt);
     }
     
-    query = query.orderBy(orderByClause);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    query = (query as any).orderBy(orderByClause);
 
     // Apply pagination
     if (limit) {
-      query = query.limit(limit);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      query = (query as any).limit(limit);
     }
     if (offset > 0) {
-      query = query.offset(offset);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      query = (query as any).offset(offset);
     }
 
     const result = await query;
@@ -93,6 +103,8 @@ export async function getCustomers({
       customerId: row.customerId,
       customerName: row.customerName,
       orderCount: Number(row.orderCount),
+      onetimeRevenue: Number(row.onetimeRevenue),
+      subscriptionRevenue: Number(row.subscriptionRevenue),
       totalRevenue: Number(row.totalRevenue),
       createdAt: row.createdAt
     }));
@@ -108,18 +120,32 @@ export async function getCustomers({
 export async function getCustomerById(customerId: string): Promise<CustomerSummary | null> {
   const result = await db
     .select({
-      customerId: orders.customerId,
-      customerName: orders.customerName,
+      customerId: customers.customerId,
+      customerName: customers.customerName,
       orderCount: sql<number>`COUNT(DISTINCT ${orders.orderId})`,
+      onetimeRevenue: sql<number>`COALESCE(SUM(CASE WHEN ${orders.isPaid} = true THEN ${orders.amount} ELSE 0 END), 0)`,
+      subscriptionRevenue: sql<number>`0`,
       totalRevenue: sql<number>`COALESCE(SUM(CASE WHEN ${orders.isPaid} = true THEN ${orders.amount} ELSE 0 END), 0)`,
-      createdAt: sql<Date>`MIN(${orders.createdAt})`
+      createdAt: customers.createdAt
     })
-    .from(orders)
-    .where(eq(orders.customerId, customerId))
-    .groupBy(orders.customerId, orders.customerName)
+    .from(customers)
+    .leftJoin(orders, eq(customers.customerId, orders.customerId))
+    .where(eq(customers.customerId, customerId))
+    .groupBy(customers.customerId, customers.customerName, customers.createdAt)
     .limit(1);
   
-  return result[0] || null;
+  const customer = result[0];
+  if (!customer) return null;
+  
+  return {
+    customerId: customer.customerId,
+    customerName: customer.customerName,
+    orderCount: Number(customer.orderCount),
+    onetimeRevenue: Number(customer.onetimeRevenue),
+    subscriptionRevenue: Number(customer.subscriptionRevenue),
+    totalRevenue: Number(customer.totalRevenue),
+    createdAt: customer.createdAt
+  };
 }
 
 /**
@@ -143,7 +169,8 @@ export async function getCustomerCount(filters: CustomerFilters = {}): Promise<n
 
     // Apply search filter
     if (filters.search && filters.search.trim() !== '') {
-      query = query.where(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      query = (query as any).where(
         like(customers.customerName, `%${filters.search.trim()}%`)
       );
     }

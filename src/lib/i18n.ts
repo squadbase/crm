@@ -46,6 +46,14 @@ export const translations = {
     ja: '注文管理',
     en: 'Orders',
   },
+  onetimeOrders: {
+    ja: '一回払い注文',
+    en: 'Onetime Orders',
+  },
+  subscriptions: {
+    ja: 'サブスク管理',
+    en: 'Subscriptions',
+  },
   settings: {
     ja: '設定',
     en: 'Settings',
@@ -71,6 +79,38 @@ export const translations = {
   unpaidRate: {
     ja: '未払い率',
     en: 'Unpaid Rate',
+  },
+  currentMonthRevenue: {
+    ja: '当月売上予定',
+    en: 'Current Month Revenue',
+  },
+  subscriptionRevenue: {
+    ja: 'サブスク売上',
+    en: 'Subscription Revenue',
+  },
+  onetimeOrderCount: {
+    ja: '一回払い注文数',
+    en: 'Onetime Orders',
+  },
+  subscriptionOrderCount: {
+    ja: 'サブスク注文数',
+    en: 'Subscription Orders',
+  },
+  onetimeAvgOrderValue: {
+    ja: '一回払い平均単価',
+    en: 'Onetime Avg Value',
+  },
+  subscriptionAvgValue: {
+    ja: 'サブスク平均単価',
+    en: 'Subscription Avg Value',
+  },
+  onetime: {
+    ja: '一回払い',
+    en: 'Onetime',
+  },
+  subscription: {
+    ja: 'サブスク',
+    en: 'Subscription',
   },
 
   // Customer Management
@@ -160,6 +200,10 @@ export const translations = {
     ja: '売上終了日',
     en: 'Sales End Date',
   },
+  salesDate: {
+    ja: '販売日',
+    en: 'Sales Date',
+  },
   isPaid: {
     ja: '支払い状況',
     en: 'Payment Status',
@@ -171,6 +215,195 @@ export const translations = {
   unpaid: {
     ja: '未払',
     en: 'Unpaid',
+  },
+
+  // Subscription specific
+  subscriptionDetail: {
+    ja: 'サブスクリプション詳細',
+    en: 'Subscription Detail',
+  },
+  basicInformation: {
+    ja: '基本情報',
+    en: 'Basic Information',
+  },
+  currentMonthlyFee: {
+    ja: '現在の月額料金',
+    en: 'Current Monthly Fee',
+  },
+  status: {
+    ja: 'ステータス',
+    en: 'Status',
+  },
+  active: {
+    ja: 'アクティブ',
+    en: 'Active',
+  },
+  inactive: {
+    ja: '非アクティブ',
+    en: 'Inactive',
+  },
+  priceHistory: {
+    ja: '料金履歴',
+    en: 'Price History',
+  },
+  paymentHistory: {
+    ja: '支払い履歴',
+    en: 'Payment History',
+  },
+  endDate: {
+    ja: '終了日',
+    en: 'End Date',
+  },
+  ended: {
+    ja: '終了',
+    en: 'Ended',
+  },
+  ongoing: {
+    ja: '継続中',
+    en: 'Ongoing',
+  },
+  yearMonth: {
+    ja: '年月',
+    en: 'Year/Month',
+  },
+  paymentStatus: {
+    ja: '支払い状況',
+    en: 'Payment Status',
+  },
+  paidStatus: {
+    ja: '支払い済み',
+    en: 'Paid',
+  },
+  unpaidStatus: {
+    ja: '未払い',
+    en: 'Unpaid',
+  },
+  action: {
+    ja: '操作',
+    en: 'Action',
+  },
+  markAsUnpaid: {
+    ja: '未払いにする',
+    en: 'Mark as Unpaid',
+  },
+  markAsPaid: {
+    ja: '支払い済みにする',
+    en: 'Mark as Paid',
+  },
+  changeFee: {
+    ja: '料金変更',
+    en: 'Change Fee',
+  },
+  cancelSubscription: {
+    ja: 'キャンセル',
+    en: 'Cancel',
+  },
+  restartSubscription: {
+    ja: '再開',
+    en: 'Restart',
+  },
+  feeChangeModal: {
+    ja: '料金変更',
+    en: 'Fee Change',
+  },
+  newMonthlyFee: {
+    ja: '新しい月額料金',
+    en: 'New Monthly Fee',
+  },
+  effectiveDate: {
+    ja: '適用開始日',
+    en: 'Effective Date',
+  },
+  change: {
+    ja: '変更',
+    en: 'Change',
+  },
+  cancelModal: {
+    ja: 'サブスクリプションキャンセル',
+    en: 'Cancel Subscription',
+  },
+  cancelWarning: {
+    ja: 'この操作は取り消すことができません。キャンセル日以降は課金が停止されます。',
+    en: 'This action cannot be undone. Billing will stop after the cancellation date.',
+  },
+  cancelDate: {
+    ja: 'キャンセル日',
+    en: 'Cancellation Date',
+  },
+  confirmCancel: {
+    ja: 'キャンセル実行',
+    en: 'Confirm Cancel',
+  },
+  restartModal: {
+    ja: 'サブスクリプション再開',
+    en: 'Restart Subscription',
+  },
+  restartWarning: {
+    ja: 'サブスクリプションを再開します。再開日以降から課金が開始されます。',
+    en: 'This will restart the subscription. Billing will resume from the restart date.',
+  },
+  restartDate: {
+    ja: '再開日',
+    en: 'Restart Date',
+  },
+  confirmRestart: {
+    ja: '再開実行',
+    en: 'Confirm Restart',
+  },
+  markPaid: {
+    ja: '支払い済みにする',
+    en: 'Mark as Paid',
+  },
+  markUnpaid: {
+    ja: '未払いにする',
+    en: 'Mark as Unpaid',
+  },
+  lastMonthlyFee: {
+    ja: '最後の月額料金',
+    en: 'Last Monthly Fee',
+  },
+  noFeeHistory: {
+    ja: '料金履歴がありません',
+    en: 'No fee history available',
+  },
+  noPaymentHistory: {
+    ja: '支払い履歴がありません',
+    en: 'No payment history available',
+  },
+
+  // Customer Detail
+  onetimeRevenue: {
+    ja: 'One-time収益',
+    en: 'One-time Revenue',
+  },
+  ordersCount: {
+    ja: 'Orders',
+    en: 'Orders',
+  },
+  noOnetimeOrders: {
+    ja: 'One-time注文がありません',
+    en: 'No one-time orders available',
+  },
+  noSubscriptions: {
+    ja: 'サブスクリプションがありません',
+    en: 'No subscriptions available',
+  },
+  orderIdLabel: {
+    ja: '注文ID',
+    en: 'Order ID',
+  },
+  subscriptionIdLabel: {
+    ja: 'サブスクID',
+    en: 'Subscription ID',
+  },
+  subscriptionId: {
+    ja: 'サブスクリプションID',
+    en: 'Subscription ID',
+  },
+
+  startDate: {
+    ja: '開始日',
+    en: 'Start Date',
   },
 
   // Common
@@ -274,14 +507,6 @@ export const translations = {
     ja: '全期間',
     en: 'All Time',
   },
-  startDate: {
-    ja: '開始日',
-    en: 'Start Date',
-  },
-  endDate: {
-    ja: '終了日',
-    en: 'End Date',
-  },
 
   // Data status
   noDataText: {
@@ -305,10 +530,6 @@ export const translations = {
   viewAll: {
     ja: '全て表示',
     en: 'View All',
-  },
-  subscription: {
-    ja: 'サブスクリプション',
-    en: 'Subscription',
   },
   oneTime: {
     ja: '一回払い',
@@ -406,6 +627,14 @@ export const translations = {
     ja: '契約終了日（以前）',
     en: 'Contract End Date (To)',
   },
+  salesDateStart: {
+    ja: '販売日（以上）',
+    en: 'Sales Date (From)',
+  },
+  salesDateEnd: {
+    ja: '販売日（以前）',
+    en: 'Sales Date (To)',
+  },
 
   // Settings page detailed
   settingsDescription: {
@@ -488,17 +717,9 @@ export const translations = {
     ja: '金額',
     en: 'Amount',
   },
-  paymentStatus: {
-    ja: '支払い状況',
-    en: 'Payment Status',
-  },
   serviceTypeHeader: {
     ja: 'サービス種別',
     en: 'Service Type',
-  },
-  ongoing: {
-    ja: '継続中',
-    en: 'Ongoing',
   },
 
   // Sales summary
@@ -694,10 +915,6 @@ export const translations = {
     ja: '注文が見つかりません',
     en: 'Order not found',
   },
-  basicInformation: {
-    ja: '基本情報',
-    en: 'Basic Information',
-  },
   serviceDetails: {
     ja: 'サービス詳細',
     en: 'Service Details',
@@ -771,14 +988,6 @@ export const translations = {
   actionsTemplate: {
     ja: 'アクション',
     en: 'Actions',
-  },
-  active: {
-    ja: 'アクティブ',
-    en: 'Active',
-  },
-  inactive: {
-    ja: '非アクティブ',
-    en: 'Inactive',
   },
   productTemplate: {
     ja: 'プロダクト',
@@ -954,6 +1163,175 @@ export const translations = {
   loadingOrders: {
     ja: '注文を読み込み中...',
     en: 'Loading orders...',
+  },
+
+  // Subscription Detail Page
+  subscriptionDetailDescription: {
+    ja: 'サブスクリプションの詳細情報と支払い履歴',
+    en: 'Subscription details and payment history',
+  },
+  subscriptionNotFound: {
+    ja: 'サブスクリプションが見つかりません',
+    en: 'Subscription not found',
+  },
+  errorOccurred: {
+    ja: 'エラーが発生しました',
+    en: 'An error occurred',
+  },
+  loadingSubscription: {
+    ja: '読み込み中...',
+    en: 'Loading...',
+  },
+  subscriptionStatus: {
+    ja: 'ステータス',
+    en: 'Status',
+  },
+  serviceContent: {
+    ja: 'サービス内容',
+    en: 'Service Content',
+  },
+  creationDate: {
+    ja: '作成日',
+    en: 'Creation Date',
+  },
+  lastUpdate: {
+    ja: '最終更新',
+    en: 'Last Update',
+  },
+  targetMonth: {
+    ja: '対象月',
+    en: 'Target Month',
+  },
+  paymentStatusHistory: {
+    ja: '支払い状況',
+    en: 'Payment Status',
+  },
+  newSubscription: {
+    ja: '新規サブスク',
+    en: 'New Subscription',
+  },
+  subscriptionsDescription: {
+    ja: 'サブスクリプション型サービスの管理と支払い状況の追跡を行います',
+    en: 'Manage subscription services and track payment status',
+  },
+  totalSubscriptions: {
+    ja: '総サブスク数',
+    en: 'Total Subscriptions',
+  },
+  activeSubscriptions: {
+    ja: 'アクティブ',
+    en: 'Active',
+  },
+  monthlyRevenueExpected: {
+    ja: '月間売上予定',
+    en: 'Monthly Revenue Expected',
+  },
+  thisMonthPaid: {
+    ja: '今月支払済',
+    en: 'This Month Paid',
+  },
+  thisMonthUnpaid: {
+    ja: '今月未払',
+    en: 'This Month Unpaid',
+  },
+  monthlyFee: {
+    ja: '月額料金',
+    en: 'Monthly Fee',
+  },
+  totalPaid: {
+    ja: '支払済合計',
+    en: 'Total Paid',
+  },
+  totalUnpaid: {
+    ja: '未払合計',
+    en: 'Total Unpaid',
+  },
+  subscriptionsTitle: {
+    ja: 'サブスクリプション - Squadbase CRM',
+    en: 'Subscriptions - Squadbase CRM',
+  },
+  // Subscription-specific translations
+  newSubscriptionButton: {
+    ja: '新規サブスク',
+    en: 'New Subscription',
+  },
+  loadingSubscriptions: {
+    ja: 'サブスクリプションを読み込み中...',
+    en: 'Loading subscriptions...',
+  },
+  noSubscriptionsFound: {
+    ja: 'サブスクリプションデータがありません',
+    en: 'No subscription data found',
+  },
+  noSubscriptionsDescription: {
+    ja: '新しいサブスクリプションを作成して管理を始めましょう',
+    en: 'Create a new subscription to start managing services',
+  },
+  createFirstSubscription: {
+    ja: '最初のサブスクを作成',
+    en: 'Create First Subscription',
+  },
+  paymentStartDate: {
+    ja: '支払い開始日',
+    en: 'Payment Start Date',
+  },
+  paymentEndDate: {
+    ja: '支払い終了日',
+    en: 'Payment End Date',
+  },
+  continuing: {
+    ja: '継続中',
+    en: 'Continuing',
+  },
+  viewDetails: {
+    ja: '詳細',
+    en: 'Details',
+  },
+  filterSearchSubscriptions: {
+    ja: 'フィルター・検索',
+    en: 'Filter & Search',
+  },
+  searchCustomerService: {
+    ja: '検索（顧客名・説明文）',
+    en: 'Search (Customer Name & Description)',
+  },
+  searchKeywordsPlaceholder: {
+    ja: '検索キーワードを入力...',
+    en: 'Enter search keywords...',
+  },
+  planTemplate: {
+    ja: 'プランテンプレート',
+    en: 'Plan Template',
+  },
+  selectTemplateOptional: {
+    ja: 'テンプレートを選択（任意）',
+    en: 'Select template (optional)',
+  },
+  monthlyFeeRequired: {
+    ja: '月額料金',
+    en: 'Monthly Fee',
+  },
+  startDateRequired: {
+    ja: '開始日',
+    en: 'Start Date',
+  },
+  subscriptionDescriptionPlaceholder: {
+    ja: 'サブスクリプションの説明（例：プロダクト月額プラン - スタンダード）',
+    en: 'Subscription description (e.g., Monthly Product Plan - Standard)',
+  },
+  creating: {
+    ja: '作成中...',
+    en: 'Creating...',
+  },
+  
+  // Additional subscription detail translations
+  loadingSubscriptionDetails: {
+    ja: 'サブスクリプション詳細を読み込み中...',
+    en: 'Loading subscription details...',
+  },
+  errorLoadingSubscription: {
+    ja: 'サブスクリプションの読み込み中にエラーが発生しました',
+    en: 'Error occurred while loading subscription',
   },
 };
 

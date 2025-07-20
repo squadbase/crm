@@ -53,16 +53,19 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
 
     switch (shortcut) {
       case 'halfYear':
+        // 半年前から半年後まで
         startDate = new Date(year, month - 6, 1);
-        endDate = new Date(year, month, day);
+        endDate = new Date(year, month + 6, 0); // 6ヶ月後の月末
         break;
       case 'oneYear':
+        // 1年前から半年後まで
         startDate = new Date(year - 1, month, 1);
-        endDate = new Date(year, month, day);
+        endDate = new Date(year, month + 6, 0); // 6ヶ月後の月末
         break;
       case 'all':
+        // 過去全てから半年後まで
         startDate = new Date(2020, 0, 1); // 2020年1月1日から開始
-        endDate = new Date(year, month, day);
+        endDate = new Date(year, month + 6, 0); // 6ヶ月後の月末
         break;
     }
 

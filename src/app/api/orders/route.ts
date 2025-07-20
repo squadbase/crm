@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getOrders, getOrderCount, createOrder } from '@/app/models/orders';
+import { db } from '@/lib/db';
+import { sql } from 'drizzle-orm';
+import { createOrder } from '@/app/models/orders';
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,49 +12,82 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50');
     const sort = searchParams.get('sort') || 'created';
     const direction = searchParams.get('direction') || 'desc';
-    const paymentType = searchParams.get('paymentType') as 'onetime' | 'subscription' | undefined;
-    const serviceType = searchParams.get('serviceType') as 'product' | 'project' | undefined;
     const isPaid = searchParams.get('isPaid');
-    const salesStartDt = searchParams.get('salesStartDt');
-    const salesEndDt = searchParams.get('salesEndDt');
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
     const search = searchParams.get('search');
-
-    // フィルター構築
-    const filters = {
-      ...(paymentType && { paymentType }),
-      ...(serviceType && { serviceType }),
-      ...(isPaid !== null && isPaid !== '' && { isPaid: isPaid === 'true' }),
-      ...(salesStartDt && { startDate: new Date(salesStartDt) }),
-      ...(salesEndDt && { endDate: new Date(salesEndDt) }),
-      ...(search && { search })
-    };
-
-    // ソート設定
-    const sortField = sort === 'created' ? 'created' :
-                     sort === 'amount' ? 'amount' :
-                     sort === 'customer' ? 'customer' :
-                     'payment';
-    
-    const sortOptions = {
-      field: sortField as 'created' | 'amount' | 'customer' | 'payment',
-      direction: direction as 'asc' | 'desc'
-    };
 
     // データ取得
     const offset = (page - 1) * limit;
     
-    const [ordersData, totalCount] = await Promise.all([
-      getOrders({
-        filters,
-        sort: sortOptions,
-        limit,
-        offset
-      }),
-      getOrderCount(filters)
+    // 基本クエリを構築（シンプルなアプローチに変更）
+    let baseQuery = sql`
+      SELECT 
+        o.order_id as "orderId",
+        o.customer_id as "customerId", 
+        c.customer_name as "customerName",
+        o.amount,
+        o.sales_at as "salesAt",
+        o.is_paid as "isPaid",
+        o.description,
+        o.created_at as "createdAt",
+        o.updated_at as "updatedAt"
+      FROM orders o
+      LEFT JOIN customers c ON o.customer_id = c.customer_id
+    `;
+
+    let countQuery = sql`
+      SELECT COUNT(*) as count
+      FROM orders o
+      LEFT JOIN customers c ON o.customer_id = c.customer_id
+    `;
+
+    // フィルター条件を追加
+    if (isPaid !== null && isPaid !== '') {
+      const paidCondition = sql` AND o.is_paid = ${isPaid === 'true'}`;
+      baseQuery = sql`${baseQuery} WHERE o.is_paid = ${isPaid === 'true'}`;
+      countQuery = sql`${countQuery} WHERE o.is_paid = ${isPaid === 'true'}`;
+    }
+    
+    if (startDate) {
+      const hasWhere = isPaid !== null && isPaid !== '';
+      const connector = hasWhere ? sql` AND` : sql` WHERE`;
+      baseQuery = sql`${baseQuery}${connector} o.sales_at >= ${startDate}`;
+      countQuery = sql`${countQuery}${connector} o.sales_at >= ${startDate}`;
+    }
+    
+    if (endDate) {
+      const hasWhere = isPaid !== null && isPaid !== '' || startDate;
+      const connector = hasWhere ? sql` AND` : sql` WHERE`;
+      const endDateTime = endDate + ' 23:59:59';
+      baseQuery = sql`${baseQuery}${connector} o.sales_at <= ${endDateTime}`;
+      countQuery = sql`${countQuery}${connector} o.sales_at <= ${endDateTime}`;
+    }
+    
+    if (search) {
+      const hasWhere = isPaid !== null && isPaid !== '' || startDate || endDate;
+      const connector = hasWhere ? sql` AND` : sql` WHERE`;
+      const searchPattern = `%${search}%`;
+      baseQuery = sql`${baseQuery}${connector} (c.customer_name ILIKE ${searchPattern} OR o.description ILIKE ${searchPattern})`;
+      countQuery = sql`${countQuery}${connector} (c.customer_name ILIKE ${searchPattern} OR o.description ILIKE ${searchPattern})`;
+    }
+
+    // ORDER BY と LIMIT/OFFSET を追加
+    baseQuery = sql`${baseQuery} ORDER BY o.created_at DESC LIMIT ${limit} OFFSET ${offset}`;
+    
+    const [ordersResult, countResult] = await Promise.all([
+      db.execute(baseQuery),
+      db.execute(countQuery)
     ]);
 
+    const orders = ordersResult.rows;
+    const totalCount = parseInt((countResult.rows[0]?.count as string) || '0');
+    
+    console.log('Orders fetched:', orders.length);
+    console.log('Total count:', totalCount);
+
     return NextResponse.json({
-      orders: ordersData,
+      orders,
       pagination: {
         page,
         limit,
@@ -63,7 +98,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Orders API error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch orders' },
+      { error: 'Failed to fetch orders', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
@@ -75,12 +110,8 @@ export async function POST(request: NextRequest) {
     
     const newOrder = await createOrder({
       customerId: body.customerId,
-      customerName: body.customerName, // Required by schema
-      paymentType: body.paymentType,
-      serviceType: body.serviceType,
-      salesStartDt: body.salesStartDt,
-      salesEndDt: body.salesEndDt,
       amount: body.amount,
+      salesAt: body.salesAt,
       isPaid: body.isPaid || false,
       description: body.description,
     });

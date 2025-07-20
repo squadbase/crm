@@ -2,18 +2,15 @@
 
 import { useState } from 'react';
 import { Edit, Trash2, Eye, Plus } from 'lucide-react';
-import { StatusBadge, ServiceTypeBadge, PaymentTypeBadge } from './StatusBadge';
+import { StatusBadge } from './StatusBadge';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
 interface Order {
   orderId: string;
   customerId: string;
   customerName: string;
-  paymentType: 'onetime' | 'subscription';
-  serviceType: 'product' | 'project';
-  salesStartDt: string;
-  salesEndDt: string | null;
   amount: string;
+  salesAt: string;
   isPaid: boolean;
   description: string | null;
   createdAt: string;
@@ -47,12 +44,6 @@ export function OrdersTable({
     return formatCurrency(num);
   };
 
-  const formatDateRange = (startDt: string, endDt: string | null) => {
-    const start = formatDate(startDt);
-    if (!endDt) return `${start} ~ ${t('ongoing')}`;
-    const end = formatDate(endDt);
-    return start === end ? start : `${start} ~ ${end}`;
-  };
 
   const handleSelectAll = (checked: boolean) => {
     setSelectedOrders(checked ? orders.map(order => order.orderId) : []);
@@ -253,27 +244,7 @@ export function OrdersTable({
                 color: '#374151',
                 borderBottom: '1px solid #e5e7eb'
               }}>
-{t('service')}
-              </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'left',
-                fontSize: '12px',
-                fontWeight: '600',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
-{t('paymentType')}
-              </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'left',
-                fontSize: '12px',
-                fontWeight: '600',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
-{t('period')}
+{t('salesDate')}
               </th>
               <th style={{
                 padding: '12px 16px',
@@ -344,17 +315,11 @@ export function OrdersTable({
                   )}
                 </td>
                 <td style={{ padding: '12px 16px' }}>
-                  <ServiceTypeBadge serviceType={order.serviceType} size="sm" />
-                </td>
-                <td style={{ padding: '12px 16px' }}>
-                  <PaymentTypeBadge paymentType={order.paymentType} size="sm" />
-                </td>
-                <td style={{ padding: '12px 16px' }}>
                   <div style={{
-                    fontSize: '13px',
-                    color: '#374151'
+                    fontSize: '14px',
+                    color: '#0f172a'
                   }}>
-                    {formatDateRange(order.salesStartDt, order.salesEndDt)}
+                    {formatDate(order.salesAt)}
                   </div>
                 </td>
                 <td style={{ padding: '12px 16px', textAlign: 'right' }}>

@@ -8,6 +8,13 @@
       "when": 1752908874268,
       "tag": "0000_perpetual_swordsman",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1752945431506,
+      "tag": "0001_exotic_maggott",
+      "breakpoints": true
     }
   ]
 }

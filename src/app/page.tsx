@@ -39,7 +39,17 @@ export default function HomePage() {
       const data = await response.json();
       
       if (data.orders && data.orders.length > 0) {
-        const formattedOrders = data.orders.map((order: any) => ({
+        const formattedOrders = data.orders.map((order: {
+          orderId: string;
+          customerName: string;
+          amount: string;
+          paymentType: string;
+          serviceType: string;
+          isPaid: boolean;
+          salesStartDt: string;
+          salesEndDt?: string | null;
+          description?: string | null;
+        }) => ({
           orderId: order.orderId,
           customerName: order.customerName,
           amount: order.amount,
@@ -69,7 +79,13 @@ export default function HomePage() {
       const data = await response.json();
       
       if (data.customers && data.customers.length > 0) {
-        const formattedCustomers = data.customers.map((customer: any) => ({
+        const formattedCustomers = data.customers.map((customer: {
+          customerId: string;
+          customerName: string;
+          orderCount: number;
+          totalRevenue: number;
+          createdAt: string;
+        }) => ({
           customerId: customer.customerId,
           customerName: customer.customerName,
           orderCount: customer.orderCount || 0,

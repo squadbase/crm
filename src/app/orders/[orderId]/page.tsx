@@ -12,11 +12,8 @@ interface OrderDetail {
   orderId: string;
   customerId: string;
   customerName: string;
-  paymentType: 'onetime' | 'subscription';
-  serviceType: 'product' | 'project';
-  salesStartDt: string;
-  salesEndDt: string | null;
   amount: string;
+  salesAt: string;
   isPaid: boolean;
   description: string | null;
   createdAt: string;
@@ -25,7 +22,7 @@ interface OrderDetail {
 
 export default function OrderDetailPage({ params }: { params: Promise<{ orderId: string }> }) {
   const router = useRouter();
-  const { t, formatCurrency } = useClientI18n();
+  const { t, formatCurrency, formatDate } = useClientI18n();
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -76,9 +73,9 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
   // ページタイトル設定
   useEffect(() => {
     if (order?.customerName) {
-      document.title = `${order.customerName} - ${t('orderDetails')}`;
+      document.title = `${order.customerName} - ${t('onetimeOrders')} ${t('details')}`;
     } else {
-      document.title = t('orderDetails');
+      document.title = `${t('onetimeOrders')} ${t('details')}`;
     }
   }, [order?.customerName, t]);
 
@@ -112,22 +109,6 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
   const handleFormSuccess = () => {
     // フォーム送信成功後、データを再取得
     fetchOrderDetail();
-  };
-
-  const getPaymentTypeLabel = (paymentType: string) => {
-    return paymentType === 'onetime' ? t('oneTime') : t('subscription');
-  };
-
-  const getServiceTypeLabel = (serviceType: string) => {
-    return serviceType === 'product' ? t('product') : t('projectType');
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ja-JP', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
   };
 
   const formatDateTime = (dateString: string) => {
@@ -186,14 +167,18 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
   }
 
   const headerActions = (
-    <>
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px'
+    }}>
       <button
         onClick={() => router.back()}
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: '6px',
-          padding: '6px 12px',
+          padding: '8px 16px',
           fontSize: '14px',
           fontWeight: '500',
           color: '#374151',
@@ -218,7 +203,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
           display: 'flex',
           alignItems: 'center',
           gap: '6px',
-          padding: '6px 12px',
+          padding: '8px 16px',
           fontSize: '14px',
           fontWeight: '500',
           color: '#374151',
@@ -243,7 +228,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
           display: 'flex',
           alignItems: 'center',
           gap: '6px',
-          padding: '6px 12px',
+          padding: '8px 16px',
           fontSize: '14px',
           fontWeight: '500',
           color: '#dc2626',
@@ -262,13 +247,13 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
         <Trash2 size={16} />
         {t('delete')}
       </button>
-    </>
+    </div>
   );
 
   return (
     <div style={{ padding: '24px' }}>
       <PageHeader
-        title={`${t('orderDetails')}`}
+        title={`${t('onetimeOrders')} - ${t('details')}`}
         description={`${t('orderId')}: ${orderId || ''}`}
         actions={headerActions}
       />
@@ -317,18 +302,17 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
                 <p style={{
                   fontSize: '14px',
                   fontWeight: '500',
-                  color: '#0f172a',
+                  color: '#2563eb',
                   margin: 0,
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  textDecoration: 'underline'
                 }}
                   onClick={() => router.push(`/customers/${order.customerId}`)}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.color = '#2563eb';
-                    e.currentTarget.style.textDecoration = 'underline';
+                    e.currentTarget.style.color = '#1d4ed8';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.color = '#0f172a';
-                    e.currentTarget.style.textDecoration = 'none';
+                    e.currentTarget.style.color = '#2563eb';
                   }}
                 >
                   {order.customerName}
@@ -365,6 +349,35 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
               </div>
             </div>
 
+            {/* 販売日 */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '16px',
+              backgroundColor: '#fef9e7',
+              borderRadius: '8px'
+            }}>
+              <Clock size={20} color="#d97706" />
+              <div>
+                <p style={{
+                  fontSize: '12px',
+                  color: '#6b7280',
+                  margin: '0 0 4px 0'
+                }}>
+                  {t('salesDate')}
+                </p>
+                <p style={{
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: '#0f172a',
+                  margin: 0
+                }}>
+                  {formatDate(order.salesAt)}
+                </p>
+              </div>
+            </div>
+
             {/* 支払い状況 */}
             <div style={{
               display: 'flex',
@@ -396,97 +409,6 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
           </div>
         </div>
 
-        {/* サービス詳細 */}
-        <div style={{ marginBottom: '32px' }}>
-          <h3 style={{
-            fontSize: '18px',
-            fontWeight: '600',
-            color: '#0f172a',
-            marginBottom: '16px'
-          }}>
-            {t('serviceDetails')}
-          </h3>
-          
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '16px'
-          }}>
-            <div>
-              <p style={{
-                fontSize: '12px',
-                color: '#6b7280',
-                margin: '0 0 4px 0'
-              }}>
-                {t('paymentType')}
-              </p>
-              <p style={{
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#0f172a',
-                margin: 0
-              }}>
-                {getPaymentTypeLabel(order.paymentType)}
-              </p>
-            </div>
-
-            <div>
-              <p style={{
-                fontSize: '12px',
-                color: '#6b7280',
-                margin: '0 0 4px 0'
-              }}>
-                {t('serviceType')}
-              </p>
-              <p style={{
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#0f172a',
-                margin: 0
-              }}>
-                {getServiceTypeLabel(order.serviceType)}
-              </p>
-            </div>
-
-            <div>
-              <p style={{
-                fontSize: '12px',
-                color: '#6b7280',
-                margin: '0 0 4px 0'
-              }}>
-                {t('contractStartDate')}
-              </p>
-              <p style={{
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#0f172a',
-                margin: 0
-              }}>
-                {formatDate(order.salesStartDt)}
-              </p>
-            </div>
-
-            {order.salesEndDt && (
-              <div>
-                <p style={{
-                  fontSize: '12px',
-                  color: '#6b7280',
-                  margin: '0 0 4px 0'
-                }}>
-                  {t('contractEndDate')}
-                </p>
-                <p style={{
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#0f172a',
-                  margin: 0
-                }}>
-                  {formatDate(order.salesEndDt)}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
 
         {/* 説明 */}
         {order.description && (
@@ -603,7 +525,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
         isOpen={isDeleteDialogOpen}
         onClose={() => setIsDeleteDialogOpen(false)}
         onConfirm={handleConfirmDelete}
-        orderName={order ? `${order.customerName} - ${order.description || order.serviceType}` : ''}
+        orderName={order ? `${order.customerName} - ${order.description || t('onetimeOrders')}` : ''}
       />
     </div>
   );

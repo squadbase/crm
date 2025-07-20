@@ -15,7 +15,6 @@ interface Customer {
 interface OrderTemplate {
   templateId: string;
   paymentType: 'onetime' | 'subscription';
-  serviceType: 'product' | 'project';
   templateName: string;
   amount: string;
   description: string | null;
@@ -25,10 +24,7 @@ interface Order {
   orderId: string;
   customerId: string;
   customerName: string;
-  paymentType: 'onetime' | 'subscription';
-  serviceType: 'product' | 'project';
-  salesStartDt: string;
-  salesEndDt: string | null;
+  salesAt: string;
   amount: string;
   isPaid: boolean;
   description: string | null;
@@ -48,10 +44,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
   const [formData, setFormData] = useState({
     customerId: '',
-    paymentType: 'onetime' as 'onetime' | 'subscription',
-    serviceType: 'product' as 'product' | 'project',
-    salesStartDt: '',
-    salesEndDt: '',
+    salesAt: '',
     amount: '',
     isPaid: false,
     description: ''
@@ -79,10 +72,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
     if (editingOrder) {
       setFormData({
         customerId: editingOrder.customerId,
-        paymentType: editingOrder.paymentType,
-        serviceType: editingOrder.serviceType,
-        salesStartDt: editingOrder.salesStartDt,
-        salesEndDt: editingOrder.salesEndDt || '',
+        salesAt: editingOrder.salesAt,
         amount: editingOrder.amount,
         isPaid: editingOrder.isPaid,
         description: editingOrder.description || ''
@@ -91,10 +81,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
       // 新規作成時はフォームをリセット
       setFormData({
         customerId: '',
-        paymentType: 'onetime',
-        serviceType: 'product',
-        salesStartDt: '',
-        salesEndDt: '',
+        salesAt: '',
         amount: '',
         isPaid: false,
         description: ''
@@ -116,8 +103,8 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
 
   const fetchTemplates = async () => {
     try {
-      // パラメーターなしで全テンプレートを取得
-      const response = await fetch('/api/order-templates');
+      // onetimeテンプレートのみを取得
+      const response = await fetch('/api/order-templates?paymentType=onetime');
       const data = await response.json();
       setTemplates(data.templates || []);
     } catch (error) {
@@ -141,8 +128,6 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
       if (template) {
         setFormData(prev => ({
           ...prev,
-          paymentType: template.paymentType,
-          serviceType: template.serviceType,
           amount: template.amount,
           description: template.description || ''
         }));
@@ -153,7 +138,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.customerId || !formData.salesStartDt || !formData.amount) {
+    if (!formData.customerId || !formData.salesAt || !formData.amount) {
       setError(t('requiredFieldsError'));
       return;
     }
@@ -175,8 +160,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
 
       const requestData = {
         ...formData,
-        amount: Number(formData.amount),
-        salesEndDt: formData.salesEndDt || null
+        amount: Number(formData.amount)
       };
 
       const response = await fetch(url, {
@@ -342,115 +326,34 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
               />
             </div>
 
-            {/* 支払い種別とサービス種別 */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '16px'
-            }}>
-              <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  marginBottom: '6px'
-                }}>
-                  {t('paymentType')} <span style={{ color: '#dc2626' }}>*</span>
-                </label>
-                <CustomSelect
-                  options={[
-                    { value: 'onetime', label: t('oneTime') },
-                    { value: 'subscription', label: t('subscription') }
-                  ]}
-                  value={formData.paymentType}
-                  onChange={(value) => handleInputChange('paymentType', value as 'onetime' | 'subscription')}
-                  required
-                />
-              </div>
 
-              <div>
-                <label style={{
-                  display: 'block',
+            {/* 売上日 */}
+            <div>
+              <label style={{
+                display: 'block',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#374151',
+                marginBottom: '6px'
+              }}>
+                売上日 <span style={{ color: '#dc2626' }}>*</span>
+              </label>
+              <input
+                type="date"
+                value={formData.salesAt}
+                onChange={(e) => handleInputChange('salesAt', e.target.value)}
+                placeholder="売上日を選択"
+                lang={getLanguage() === 'ja' ? 'ja' : 'en'}
+                required
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
                   fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  marginBottom: '6px'
-                }}>
-                  {t('serviceType')} <span style={{ color: '#dc2626' }}>*</span>
-                </label>
-                <CustomSelect
-                  options={[
-                    { value: 'product', label: t('productService') },
-                    { value: 'project', label: t('projectService') }
-                  ]}
-                  value={formData.serviceType}
-                  onChange={(value) => handleInputChange('serviceType', value as 'product' | 'project')}
-                  required
-                />
-              </div>
-            </div>
-
-            {/* 契約開始日と終了日 */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '16px'
-            }}>
-              <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  marginBottom: '6px'
-                }}>
-                  {t('contractStartDate')} <span style={{ color: '#dc2626' }}>*</span>
-                </label>
-                <input
-                  type="date"
-                  value={formData.salesStartDt}
-                  onChange={(e) => handleInputChange('salesStartDt', e.target.value)}
-                  placeholder={t('startDatePlaceholder')}
-                  lang={getLanguage() === 'ja' ? 'ja' : 'en'}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-
-              <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  marginBottom: '6px'
-                }}>
-                  {t('contractEndDate')}
-                </label>
-                <input
-                  type="date"
-                  value={formData.salesEndDt}
-                  onChange={(e) => handleInputChange('salesEndDt', e.target.value)}
-                  placeholder={t('endDatePlaceholder')}
-                  lang={getLanguage() === 'ja' ? 'ja' : 'en'}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
+                  boxSizing: 'border-box'
+                }}
+              />
             </div>
 
             {/* 金額 */}

@@ -14,11 +14,8 @@ type OrderData = {
   customerName: string | null;
   customerId: string | null;
   amount: string;
-  paymentType: string;
-  serviceType: string;
   isPaid: boolean;
-  salesStartDt: string;
-  salesEndDt: string | null;
+  salesAt: Date;
   description: string | null;
   createdAt: Date;
 };
@@ -55,24 +52,6 @@ const columns: ColumnDef<OrderData>[] = [
     ),
   },
   {
-    accessorKey: 'paymentType',
-    header: '支払い方法',
-    cell: ({ row }) => (
-      <Badge variant={row.original.paymentType === 'subscription' ? 'accent' : 'secondary'}>
-        {row.original.paymentType === 'subscription' ? '継続課金' : '一回払い'}
-      </Badge>
-    ),
-  },
-  {
-    accessorKey: 'serviceType',
-    header: 'サービス',
-    cell: ({ row }) => (
-      <Badge variant={row.original.serviceType === 'product' ? 'default' : 'secondary'}>
-        {row.original.serviceType === 'product' ? 'プロダクト' : 'プロジェクト'}
-      </Badge>
-    ),
-  },
-  {
     accessorKey: 'isPaid',
     header: 'ステータス',
     cell: ({ row }) => (
@@ -80,11 +59,11 @@ const columns: ColumnDef<OrderData>[] = [
     ),
   },
   {
-    accessorKey: 'salesStartDt',
-    header: '売上開始日',
+    accessorKey: 'salesAt',
+    header: '売上日',
     cell: ({ row }) => (
       <div className="text-body text-foreground">
-        {new Date(row.original.salesStartDt).toLocaleDateString('ja-JP')}
+        {row.original.salesAt.toLocaleDateString('ja-JP')}
       </div>
     ),
   },

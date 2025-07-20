@@ -5,8 +5,8 @@ import { Calendar } from 'lucide-react';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
 interface PeriodValues {
-  salesStartDt: string;
-  salesEndDt: string;
+  startDate: string;
+  endDate: string;
 }
 
 interface PeriodSelectorProps {
@@ -16,8 +16,8 @@ interface PeriodSelectorProps {
 export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
   const { t, getLanguage } = useClientI18n();
   const [period, setPeriod] = useState<PeriodValues>({
-    salesStartDt: '',
-    salesEndDt: ''
+    startDate: '',
+    endDate: ''
   });
 
   const handlePeriodChange = (key: keyof PeriodValues, value: string) => {
@@ -28,8 +28,8 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
 
   const clearPeriod = () => {
     const clearedPeriod: PeriodValues = {
-      salesStartDt: '',
-      salesEndDt: ''
+      startDate: '',
+      endDate: ''
     };
     setPeriod(clearedPeriod);
     onPeriodChange(clearedPeriod);
@@ -73,8 +73,8 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
     };
 
     const newPeriod: PeriodValues = {
-      salesStartDt: formatDate(startDate),
-      salesEndDt: formatDate(endDate)
+      startDate: formatDate(startDate),
+      endDate: formatDate(endDate)
     };
     setPeriod(newPeriod);
     onPeriodChange(newPeriod);
@@ -200,7 +200,7 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
         gridTemplateColumns: '1fr 1fr',
         gap: '16px'
       }}>
-        {/* 契約開始日 */}
+        {/* 販売日開始 */}
         <div style={{ minWidth: 0 }}>
           <label style={{
             display: 'block',
@@ -209,12 +209,12 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
             color: '#374151',
             marginBottom: '6px'
           }}>
-{t('contractStartDate')}
+{t('salesDateStart')}
           </label>
           <input
             type="date"
-            value={period.salesStartDt}
-            onChange={(e) => handlePeriodChange('salesStartDt', e.target.value)}
+            value={period.startDate}
+            onChange={(e) => handlePeriodChange('startDate', e.target.value)}
             placeholder={t('startDatePlaceholder')}
             lang={getLanguage() === 'ja' ? 'ja' : 'en'}
             style={{
@@ -228,7 +228,7 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
           />
         </div>
 
-        {/* 契約終了日 */}
+        {/* 販売日終了 */}
         <div style={{ minWidth: 0 }}>
           <label style={{
             display: 'block',
@@ -237,12 +237,12 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
             color: '#374151',
             marginBottom: '6px'
           }}>
-{t('contractEndDate')}
+{t('salesDateEnd')}
           </label>
           <input
             type="date"
-            value={period.salesEndDt}
-            onChange={(e) => handlePeriodChange('salesEndDt', e.target.value)}
+            value={period.endDate}
+            onChange={(e) => handlePeriodChange('endDate', e.target.value)}
             placeholder={t('endDatePlaceholder')}
             lang={getLanguage() === 'ja' ? 'ja' : 'en'}
             style={{

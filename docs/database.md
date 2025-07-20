@@ -2,6 +2,7 @@
 
 ## 概要
 売上管理に特化したCRMシステムのデータベース設計。顧客管理と売上管理を中心とした構成。
+onetimeとsubscriptionの注文を分離して管理し、詳細な売上分析とKPI管理を実現する。
 
 ## テーブル構成
 
@@ -15,23 +16,59 @@
 | created_at | TIMESTAMP | DEFAULT NOW() | 作成日時 |
 | updated_at | TIMESTAMP | DEFAULT NOW() | 更新日時 |
 
-### 2. orders（売上管理）
-売上・注文情報を管理するテーブル
+### 2. orders（一回払い注文管理）
+一回払い (onetime) の注文のみを管理するテーブル
 
 | カラム名 | 型 | 制約 | 説明 |
 |---------|-----|------|-----|
 | order_id | UUID | PRIMARY KEY | 注文ID |
 | customer_id | UUID | FOREIGN KEY | 顧客ID (customers.customer_id) |
-| payment_type | ENUM | NOT NULL | 支払い形態 (onetime, subscription) |
-| sales_start_dt | DATE | NOT NULL | 売上開始日 |
-| sales_end_dt | DATE | | 売上終了日 (onetimeの場合はsales_start_dtと同じ) |
 | amount | DECIMAL(15,2) | NOT NULL | 金額 |
+| sales_at | DECIMAL(15,2) | NOT NULL | 売り上げ日 |
 | is_paid | BOOLEAN | DEFAULT FALSE | 支払い済みフラグ |
 | description | TEXT | | 説明・備考 |
 | created_at | TIMESTAMP | DEFAULT NOW() | 作成日時 |
 | updated_at | TIMESTAMP | DEFAULT NOW() | 更新日時 |
 
-### 3. order_templates（注文テンプレート）
+### 3. subscriptions（サブスクリプション管理）
+継続課金 (subscription) の契約を管理するテーブル
+
+| カラム名 | 型 | 制約 | 説明 |
+|---------|-----|------|-----|
+| subscription_id | UUID | PRIMARY KEY | サブスクリプションID |
+| customer_id | UUID | FOREIGN KEY | 顧客ID (customers.customer_id) |
+| description | TEXT | | 説明・備考 |
+| created_at | TIMESTAMP | DEFAULT NOW() | 作成日時 |
+| updated_at | TIMESTAMP | DEFAULT NOW() | 更新日時 |
+
+### 4. subscription_amounts（サブスクリプション料金管理）
+サブスクリプションの料金変更履歴を管理するテーブル（アップセル・ダウンセル・解約の追跡）
+
+| カラム名 | 型 | 制約 | 説明 |
+|---------|-----|------|-----|
+| amount_id | UUID | PRIMARY KEY | 料金設定ID |
+| subscription_id | UUID | FOREIGN KEY | サブスクリプションID (subscriptions.subscription_id) |
+| amount | DECIMAL(15,2) | NOT NULL | 月額料金 |
+| start_date | DATE | NOT NULL | 料金適用開始日 |
+| end_date | DATE | | 料金適用終了日 (NULL = 継続中) |
+| created_at | TIMESTAMP | DEFAULT NOW() | 作成日時 |
+| updated_at | TIMESTAMP | DEFAULT NOW() | 更新日時 |
+
+### 5. subscription_paid（サブスクリプション支払い管理）
+サブスクリプションの月次支払い状況を管理するテーブル
+
+| カラム名 | 型 | 制約 | 説明 |
+|---------|-----|------|-----|
+| paid_id | UUID | PRIMARY KEY | 支払い記録ID |
+| subscription_id | UUID | FOREIGN KEY | サブスクリプションID (subscriptions.subscription_id) |
+| year | INTEGER | NOT NULL | 支払い年 |
+| month | INTEGER | NOT NULL | 支払い月 (1-12) |
+| amount | DECIMAL(15,2) | NOT NULL | 支払い金額 |
+| is_paid | BOOLEAN | DEFAULT FALSE | 支払い済みフラグ |
+| created_at | TIMESTAMP | DEFAULT NOW() | 作成日時 |
+| updated_at | TIMESTAMP | DEFAULT NOW() | 更新日時 |
+
+### 6. order_templates（注文テンプレート）
 payment_typeとservice_typeの組み合わせごとの入力テンプレートを管理するテーブル（入力補助用）
 
 | カラム名 | 型 | 制約 | 説明 |

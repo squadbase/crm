@@ -15,7 +15,6 @@ interface OrderTemplate {
   templateId: string;
   templateName: string;
   paymentType: 'onetime' | 'subscription';
-  serviceType: 'product' | 'project';
   amount: string;
   description: string | null;
   isActive: boolean;

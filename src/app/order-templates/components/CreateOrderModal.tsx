@@ -7,7 +7,6 @@ interface OrderTemplate {
   templateId: string;
   templateName: string;
   paymentType: 'onetime' | 'subscription';
-  serviceType: 'product' | 'project';
   amount: string;
   description: string | null;
   isActive: boolean;
@@ -22,24 +21,6 @@ interface CreateOrderModalProps {
   onConfirm: (templateId: string) => void;
 }
 
-function ServiceTypeBadge({ serviceType }: { serviceType: 'product' | 'project' }) {
-  const { t } = useClientI18n();
-  const isProduct = serviceType === 'product';
-  return (
-    <span style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      padding: '2px 8px',
-      fontSize: '12px',
-      fontWeight: '500',
-      borderRadius: '9999px',
-      backgroundColor: isProduct ? '#dbeafe' : '#fef3c7',
-      color: isProduct ? '#1e40af' : '#92400e'
-    }}>
-      {isProduct ? t('productTemplate') : t('projectTemplate')}
-    </span>
-  );
-}
 
 function PaymentTypeBadge({ paymentType }: { paymentType: 'onetime' | 'subscription' }) {
   const { t } = useClientI18n();
@@ -184,7 +165,6 @@ export function CreateOrderModal({ isOpen, onClose, template, onConfirm }: Creat
                   alignItems: 'center',
                   gap: '8px'
                 }}>
-                  <ServiceTypeBadge serviceType={template.serviceType} />
                   <PaymentTypeBadge paymentType={template.paymentType} />
                 </div>
               </div>

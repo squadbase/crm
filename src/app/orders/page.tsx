@@ -16,11 +16,8 @@ interface Order {
   orderId: string;
   customerId: string;
   customerName: string;
-  paymentType: 'onetime' | 'subscription';
-  serviceType: 'product' | 'project';
-  salesStartDt: string;
-  salesEndDt: string | null;
   amount: string;
+  salesAt: string;
   isPaid: boolean;
   description: string | null;
   createdAt: string;
@@ -28,15 +25,13 @@ interface Order {
 }
 
 interface FilterValues {
-  paymentType: string;
-  serviceType: string;
   isPaid: string;
   search: string;
 }
 
 interface PeriodValues {
-  salesStartDt: string;
-  salesEndDt: string;
+  startDate: string;
+  endDate: string;
 }
 
 interface PaginationInfo {
@@ -57,15 +52,13 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<FilterValues>({
-    paymentType: '',
-    serviceType: '',
     isPaid: '',
     search: ''
   });
   
   const [period, setPeriod] = useState<PeriodValues>({
-    salesStartDt: '',
-    salesEndDt: ''
+    startDate: '',
+    endDate: ''
   });
   const [pagination, setPagination] = useState<PaginationInfo>({
     page: 1,
@@ -218,14 +211,14 @@ export default function OrdersPage() {
       backgroundColor: 'white' 
     }}>
       <PageHeader
-        title={t('orders')}
+        title={t('onetimeOrders')}
         description={t('orderDescription')}
         actions={headerActions}
       />
 
       <div style={{ padding: '16px' }}>
         <PeriodSelector onPeriodChange={handlePeriodChange} />
-        <SalesSummary period={period} />
+        <SalesSummary period={{ salesStartDt: period.startDate, salesEndDt: period.endDate }} />
         <OrdersFilter onFilterChange={handleFilterChange} />
         <OrdersTable
           orders={orders}
@@ -261,7 +254,7 @@ export default function OrdersPage() {
             setDeletingOrder(null);
           }}
           onConfirm={handleConfirmDelete}
-          orderName={deletingOrder ? `${deletingOrder.customerName} - ${deletingOrder.serviceType}` : ''}
+          orderName={deletingOrder ? `${deletingOrder.customerName} - ${deletingOrder.description || 'Order'}` : ''}
         />
 
         {/* ページネーション */}

@@ -12,7 +12,6 @@ export async function GET(request: NextRequest) {
 
     // フィルター条件
     const paymentType = searchParams.get('paymentType');
-    const serviceType = searchParams.get('serviceType');
     const isActive = searchParams.get('isActive');
     const search = searchParams.get('search');
 
@@ -21,10 +20,6 @@ export async function GET(request: NextRequest) {
 
     if (paymentType) {
       conditions.push(eq(orderTemplates.paymentType, paymentType as 'onetime' | 'subscription'));
-    }
-
-    if (serviceType) {
-      conditions.push(eq(orderTemplates.serviceType, serviceType as 'product' | 'project'));
     }
 
     if (isActive !== null && isActive !== '') {
@@ -81,10 +76,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { templateName, paymentType, serviceType, amount, description, isActive } = body;
+    const { templateName, paymentType, amount, description, isActive } = body;
 
     // バリデーション
-    if (!templateName || !paymentType || !serviceType || !amount) {
+    if (!templateName || !paymentType || !amount) {
       return NextResponse.json(
         { error: 'Required fields are missing' },
         { status: 400 }
@@ -104,7 +99,6 @@ export async function POST(request: NextRequest) {
       .values({
         templateName,
         paymentType,
-        serviceType,
         amount,
         description: description || null,
         isActive: isActive ?? true

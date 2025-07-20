@@ -5,8 +5,6 @@ import { Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
 interface FilterValues {
-  paymentType: string;
-  serviceType: string;
   isPaid: string;
   search: string;
 }
@@ -18,8 +16,6 @@ interface OrdersFilterProps {
 export function OrdersFilter({ onFilterChange }: OrdersFilterProps) {
   const { t } = useClientI18n();
   const [filters, setFilters] = useState<FilterValues>({
-    paymentType: '',
-    serviceType: '',
     isPaid: '',
     search: ''
   });
@@ -34,8 +30,6 @@ export function OrdersFilter({ onFilterChange }: OrdersFilterProps) {
 
   const clearFilters = () => {
     const clearedFilters: FilterValues = {
-      paymentType: '',
-      serviceType: '',
       isPaid: '',
       search: ''
     };
@@ -105,73 +99,13 @@ export function OrdersFilter({ onFilterChange }: OrdersFilterProps) {
       {/* フィルター内容（折りたたみ式） */}
       {isExpanded && (
         <>
-          {/* 上段のフィルター */}
+          {/* フィルター */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
+            gridTemplateColumns: 'repeat(1, 1fr)',
             gap: '16px',
             marginBottom: '16px'
           }}>
-        {/* 支払い形態 */}
-        <div style={{ minWidth: 0 }}>
-          <label style={{
-            display: 'block',
-            fontSize: '12px',
-            fontWeight: '500',
-            color: '#374151',
-            marginBottom: '6px'
-          }}>
-{t('paymentType')}
-          </label>
-          <select
-            value={filters.paymentType}
-            onChange={(e) => handleFilterChange('paymentType', e.target.value)}
-            style={{
-              width: '100%',
-              padding: '8px 10px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '12px',
-              backgroundColor: 'white',
-              boxSizing: 'border-box'
-            }}
-          >
-            <option value="">{t('all')}</option>
-            <option value="onetime">{t('oneTime')}</option>
-            <option value="subscription">{t('subscription')}</option>
-          </select>
-        </div>
-
-        {/* サービス種別 */}
-        <div style={{ minWidth: 0 }}>
-          <label style={{
-            display: 'block',
-            fontSize: '12px',
-            fontWeight: '500',
-            color: '#374151',
-            marginBottom: '6px'
-          }}>
-{t('serviceType')}
-          </label>
-          <select
-            value={filters.serviceType}
-            onChange={(e) => handleFilterChange('serviceType', e.target.value)}
-            style={{
-              width: '100%',
-              padding: '8px 10px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '12px',
-              backgroundColor: 'white',
-              boxSizing: 'border-box'
-            }}
-          >
-            <option value="">{t('all')}</option>
-            <option value="product">{t('productService')}</option>
-            <option value="project">{t('projectService')}</option>
-          </select>
-        </div>
-
         {/* 支払い状況 */}
         <div style={{ minWidth: 0 }}>
           <label style={{

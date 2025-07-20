@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { DollarSign, Users, ShoppingCart, TrendingUp, TrendingDown } from 'lucide-react';
+import { DollarSign, ShoppingCart, TrendingUp, TrendingDown } from 'lucide-react';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
 interface MetricGrowth {
@@ -15,23 +15,21 @@ interface MetricData {
 }
 
 interface MetricsData {
-  totalRevenue: MetricData;
-  totalOrders: MetricData;
+  currentMonthRevenue: MetricData;
+  onetimeRevenue: MetricData;
+  subscriptionRevenue: MetricData;
+  onetimeOrderCount: MetricData;
+  subscriptionOrderCount: MetricData;
   totalCustomers: MetricData;
+  onetimeAvgOrderValue: MetricData;
+  subscriptionAvgValue: MetricData;
 }
 
 interface MetricsResponse {
   metrics: MetricsData;
-  previousPeriod: {
-    totalRevenue: number;
-    totalOrders: number;
-    totalCustomers: number;
-  };
 }
 
-interface MetricsCardsProps {
-  // 期間は削除 - メトリクスは常に最新の全体状況を表示
-}
+// MetricsCards コンポーネントはプロパティを受け取らない
 
 export function MetricsCards() {
   const { t, formatCurrency } = useClientI18n();
@@ -116,8 +114,8 @@ export function MetricsCards() {
 
   const metricsConfig = [
     {
-      key: 'totalRevenue' as keyof MetricsData,
-      title: t('totalRevenue'),
+      key: 'currentMonthRevenue' as keyof MetricsData,
+      title: t('currentMonthRevenue'),
       icon: DollarSign,
       iconColor: '#16a34a',
       iconBg: '#dcfce7',
@@ -127,24 +125,35 @@ export function MetricsCards() {
       isUnpaid: false
     },
     {
-      key: 'totalCustomers' as keyof MetricsData,
-      title: t('totalCustomers'),
-      icon: Users,
-      iconColor: '#2563eb',
-      iconBg: '#dbeafe',
-      formatter: (value: number) => `${value.toLocaleString()}${t('people')}`,
-      isRevenue: false,
+      key: 'onetimeRevenue' as keyof MetricsData,
+      title: t('onetimeRevenue'),
+      icon: ShoppingCart,
+      iconColor: '#f97316',
+      iconBg: '#fed7aa',
+      formatter: formatCurrency,
+      isRevenue: true,
       isRate: false,
       isUnpaid: false
     },
     {
-      key: 'totalOrders' as keyof MetricsData,
-      title: t('totalOrders'),
-      icon: ShoppingCart,
-      iconColor: '#f97316',
-      iconBg: '#fed7aa',
-      formatter: (value: number) => `${value.toLocaleString()}${t('orders_unit')}`,
-      isRevenue: false,
+      key: 'subscriptionRevenue' as keyof MetricsData,
+      title: t('subscriptionRevenue'),
+      icon: DollarSign,
+      iconColor: '#8b5cf6',
+      iconBg: '#f3e8ff',
+      formatter: formatCurrency,
+      isRevenue: true,
+      isRate: false,
+      isUnpaid: false
+    },
+    {
+      key: 'subscriptionAvgValue' as keyof MetricsData,
+      title: t('subscriptionAvgValue'),
+      icon: DollarSign,
+      iconColor: '#8b5cf6',
+      iconBg: '#f3e8ff',
+      formatter: formatCurrency,
+      isRevenue: true,
       isRate: false,
       isUnpaid: false
     }

@@ -40,10 +40,10 @@ export async function PUT(
   try {
     const { id: templateId } = await params;
     const body = await request.json();
-    const { templateName, paymentType, serviceType, amount, description, isActive } = body;
+    const { templateName, paymentType, amount, description, isActive } = body;
 
     // バリデーション
-    if (!templateName || !paymentType || !serviceType || !amount) {
+    if (!templateName || !paymentType || !amount) {
       return NextResponse.json(
         { error: 'Required fields are missing' },
         { status: 400 }
@@ -63,7 +63,6 @@ export async function PUT(
       .set({
         templateName,
         paymentType,
-        serviceType,
         amount,
         description: description || null,
         isActive: isActive ?? true,

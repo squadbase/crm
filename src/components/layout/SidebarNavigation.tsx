@@ -7,9 +7,10 @@ import { TranslationKey } from '@/lib/i18n';
 import {
   Clock,
   Users,
-  ShoppingCart,
   FileText,
-  Settings
+  Settings,
+  CreditCard,
+  RefreshCw
 } from 'lucide-react';
 
 const getNavigationSections = (t: (key: TranslationKey) => string) => [
@@ -17,7 +18,8 @@ const getNavigationSections = (t: (key: TranslationKey) => string) => [
     title: t('salesManagementSection'),
     items: [
       { name: t('dashboard'), href: '/', icon: Clock },
-      { name: t('orders'), href: '/orders', icon: ShoppingCart },
+      { name: t('onetimeOrders'), href: '/orders', icon: CreditCard },
+      { name: t('subscriptions'), href: '/subscriptions', icon: RefreshCw },
       { name: t('customers'), href: '/customers', icon: Users },
     ]
   },
@@ -97,7 +99,8 @@ export function SidebarNavigation() {
       title: '売上管理',
       items: [
         { name: 'Dashboard', href: '/', icon: Clock },
-        { name: 'Orders', href: '/orders', icon: ShoppingCart },
+        { name: 'Onetime Orders', href: '/orders', icon: CreditCard },
+        { name: 'Subscriptions', href: '/subscriptions', icon: RefreshCw },
         { name: 'Customer Management', href: '/customers', icon: Users },
       ]
     },

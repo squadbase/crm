@@ -1,12 +1,14 @@
 'use client';
 
-import { Building, Calendar, ShoppingBag, Edit, Trash2 } from 'lucide-react';
+import { Building, Calendar, Edit, Trash2 } from 'lucide-react';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
 interface Customer {
   customerId: string;
   customerName: string;
   orderCount?: number;
+  onetimeRevenue?: number | null;
+  subscriptionRevenue?: number | null;
   totalRevenue?: number | null;
   lastOrderDate?: string | null;
   createdAt: Date;
@@ -56,14 +58,23 @@ export function AllCustomers({ customers: customerStats, onEdit, onDelete }: All
                 fontWeight: '500', 
                 color: '#6b7280' 
               }}>{t('customerName')}</th>
-              {typeof customerStats[0]?.orderCount !== 'undefined' && (
+              {typeof customerStats[0]?.onetimeRevenue !== 'undefined' && (
                 <th style={{ 
                   textAlign: 'center', 
                   padding: '8px 6px', 
                   fontSize: '13px', 
                   fontWeight: '500', 
                   color: '#6b7280' 
-                }}>{t('orderCount')}</th>
+                }}>One-time収益</th>
+              )}
+              {typeof customerStats[0]?.subscriptionRevenue !== 'undefined' && (
+                <th style={{ 
+                  textAlign: 'center', 
+                  padding: '8px 6px', 
+                  fontSize: '13px', 
+                  fontWeight: '500', 
+                  color: '#6b7280' 
+                }}>サブスク収益</th>
               )}
               {typeof customerStats[0]?.totalRevenue !== 'undefined' && (
                 <th style={{ 
@@ -72,7 +83,7 @@ export function AllCustomers({ customers: customerStats, onEdit, onDelete }: All
                   fontSize: '13px', 
                   fontWeight: '500', 
                   color: '#6b7280' 
-                }}>{t('revenue')}</th>
+                }}>総収益</th>
               )}
               {typeof customerStats[0]?.lastOrderDate !== 'undefined' && (
                 <th style={{ 
@@ -143,12 +154,18 @@ export function AllCustomers({ customers: customerStats, onEdit, onDelete }: All
                     </div>
                   </div>
                 </td>
-                {typeof customer.orderCount !== 'undefined' && (
+                {typeof customer.onetimeRevenue !== 'undefined' && (
                   <td style={{ padding: '12px 8px', textAlign: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                      <ShoppingBag style={{ height: '14px', width: '14px', color: '#6b7280' }} />
-                      <span style={{ fontWeight: '500' }}>{customer.orderCount}</span>
-                    </div>
+                    <span style={{ fontWeight: '500' }}>
+                      {formatCurrency(customer.onetimeRevenue || 0)}
+                    </span>
+                  </td>
+                )}
+                {typeof customer.subscriptionRevenue !== 'undefined' && (
+                  <td style={{ padding: '12px 8px', textAlign: 'center' }}>
+                    <span style={{ fontWeight: '500' }}>
+                      {formatCurrency(customer.subscriptionRevenue || 0)}
+                    </span>
                   </td>
                 )}
                 {typeof customer.totalRevenue !== 'undefined' && (

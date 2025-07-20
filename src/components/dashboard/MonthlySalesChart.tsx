@@ -7,20 +7,18 @@ import { useClientI18n } from '@/hooks/useClientI18n';
 interface MonthlySalesData {
   month: string;
   totalAmount: number;
-  projectAmount: number;
-  productAmount: number;
-  orderCount: number;
-  projectCount: number;
-  productCount: number;
+  onetimeAmount: number;
+  subscriptionAmount: number;
+  year: number;
+  monthNum: number;
 }
 
 interface MonthlySalesResponse {
   monthlySales: MonthlySalesData[];
   summary: {
     totalPeriodSales: number;
-    totalProjectSales: number;
-    totalProductSales: number;
-    totalOrders: number;
+    totalOnetimeSales: number;
+    totalSubscriptionSales: number;
     monthCount: number;
   };
 }
@@ -38,7 +36,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
   const [loading, setLoading] = useState(true);
   const [hoveredBar, setHoveredBar] = useState<{
     monthIndex: number;
-    barType: 'total' | 'project' | 'product';
+    barType: 'onetime' | 'subscription';
   } | null>(null);
 
   useEffect(() => {
@@ -49,11 +47,11 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const params = new URLSearchParams();
-      if (period.startDate) params.append('startDate', period.startDate);
-      if (period.endDate) params.append('endDate', period.endDate);
-
-      const response = await fetch(`/api/dashboard/monthly-sales?${params}`);
+      let url = '/api/dashboard/monthly-sales';
+      if (period.startDate && period.endDate) {
+        url += `?startDate=${period.startDate}&endDate=${period.endDate}`;
+      }
+      const response = await fetch(url);
       const result = await response.json();
       setData(result);
     } catch (error) {
@@ -94,7 +92,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
     );
   }
 
-  if (!data || data.monthlySales.length === 0) {
+  if (!data || !data.monthlySales || data.monthlySales.length === 0) {
     return (
       <div style={{
         backgroundColor: 'white',
@@ -126,52 +124,48 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
   const graphHeight = chartHeight - padding.top - padding.bottom;
 
   // 最大値を計算 - データが空の場合のエラーを防ぐ
-  const maxAmount = monthlySales.length > 0 ? Math.max(...monthlySales.map(item => item.totalAmount)) : 0;
+  const maxAmount = monthlySales && monthlySales.length > 0 ? Math.max(...monthlySales.map(item => item.totalAmount)) : 0;
   const yAxisMax = Math.ceil(maxAmount * 1.1 / 100000) * 100000; // 10万円単位で切り上げ
 
-  // 棒グラフ用の座標計算関数
-  const barWidth = graphWidth / monthlySales.length * 0.8; // 棒の幅（80%使用）
-  // const barSpacing = graphWidth / monthlySales.length * 0.2; // 棒の間隔（20%使用） // Currently not used
-  const groupWidth = barWidth / 3; // 各グループ内の棒の幅
+  // 棒グラフ用の座標計算関数（スタック形式）
+  const barWidth = monthlySales && monthlySales.length > 0 ? graphWidth / monthlySales.length * 0.6 : 0; // 棒の幅（60%使用）
   
-  const getBarX = (index: number, groupIndex: number) => {
-    const centerX = padding.left + (index + 0.5) * (graphWidth / monthlySales.length);
-    const groupStartX = centerX - barWidth / 2;
-    return groupStartX + groupIndex * groupWidth;
+  const getBarX = (index: number) => {
+    const length = monthlySales && monthlySales.length > 0 ? monthlySales.length : 1;
+    const centerX = padding.left + (index + 0.5) * (graphWidth / length);
+    return centerX - barWidth / 2;
   };
   
   const getBarY = (amount: number) => padding.top + graphHeight - (amount / yAxisMax) * graphHeight;
   const getBarHeight = (amount: number) => (amount / yAxisMax) * graphHeight;
 
-  const getBarColor = (baseColor: string, monthIndex: number, barType: 'total' | 'project' | 'product') => {
+  const getBarColor = (baseColor: string, monthIndex: number, barType: 'onetime' | 'subscription') => {
     const isHovered = hoveredBar?.monthIndex === monthIndex && hoveredBar?.barType === barType;
     if (isHovered) {
       // ホバー時に明るくする
       const colors = {
-        '#2563eb': '#3b82f6', // 青系
-        '#059669': '#10b981', // 緑系
-        '#dc2626': '#ef4444'  // 赤系
+        '#f97316': '#fb923c', // オレンジ系
+        '#8b5cf6': '#a78bfa', // 紫系
       };
       return colors[baseColor as keyof typeof colors] || baseColor;
     }
     return baseColor;
   };
 
-  const getTooltipContent = (item: MonthlySalesData, barType: 'total' | 'project' | 'product') => {
+  const getTooltipContent = (item: MonthlySalesData, barType: 'onetime' | 'subscription') => {
     const values = {
-      total: item.totalAmount,
-      project: item.projectAmount,
-      product: item.productAmount
+      onetime: item.onetimeAmount,
+      subscription: item.subscriptionAmount
     };
     const labels = {
-      total: '合計',
-      project: 'プロジェクト',
-      product: 'Product'
+      onetime: t('onetime'),
+      subscription: t('subscription')
     };
     return {
       label: labels[barType],
       value: formatCurrency(values[barType]),
-      month: formatMonth(item.month)
+      month: formatMonth(item.month),
+      total: formatCurrency(item.totalAmount)
     };
   };
 
@@ -216,28 +210,19 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
             <div style={{
               width: '12px',
               height: '12px',
-              backgroundColor: '#2563eb',
+              backgroundColor: '#f97316',
               borderRadius: '2px'
             }} />
-            <span style={{ fontSize: '12px', color: '#374151' }}>{t('total')}</span>
+            <span style={{ fontSize: '12px', color: '#374151' }}>{t('onetime')}</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{
               width: '12px',
               height: '12px',
-              backgroundColor: '#059669',
+              backgroundColor: '#8b5cf6',
               borderRadius: '2px'
             }} />
-            <span style={{ fontSize: '12px', color: '#374151' }}>{t('project')}</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{
-              width: '12px',
-              height: '12px',
-              backgroundColor: '#dc2626',
-              borderRadius: '2px'
-            }} />
-            <span style={{ fontSize: '12px', color: '#374151' }}>{t('product')}</span>
+            <span style={{ fontSize: '12px', color: '#374151' }}>{t('subscription')}</span>
           </div>
         </div>
       </div>
@@ -259,21 +244,15 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
           </p>
         </div>
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 4px 0' }}>{t('project')}</p>
-          <p style={{ fontSize: '16px', fontWeight: '600', color: '#059669', margin: 0 }}>
-            {formatCurrency(summary.totalProjectSales)}
+          <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 4px 0' }}>{t('onetime')}</p>
+          <p style={{ fontSize: '16px', fontWeight: '600', color: '#f97316', margin: 0 }}>
+            {formatCurrency(summary.totalOnetimeSales)}
           </p>
         </div>
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 4px 0' }}>{t('product')}</p>
-          <p style={{ fontSize: '16px', fontWeight: '600', color: '#dc2626', margin: 0 }}>
-            {formatCurrency(summary.totalProductSales)}
-          </p>
-        </div>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 4px 0' }}>{t('totalOrders')}</p>
-          <p style={{ fontSize: '16px', fontWeight: '600', color: '#374151', margin: 0 }}>
-            {summary.totalOrders}{t('orders_unit')}
+          <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 4px 0' }}>{t('subscription')}</p>
+          <p style={{ fontSize: '16px', fontWeight: '600', color: '#8b5cf6', margin: 0 }}>
+            {formatCurrency(summary.totalSubscriptionSales)}
           </p>
         </div>
       </div>
@@ -317,8 +296,9 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
           })}
 
           {/* X軸ラベル */}
-          {monthlySales.map((item, index) => {
-            const centerX = padding.left + (index + 0.5) * (graphWidth / monthlySales.length);
+          {monthlySales && monthlySales.map((item, index) => {
+            const length = monthlySales.length;
+            const centerX = padding.left + (index + 0.5) * (graphWidth / length);
             return (
               <text
                 key={index}
@@ -333,44 +313,38 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
             );
           })}
 
-          {/* 棒グラフ */}
-          {monthlySales.map((item, index) => {
+          {/* 棒グラフ（スタック形式） */}
+          {monthlySales && monthlySales.map((item, index) => {
+            const x = getBarX(index);
+            const onetimeHeight = getBarHeight(item.onetimeAmount);
+            const subscriptionHeight = getBarHeight(item.subscriptionAmount);
+            const onetimeY = getBarY(item.onetimeAmount);
+            const subscriptionY = getBarY(item.totalAmount);
+            
             return (
               <g key={index}>
-                {/* 合計の棒 */}
+                {/* Subscriptionの棒（下部） */}
                 <rect
-                  x={getBarX(index, 0)}
-                  y={getBarY(item.totalAmount)}
-                  width={groupWidth}
-                  height={getBarHeight(item.totalAmount)}
-                  fill={getBarColor('#2563eb', index, 'total')}
+                  x={x}
+                  y={subscriptionY}
+                  width={barWidth}
+                  height={subscriptionHeight}
+                  fill={getBarColor('#8b5cf6', index, 'subscription')}
                   rx="2"
                   style={{ cursor: 'pointer', transition: 'fill 0.2s ease' }}
-                  onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'total' })}
+                  onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'subscription' })}
                   onMouseLeave={() => setHoveredBar(null)}
                 />
-                {/* プロジェクトの棒 */}
+                {/* One-timeの棒（上部） */}
                 <rect
-                  x={getBarX(index, 1)}
-                  y={getBarY(item.projectAmount)}
-                  width={groupWidth}
-                  height={getBarHeight(item.projectAmount)}
-                  fill={getBarColor('#059669', index, 'project')}
+                  x={x}
+                  y={onetimeY}
+                  width={barWidth}
+                  height={onetimeHeight}
+                  fill={getBarColor('#f97316', index, 'onetime')}
                   rx="2"
                   style={{ cursor: 'pointer', transition: 'fill 0.2s ease' }}
-                  onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'project' })}
-                  onMouseLeave={() => setHoveredBar(null)}
-                />
-                {/* Productの棒 */}
-                <rect
-                  x={getBarX(index, 2)}
-                  y={getBarY(item.productAmount)}
-                  width={groupWidth}
-                  height={getBarHeight(item.productAmount)}
-                  fill={getBarColor('#dc2626', index, 'product')}
-                  rx="2"
-                  style={{ cursor: 'pointer', transition: 'fill 0.2s ease' }}
-                  onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'product' })}
+                  onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'onetime' })}
                   onMouseLeave={() => setHoveredBar(null)}
                 />
               </g>
@@ -383,13 +357,10 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
           <div
             style={{
               position: 'absolute',
-              top: getBarY(monthlySales[hoveredBar.monthIndex]?.[
-                hoveredBar.barType === 'total' ? 'totalAmount' : 
-                hoveredBar.barType === 'project' ? 'projectAmount' : 'productAmount'
-              ] || 0) - 60,
-              left: getBarX(hoveredBar.monthIndex, 
-                hoveredBar.barType === 'total' ? 0 : 
-                hoveredBar.barType === 'project' ? 1 : 2) + groupWidth / 2,
+              top: hoveredBar.barType === 'onetime' 
+                ? getBarY(monthlySales[hoveredBar.monthIndex]?.onetimeAmount || 0) - 80
+                : getBarY(monthlySales[hoveredBar.monthIndex]?.totalAmount || 0) + getBarHeight(monthlySales[hoveredBar.monthIndex]?.subscriptionAmount || 0) / 2 - 30,
+              left: getBarX(hoveredBar.monthIndex) + barWidth / 2,
               transform: 'translateX(-50%)',
               backgroundColor: 'rgba(0, 0, 0, 0.8)',
               color: 'white',
@@ -407,9 +378,12 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
               return (
                 <div>
                   <div style={{ marginBottom: '4px', fontWeight: '600' }}>{tooltip.month}</div>
-                  <div>
+                  <div style={{ marginBottom: '2px' }}>
                     <span style={{ marginRight: '8px' }}>{tooltip.label}:</span>
                     <span style={{ fontWeight: '600' }}>{tooltip.value}</span>
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#e5e7eb' }}>
+                    <span>Total: {tooltip.total}</span>
                   </div>
                 </div>
               );

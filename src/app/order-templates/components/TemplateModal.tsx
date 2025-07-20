@@ -8,7 +8,6 @@ interface OrderTemplate {
   templateId: string;
   templateName: string;
   paymentType: 'onetime' | 'subscription';
-  serviceType: 'product' | 'project';
   amount: string;
   description: string | null;
   isActive: boolean;
@@ -26,7 +25,6 @@ interface TemplateModalProps {
 interface FormData {
   templateName: string;
   paymentType: 'onetime' | 'subscription';
-  serviceType: 'product' | 'project';
   amount: string;
   description: string;
   isActive: boolean;
@@ -37,7 +35,6 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
   const [formData, setFormData] = useState<FormData>({
     templateName: '',
     paymentType: 'onetime',
-    serviceType: 'product',
     amount: '',
     description: '',
     isActive: true
@@ -51,7 +48,6 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
       setFormData({
         templateName: editingTemplate.templateName,
         paymentType: editingTemplate.paymentType,
-        serviceType: editingTemplate.serviceType,
         amount: editingTemplate.amount,
         description: editingTemplate.description || '',
         isActive: editingTemplate.isActive
@@ -60,7 +56,6 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
       setFormData({
         templateName: '',
         paymentType: 'onetime',
-        serviceType: 'product',
         amount: '',
         description: '',
         isActive: true
@@ -226,65 +221,34 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
               )}
             </div>
 
-            {/* サービス種別・支払い形態 */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div>
-                <label style={{
-                  display: 'block',
+            {/* 支払い形態 */}
+            <div>
+              <label style={{
+                display: 'block',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#374151',
+                marginBottom: '6px'
+              }}>
+                {t('paymentTypeTemplate')} <span style={{ color: '#dc2626' }}>*</span>
+              </label>
+              <select
+                value={formData.paymentType}
+                onChange={(e) => handleInputChange('paymentType', e.target.value as 'onetime' | 'subscription')}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
                   fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  marginBottom: '6px'
-                }}>
-                  {t('serviceTypeTemplate')} <span style={{ color: '#dc2626' }}>*</span>
-                </label>
-                <select
-                  value={formData.serviceType}
-                  onChange={(e) => handleInputChange('serviceType', e.target.value as 'product' | 'project')}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    backgroundColor: 'white',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                >
-                  <option value="product">{t('productTemplate')}</option>
-                  <option value="project">{t('projectTemplate')}</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  marginBottom: '6px'
-                }}>
-                  {t('paymentTypeTemplate')} <span style={{ color: '#dc2626' }}>*</span>
-                </label>
-                <select
-                  value={formData.paymentType}
-                  onChange={(e) => handleInputChange('paymentType', e.target.value as 'onetime' | 'subscription')}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    backgroundColor: 'white',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                >
-                  <option value="onetime">{t('onetimeTemplate')}</option>
-                  <option value="subscription">{t('subscriptionTemplate')}</option>
-                </select>
-              </div>
+                  backgroundColor: 'white',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <option value="onetime">{t('onetimeTemplate')}</option>
+                <option value="subscription">{t('subscriptionTemplate')}</option>
+              </select>
             </div>
 
             {/* 金額 */}

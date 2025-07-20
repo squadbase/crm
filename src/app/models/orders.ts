@@ -1,19 +1,17 @@
 import { db } from '@/lib/db';
-import { orders } from '@/lib/db/schema';
-import { eq, desc, asc, lte, gte, and, or, like } from 'drizzle-orm';
+import { orders, customers } from '@/lib/db/schema';
+import { eq, desc, asc, lte, gte, and, or, like, count } from 'drizzle-orm';
 
 export interface OrderFilters {
   customerId?: string;
   isPaid?: boolean;
-  paymentType?: 'onetime' | 'subscription';
-  serviceType?: 'project' | 'product';
   startDate?: Date;
   endDate?: Date;
   search?: string;
 }
 
 export interface OrderSortOptions {
-  field: 'created' | 'amount' | 'customer' | 'payment';
+  field: 'created' | 'amount' | 'customer';
   direction: 'asc' | 'desc';
 }
 
@@ -31,66 +29,79 @@ export async function getOrders({
   limit?: number;
   offset?: number;
 } = {}) {
-  let query = db.select().from(orders);
+  try {
+    // Join with customers table to get customer name
+    let query = db
+      .select({
+        orderId: orders.orderId,
+        customerId: orders.customerId,
+        customerName: customers.customerName,
+        amount: orders.amount,
+        isPaid: orders.isPaid,
+        description: orders.description,
+        createdAt: orders.createdAt,
+        updatedAt: orders.updatedAt,
+      })
+      .from(orders)
+      .leftJoin(customers, eq(orders.customerId, customers.customerId));
 
-  // Apply filters
-  const conditions = [];
-  
-  if (filters.customerId) {
-    conditions.push(eq(orders.customerId, filters.customerId));
-  }
-  
-  if (filters.isPaid !== undefined) {
-    conditions.push(eq(orders.isPaid, filters.isPaid));
-  }
-  
-  if (filters.paymentType) {
-    conditions.push(eq(orders.paymentType, filters.paymentType));
-  }
-  
-  if (filters.serviceType) {
-    conditions.push(eq(orders.serviceType, filters.serviceType));
-  }
-  
-  if (filters.startDate) {
-    conditions.push(gte(orders.salesStartDt, filters.startDate));
-  }
-  
-  if (filters.endDate) {
-    conditions.push(lte(orders.salesStartDt, filters.endDate));
-  }
-  
-  if (filters.search) {
-    conditions.push(
-      or(
-        like(orders.customerName, `%${filters.search}%`),
-        like(orders.description, `%${filters.search}%`)
-      )
-    );
-  }
+    // Apply filters
+    const conditions = [];
+    
+    if (filters.customerId) {
+      conditions.push(eq(orders.customerId, filters.customerId));
+    }
+    
+    if (filters.isPaid !== undefined) {
+      conditions.push(eq(orders.isPaid, filters.isPaid));
+    }
+    
+    if (filters.startDate) {
+      conditions.push(gte(orders.createdAt, filters.startDate));
+    }
+    
+    if (filters.endDate) {
+      conditions.push(lte(orders.createdAt, filters.endDate));
+    }
+    
+    if (filters.search) {
+      conditions.push(
+        or(
+          like(customers.customerName, `%${filters.search}%`),
+          like(orders.description, `%${filters.search}%`)
+        )
+      );
+    }
 
-  if (conditions.length > 0) {
-    query = query.where(and(...conditions));
+    if (conditions.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      query = (query as any).where(conditions.length === 1 ? conditions[0] : and(...conditions));
+    }
+
+    // Apply sorting
+    const sortField = sort.field === 'created' ? orders.createdAt :
+                     sort.field === 'amount' ? orders.amount :
+                     customers.customerName;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    query = (query as any).orderBy(sort.direction === 'desc' ? desc(sortField) : asc(sortField));
+
+    // Apply pagination
+    if (limit) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      query = (query as any).limit(limit);
+    }
+    
+    if (offset > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      query = (query as any).offset(offset);
+    }
+
+    const result = await query;
+    return result;
+  } catch (error) {
+    throw error;
   }
-
-  // Apply sorting
-  const sortField = sort.field === 'created' ? orders.createdAt :
-                   sort.field === 'amount' ? orders.amount :
-                   sort.field === 'customer' ? orders.customerName :
-                   orders.paymentType;
-
-  query = query.orderBy(sort.direction === 'desc' ? desc(sortField) : asc(sortField));
-
-  // Apply pagination
-  if (limit) {
-    query = query.limit(limit);
-  }
-  
-  if (offset > 0) {
-    query = query.offset(offset);
-  }
-
-  return await query;
 }
 
 /**
@@ -160,7 +171,10 @@ export async function getRecentOrders(limit: number = 5) {
  * Get order count
  */
 export async function getOrderCount(filters: OrderFilters = {}) {
-  let query = db.select({ count: orders.orderId }).from(orders);
+  let query = db
+    .select({ count: count() })
+    .from(orders)
+    .leftJoin(customers, eq(orders.customerId, customers.customerId));
 
   const conditions = [];
   
@@ -172,18 +186,28 @@ export async function getOrderCount(filters: OrderFilters = {}) {
     conditions.push(eq(orders.isPaid, filters.isPaid));
   }
   
-  if (filters.paymentType) {
-    conditions.push(eq(orders.paymentType, filters.paymentType));
+  if (filters.startDate) {
+    conditions.push(gte(orders.createdAt, filters.startDate));
   }
   
-  if (filters.serviceType) {
-    conditions.push(eq(orders.serviceType, filters.serviceType));
+  if (filters.endDate) {
+    conditions.push(lte(orders.createdAt, filters.endDate));
+  }
+  
+  if (filters.search) {
+    conditions.push(
+      or(
+        like(customers.customerName, `%${filters.search}%`),
+        like(orders.description, `%${filters.search}%`)
+      )
+    );
   }
 
   if (conditions.length > 0) {
-    query = query.where(and(...conditions));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    query = (query as any).where(conditions.length === 1 ? conditions[0] : and(...conditions));
   }
 
   const result = await query;
-  return result.length;
+  return Number(result[0]?.count || 0);
 }
