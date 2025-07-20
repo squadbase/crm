@@ -1,0 +1,1 @@
+ALTER TABLE "orders" ADD COLUMN "sales_at" timestamp NOT NULL;

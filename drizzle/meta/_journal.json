@@ -15,6 +15,13 @@
       "when": 1752945431506,
       "tag": "0001_exotic_maggott",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1753005368452,
+      "tag": "0002_lame_mastermind",
+      "breakpoints": true
     }
   ]
 }
