@@ -12,9 +12,8 @@ export const getCurrentMonthMetricsQuery = (year: number, month: number) => ({
     COALESCE(
       (SELECT SUM(${orders.amount}) 
        FROM ${orders} 
-       WHERE ${orders.isPaid} = true 
-       AND EXTRACT(YEAR FROM ${orders.createdAt}) = ${year}
-       AND EXTRACT(MONTH FROM ${orders.createdAt}) = ${month}), 
+       WHERE EXTRACT(YEAR FROM ${orders.salesAt}) = ${year}
+       AND EXTRACT(MONTH FROM ${orders.salesAt}) = ${month}), 
       0
     )
   `,
@@ -35,8 +34,8 @@ export const getCurrentMonthMetricsQuery = (year: number, month: number) => ({
   onetimeOrderCount: sql<number>`
     (SELECT COUNT(*) 
      FROM ${orders} 
-     WHERE EXTRACT(YEAR FROM ${orders.createdAt}) = ${year}
-     AND EXTRACT(MONTH FROM ${orders.createdAt}) = ${month})
+     WHERE EXTRACT(YEAR FROM ${orders.salesAt}) = ${year}
+     AND EXTRACT(MONTH FROM ${orders.salesAt}) = ${month})
   `,
 
   // Count of subscription orders for current month
@@ -58,8 +57,8 @@ export const getKPIMetricsQuery = (year: number, month: number) => ({
     COALESCE(
       (SELECT AVG(${orders.amount}) 
        FROM ${orders} 
-       WHERE EXTRACT(YEAR FROM ${orders.createdAt}) = ${year}
-       AND EXTRACT(MONTH FROM ${orders.createdAt}) = ${month}), 
+       WHERE EXTRACT(YEAR FROM ${orders.salesAt}) = ${year}
+       AND EXTRACT(MONTH FROM ${orders.salesAt}) = ${month}), 
       0
     )
   `,

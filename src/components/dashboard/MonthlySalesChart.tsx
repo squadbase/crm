@@ -117,10 +117,17 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
   const { monthlySales, summary } = data;
 
   // グラフの描画設定
-  // const chartWidth = '100%'; // Currently not used
   const chartHeight = 350;
   const padding = { top: 20, right: 80, bottom: 60, left: 120 };
-  const graphWidth = 900 - padding.left - padding.right;
+  
+  // 動的な幅計算：データ量に応じてチャート幅を調整
+  const minChartWidth = 900;
+  const minWidthPerMonth = 15; // 月あたりの最小幅
+  const dynamicWidth = monthlySales && monthlySales.length > 0 
+    ? Math.max(minChartWidth, monthlySales.length * minWidthPerMonth + padding.left + padding.right)
+    : minChartWidth;
+  
+  const graphWidth = dynamicWidth - padding.left - padding.right;
   const graphHeight = chartHeight - padding.top - padding.bottom;
 
   // 最大値を計算 - データが空の場合のエラーを防ぐ
@@ -259,14 +266,14 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
 
       {/* グラフ */}
       <div style={{ overflowX: 'auto', position: 'relative', width: '100%' }}>
-        <svg width="100%" height={chartHeight} style={{ display: 'block', minWidth: '900px' }} viewBox="0 0 900 350" preserveAspectRatio="none">
+        <svg width="100%" height={chartHeight} style={{ display: 'block', minWidth: `${dynamicWidth}px` }} viewBox={`0 0 ${dynamicWidth} 350`} preserveAspectRatio="none">
           {/* 背景グリッド */}
           <defs>
             <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
               <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f1f5f9" strokeWidth="1"/>
             </pattern>
           </defs>
-          <rect width="900" height="350" fill="url(#grid)" />
+          <rect width={dynamicWidth} height="350" fill="url(#grid)" />
 
           {/* Y軸ラベル */}
           {[0, 0.25, 0.5, 0.75, 1].map((ratio, index) => {
@@ -299,6 +306,37 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
           {monthlySales && monthlySales.map((item, index) => {
             const length = monthlySales.length;
             const centerX = padding.left + (index + 0.5) * (graphWidth / length);
+            
+            // ラベルの表示間隔を動的に調整（文字重複を防ぐ）
+            // 各ラベルの推定幅: 約50px (YYYY/MM形式)
+            const estimatedLabelWidth = 50;
+            const availableWidthPerLabel = graphWidth / length;
+            const optimalInterval = Math.max(1, Math.ceil(estimatedLabelWidth / availableWidthPerLabel));
+            
+            let shouldShowLabel = false;
+            
+            if (length <= 12) {
+              // 12ヶ月以下の場合は全て表示
+              shouldShowLabel = true;
+            } else if (length <= 24) {
+              // 13-24ヶ月の場合は2ヶ月おき
+              shouldShowLabel = index % 2 === 0;
+            } else if (length <= 36) {
+              // 25-36ヶ月の場合は3ヶ月おき
+              shouldShowLabel = index % 3 === 0;
+            } else if (length <= 60) {
+              // 37-60ヶ月の場合は4ヶ月おき
+              shouldShowLabel = index % 4 === 0;
+            } else if (length <= 72) {
+              // 61-72ヶ月の場合は6ヶ月おき
+              shouldShowLabel = index % 6 === 0;
+            } else {
+              // 73ヶ月以上の場合は年単位（12ヶ月おき）
+              shouldShowLabel = index % 12 === 0;
+            }
+            
+            if (!shouldShowLabel) return null;
+            
             return (
               <text
                 key={index}

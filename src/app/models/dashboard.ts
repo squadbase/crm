@@ -141,31 +141,42 @@ export async function getDashboardMetrics(): Promise<{
  */
 export async function getMonthlySalesData(startDate?: string | null, endDate?: string | null): Promise<MonthlySalesData[]> {
   try {
-    // Calculate date range
+    // Calculate date range based on provided parameters or default to 13 months
     const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1;
+    let start: Date;
+    let end: Date;
+    
+    if (startDate && endDate) {
+      start = new Date(startDate);
+      end = new Date(endDate);
+    } else {
+      // Default: 6 months before to 6 months after current month
+      start = new Date(now.getFullYear(), now.getMonth() - 6, 1);
+      end = new Date(now.getFullYear(), now.getMonth() + 6, 1);
+    }
     
     // Generate all months in the range
     const months: { year: number; month: number }[] = [];
-    for (let i = -6; i <= 6; i++) {
-      const targetMonth = currentMonth + i;
-      const targetYear = targetMonth <= 0 ? currentYear - 1 : 
-                         targetMonth > 12 ? currentYear + 1 : currentYear;
-      const normalizedMonth = targetMonth <= 0 ? targetMonth + 12 :
-                              targetMonth > 12 ? targetMonth - 12 : targetMonth;
-      months.push({ year: targetYear, month: normalizedMonth });
+    const current = new Date(start.getFullYear(), start.getMonth(), 1);
+    
+    while (current <= end) {
+      months.push({ 
+        year: current.getFullYear(), 
+        month: current.getMonth() + 1 
+      });
+      current.setMonth(current.getMonth() + 1);
     }
 
     // Get onetime sales data
     const onetimeResult = await db.execute(sql`
       SELECT 
-        EXTRACT(YEAR FROM created_at) as year,
-        EXTRACT(MONTH FROM created_at) as month,
-        COALESCE(SUM(CASE WHEN is_paid = true THEN amount ELSE 0 END), 0) as amount
+        EXTRACT(YEAR FROM sales_at) as year,
+        EXTRACT(MONTH FROM sales_at) as month,
+        COALESCE(SUM(amount), 0) as amount
       FROM ${orders}
-      WHERE created_at >= CURRENT_DATE - INTERVAL '12 months'
-      GROUP BY EXTRACT(YEAR FROM created_at), EXTRACT(MONTH FROM created_at)
+      WHERE sales_at >= ${start.toISOString().split('T')[0]}
+      AND sales_at <= ${end.toISOString().split('T')[0]}
+      GROUP BY EXTRACT(YEAR FROM sales_at), EXTRACT(MONTH FROM sales_at)
     `);
 
     // Get subscription sales data (past)
@@ -175,7 +186,10 @@ export async function getMonthlySalesData(startDate?: string | null, endDate?: s
         month,
         COALESCE(SUM(CASE WHEN is_paid = true THEN amount ELSE 0 END), 0) as amount
       FROM ${subscriptionPaid}
-      WHERE year >= EXTRACT(YEAR FROM CURRENT_DATE - INTERVAL '12 months')
+      WHERE year >= ${start.getFullYear()}
+      AND year <= ${end.getFullYear()}
+      AND (year > ${start.getFullYear()} OR month >= ${start.getMonth() + 1})
+      AND (year < ${end.getFullYear()} OR month <= ${end.getMonth() + 1})
       GROUP BY year, month
     `);
 
@@ -186,8 +200,8 @@ export async function getMonthlySalesData(startDate?: string | null, endDate?: s
         sa.amount
       FROM ${subscriptions} s
       JOIN ${subscriptionAmounts} sa ON s.subscription_id = sa.subscription_id
-      WHERE (sa.end_date IS NULL OR sa.end_date >= CURRENT_DATE)
-      AND sa.start_date <= CURRENT_DATE + INTERVAL '6 months'
+      WHERE (sa.end_date IS NULL OR sa.end_date >= ${end.toISOString().split('T')[0]})
+      AND sa.start_date <= ${end.toISOString().split('T')[0]}
     `);
 
     // Create maps for quick lookup
@@ -217,7 +231,7 @@ export async function getMonthlySalesData(startDate?: string | null, endDate?: s
       const onetimeSales = onetimeMap.get(key) || 0;
       const subscriptionSales = isCurrentOrPast 
         ? (subscriptionMap.get(key) || 0)
-        : totalActiveSubscriptionAmount; // Project active subscriptions into future
+        : (monthDate > now ? totalActiveSubscriptionAmount : 0); // Project active subscriptions only into future
 
       return {
         month: `${year}-${String(month).padStart(2, '0')}`,

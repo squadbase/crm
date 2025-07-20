@@ -1246,6 +1246,14 @@ export const translations = {
     ja: '未払合計',
     en: 'Total Unpaid',
   },
+  averageContinuationMonths: {
+    ja: '平均継続月数',
+    en: 'Average Continuation Months',
+  },
+  months: {
+    ja: 'ヶ月',
+    en: ' months',
+  },
   subscriptionsTitle: {
     ja: 'サブスクリプション - Squadbase CRM',
     en: 'Subscriptions - Squadbase CRM',

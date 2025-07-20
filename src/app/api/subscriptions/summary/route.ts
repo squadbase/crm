@@ -5,25 +5,6 @@ import { count, sum, sql, and, or, eq, isNull } from 'drizzle-orm';
 
 export async function GET(request: NextRequest) {
   try {
-    // 総サブスクリプション数
-    const totalSubscriptionsResult = await db
-      .select({ count: count() })
-      .from(subscriptions);
-
-    // アクティブサブスクリプション数（現在有効な料金設定があるもの）
-    const activeSubscriptionsResult = await db
-      .select({ count: sql<number>`COUNT(DISTINCT ${subscriptions.subscriptionId})` })
-      .from(subscriptions)
-      .leftJoin(subscriptionAmounts, eq(subscriptions.subscriptionId, subscriptionAmounts.subscriptionId))
-      .where(
-        and(
-          or(
-            isNull(subscriptionAmounts.endDate), // 終了日がnull（継続中）
-            sql`${subscriptionAmounts.endDate} >= CURRENT_DATE` // または終了日が今日以降
-          )
-        )
-      );
-
     // 月間売上予定（全アクティブサブスクリプションの現在料金合計）
     const monthlyRevenueResult = await db
       .select({ 
@@ -37,35 +18,67 @@ export async function GET(request: NextRequest) {
         )
       );
 
-    // 今月の支払い状況
+    // 総未払い金額（今月までで支払うべきだったが未払いのもの）
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth() + 1;
 
-    const thisMonthPaymentResult = await db
+    const totalUnpaidResult = await db
       .select({
-        paidAmount: sql<string>`SUM(CASE WHEN ${subscriptionPaid.isPaid} = true THEN ${subscriptionPaid.amount} ELSE 0 END)`,
-        unpaidAmount: sql<string>`SUM(CASE WHEN ${subscriptionPaid.isPaid} = false THEN ${subscriptionPaid.amount} ELSE 0 END)`,
+        totalUnpaid: sql<string>`SUM(${subscriptionPaid.amount})`
       })
       .from(subscriptionPaid)
       .where(
         and(
-          eq(subscriptionPaid.year, currentYear),
-          eq(subscriptionPaid.month, currentMonth)
+          eq(subscriptionPaid.isPaid, false),
+          or(
+            sql`${subscriptionPaid.year} < ${currentYear}`,
+            and(
+              eq(subscriptionPaid.year, currentYear),
+              sql`${subscriptionPaid.month} <= ${currentMonth}`
+            )
+          )
         )
       );
 
-    const totalSubscriptions = totalSubscriptionsResult[0]?.count || 0;
-    const activeSubscriptions = activeSubscriptionsResult[0]?.count || 0;
+    // 平均継続月数の計算
+    const continuationMonthsResult = await db
+      .select({
+        subscriptionId: subscriptions.subscriptionId,
+        startDate: sql<string>`MIN(${subscriptionAmounts.startDate})`,
+        endDate: sql<string>`MAX(${subscriptionAmounts.endDate})`
+      })
+      .from(subscriptions)
+      .leftJoin(subscriptionAmounts, eq(subscriptions.subscriptionId, subscriptionAmounts.subscriptionId))
+      .groupBy(subscriptions.subscriptionId);
+
+    // 各サブスクリプションの継続月数を計算
+    let totalMonths = 0;
+    let subscriptionCount = 0;
+    const currentDate = new Date();
+
+    for (const sub of continuationMonthsResult) {
+      if (sub.startDate) {
+        const startDate = new Date(sub.startDate);
+        const endDate = sub.endDate ? new Date(sub.endDate) : currentDate;
+        
+        // 月数の差を計算
+        const monthDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 + 
+                         (endDate.getMonth() - startDate.getMonth()) + 1;
+        
+        totalMonths += monthDiff;
+        subscriptionCount++;
+      }
+    }
+
+    const averageContinuationMonths = subscriptionCount > 0 ? totalMonths / subscriptionCount : 0;
+
     const totalMonthlyRevenue = monthlyRevenueResult[0]?.totalAmount || '0';
-    const paidThisMonth = thisMonthPaymentResult[0]?.paidAmount || '0';
-    const unpaidThisMonth = thisMonthPaymentResult[0]?.unpaidAmount || '0';
+    const totalUnpaid = totalUnpaidResult[0]?.totalUnpaid || '0';
 
     return NextResponse.json({
-      totalSubscriptions,
-      activeSubscriptions,
       totalMonthlyRevenue,
-      paidThisMonth,
-      unpaidThisMonth,
+      totalUnpaid,
+      averageContinuationMonths,
     });
   } catch (error) {
     console.error('Subscriptions summary API error:', error);

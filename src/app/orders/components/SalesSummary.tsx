@@ -4,9 +4,7 @@ import { useEffect, useState } from 'react';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
 interface SummaryData {
-  totalOrders: number;
   totalAmount: string;
-  paidAmount: string;
   unpaidAmount: string;
 }
 
@@ -72,7 +70,7 @@ export function SalesSummary({ period }: SalesSummaryProps) {
         gap: '16px',
         marginBottom: '20px'
       }}>
-        {[1, 2, 3, 4].map((i) => (
+        {[1, 2].map((i) => (
           <div key={i} style={{
             backgroundColor: 'white',
             border: '1px solid #e2e8f0',
@@ -104,19 +102,9 @@ export function SalesSummary({ period }: SalesSummaryProps) {
 
   const summaryCards = [
     {
-      title: t('totalOrdersCount'),
-      value: summary.totalOrders.toString(),
-      color: '#2563eb'
-    },
-    {
       title: t('totalSales'),
       value: formatAmount(summary.totalAmount || 0),
       color: '#059669'
-    },
-    {
-      title: t('paidAmount'),
-      value: formatAmount(summary.paidAmount || 0),
-      color: '#10b981'
     },
     {
       title: t('unpaidAmount'),

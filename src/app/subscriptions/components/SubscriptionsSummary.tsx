@@ -4,11 +4,9 @@ import { useEffect, useState } from 'react';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
 interface SummaryData {
-  totalSubscriptions: number;
-  activeSubscriptions: number;
   totalMonthlyRevenue: string;
-  paidThisMonth: string;
-  unpaidThisMonth: string;
+  totalUnpaid: string;
+  averageContinuationMonths: number;
 }
 
 export function SubscriptionsSummary() {
@@ -45,7 +43,7 @@ export function SubscriptionsSummary() {
         gap: '16px',
         marginBottom: '20px'
       }}>
-        {[1, 2, 3, 4].map((i) => (
+        {[1, 2, 3].map((i) => (
           <div key={i} style={{
             backgroundColor: 'white',
             border: '1px solid #e2e8f0',
@@ -74,24 +72,19 @@ export function SubscriptionsSummary() {
 
   const summaryCards = [
     {
-      title: t('totalSubscriptions'),
-      value: `${data.activeSubscriptions}/${data.totalSubscriptions}`,
-      color: '#2563eb'
-    },
-    {
       title: t('monthlyRevenueExpected'),
       value: formatAmount(data.totalMonthlyRevenue || 0),
       color: '#7c3aed'
     },
     {
-      title: t('thisMonthPaid'),
-      value: formatAmount(data.paidThisMonth || 0),
-      color: '#10b981'
+      title: t('totalUnpaid'),
+      value: formatAmount(data.totalUnpaid || 0),
+      color: '#ef4444'
     },
     {
-      title: t('thisMonthUnpaid'),
-      value: formatAmount(data.unpaidThisMonth || 0),
-      color: '#ef4444'
+      title: t('averageContinuationMonths'),
+      value: `${data.averageContinuationMonths.toFixed(1)}${t('months')}`,
+      color: '#10b981'
     }
   ];
 
