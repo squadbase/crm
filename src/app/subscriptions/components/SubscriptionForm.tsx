@@ -166,7 +166,7 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
 
       onSuccess();
       onClose();
-    } catch (error) {
+    } catch {
       setError('Failed to create subscription');
     } finally {
       setIsSubmitting(false);

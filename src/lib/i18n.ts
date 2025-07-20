@@ -118,6 +118,10 @@ export const translations = {
     ja: '顧客管理',
     en: 'Customers',
   },
+  unpaidPayments: {
+    ja: '未払い管理',
+    en: 'Unpaid Payments',
+  },
   customerManagement: {
     ja: '顧客情報の管理と分析を行います',
     en: 'Manage and analyze customer information',
@@ -1340,6 +1344,88 @@ export const translations = {
   errorLoadingSubscription: {
     ja: 'サブスクリプションの読み込み中にエラーが発生しました',
     en: 'Error occurred while loading subscription',
+  },
+
+  // Unpaid Payments Management
+  unpaidPaymentsTitle: {
+    ja: '未払い管理 - Squadbase CRM',
+    en: 'Unpaid Payments - Squadbase CRM',
+  },
+  unpaidPaymentsDescription: {
+    ja: '当月以前の未払い取引の管理と支払い状況の更新を行います',
+    en: 'Manage unpaid transactions from previous months and update payment status',
+  },
+  currentMonthUnpaid: {
+    ja: '当月未払い',
+    en: 'Current Month Unpaid',
+  },
+  pastDueUnpaid: {
+    ja: '期限経過未払い',
+    en: 'Past Due Unpaid',
+  },
+  markSelectedAsPaid: {
+    ja: '選択分を支払い済みにする',
+    en: 'Mark Selected as Paid',
+  },
+  updating: {
+    ja: '更新中...',
+    en: 'Updating...',
+  },
+  selectAll: {
+    ja: '全て選択',
+    en: 'Select All',
+  },
+  clearSelection: {
+    ja: '選択解除',
+    en: 'Clear Selection',
+  },
+  paymentDate: {
+    ja: '支払日',
+    en: 'Payment Date',
+  },
+  dueDate: {
+    ja: '期限',
+    en: 'Due Date',
+  },
+  daysPastDue: {
+    ja: '延滞日数',
+    en: 'Days Past Due',
+  },
+  transactionType: {
+    ja: '取引種別',
+    en: 'Transaction Type',
+  },
+  loadingUnpaidPayments: {
+    ja: '未払い取引を読み込み中...',
+    en: 'Loading unpaid payments...',
+  },
+  noUnpaidPayments: {
+    ja: '未払いの取引はありません',
+    en: 'No unpaid payments found',
+  },
+  noUnpaidPaymentsDescription: {
+    ja: '全ての取引が支払い済みです',
+    en: 'All transactions have been paid',
+  },
+  paymentUpdateSuccess: {
+    ja: '支払い状況を更新しました',
+    en: 'Payment status updated successfully',
+  },
+  paymentUpdateError: {
+    ja: '支払い状況の更新に失敗しました',
+    en: 'Failed to update payment status',
+  },
+  confirmMarkAsPaid: {
+    ja: '支払い済みマーク確認',
+    en: 'Confirm Mark as Paid',
+  },
+  confirmMarkAsPaidMessage: {
+    ja: '選択した取引を支払い済みにしますか？',
+    en: 'Are you sure you want to mark the selected transactions as paid?',
+  },
+  selectedItemsCount: {
+    ja: '件選択中',
+    en: ' items selected',
   },
 };
 

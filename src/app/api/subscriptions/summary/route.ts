@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { subscriptions, subscriptionPaid, subscriptionAmounts } from '@/lib/db/schema';
-import { count, sum, sql, and, or, eq, isNull } from 'drizzle-orm';
+import { sql, or, eq, isNull } from 'drizzle-orm';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // 月間売上予定（全アクティブサブスクリプションの現在料金合計）
     const monthlyRevenueResult = await db
@@ -18,27 +18,13 @@ export async function GET(request: NextRequest) {
         )
       );
 
-    // 総未払い金額（今月までで支払うべきだったが未払いのもの）
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth() + 1;
-
+    // 総未払い金額（全ての期間の未払い合計）
     const totalUnpaidResult = await db
       .select({
         totalUnpaid: sql<string>`SUM(${subscriptionPaid.amount})`
       })
       .from(subscriptionPaid)
-      .where(
-        and(
-          eq(subscriptionPaid.isPaid, false),
-          or(
-            sql`${subscriptionPaid.year} < ${currentYear}`,
-            and(
-              eq(subscriptionPaid.year, currentYear),
-              sql`${subscriptionPaid.month} <= ${currentMonth}`
-            )
-          )
-        )
-      );
+      .where(eq(subscriptionPaid.isPaid, false));
 
     // 平均継続月数の計算
     const continuationMonthsResult = await db

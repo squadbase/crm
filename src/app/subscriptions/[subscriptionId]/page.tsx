@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Edit, X, DollarSign, Calendar, AlertTriangle, Play, User, CreditCard, Clock } from 'lucide-react';
+import { ArrowLeft, X, DollarSign, AlertTriangle, Play, User, CreditCard, Clock } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
@@ -67,28 +67,7 @@ export default function SubscriptionDetailPage({
   const [restartDate, setRestartDate] = useState('');
   const [restartAmountDisplay, setRestartAmountDisplay] = useState('');
 
-  useEffect(() => {
-    params.then((resolvedParams) => {
-      setSubscriptionId(resolvedParams.subscriptionId);
-    });
-  }, [params]);
-
-  useEffect(() => {
-    if (subscriptionId) {
-      fetchSubscriptionDetail();
-    }
-  }, [subscriptionId]);
-
-  // ページタイトル設定
-  useEffect(() => {
-    if (subscription?.customerName) {
-      document.title = `${subscription.customerName} - ${t('subscription')} ${t('details')}`;
-    } else {
-      document.title = `${t('subscription')} ${t('details')}`;
-    }
-  }, [subscription?.customerName, t]);
-
-  const fetchSubscriptionDetail = async () => {
+  const fetchSubscriptionDetail = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -113,7 +92,28 @@ export default function SubscriptionDetailPage({
     } finally {
       setLoading(false);
     }
-  };
+  }, [subscriptionId]);
+
+  useEffect(() => {
+    params.then((resolvedParams) => {
+      setSubscriptionId(resolvedParams.subscriptionId);
+    });
+  }, [params]);
+
+  useEffect(() => {
+    if (subscriptionId) {
+      fetchSubscriptionDetail();
+    }
+  }, [subscriptionId, fetchSubscriptionDetail]);
+
+  // ページタイトル設定
+  useEffect(() => {
+    if (subscription?.customerName) {
+      document.title = `${subscription.customerName} - ${t('subscription')} ${t('details')}`;
+    } else {
+      document.title = `${t('subscription')} ${t('details')}`;
+    }
+  }, [subscription?.customerName, t]);
 
   const handleAmountChange = async () => {
     if (!newAmount || !effectiveDate) {

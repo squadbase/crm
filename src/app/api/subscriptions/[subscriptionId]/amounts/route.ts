@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { subscriptionAmounts } from '@/lib/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, asc } from 'drizzle-orm';
 
 export async function GET(
   request: NextRequest,
@@ -23,7 +23,7 @@ export async function GET(
       })
       .from(subscriptionAmounts)
       .where(eq(subscriptionAmounts.subscriptionId, subscriptionId))
-      .orderBy(desc(subscriptionAmounts.startDate));
+      .orderBy(asc(subscriptionAmounts.startDate));
 
     return NextResponse.json({
       amounts: amounts.map(amount => ({

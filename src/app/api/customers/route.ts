@@ -94,7 +94,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const validatedData = createCustomerSchema.parse(body);
+    createCustomerSchema.parse(body);
 
     // Note: In the refactored version, customer creation should be handled
     // through the orders model since customers are derived from orders

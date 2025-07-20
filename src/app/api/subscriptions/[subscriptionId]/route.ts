@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { subscriptions, customers, subscriptionAmounts, subscriptionPaid } from '@/lib/db/schema';
-import { eq, desc, and, isNull, or } from 'drizzle-orm';
+import { eq, desc, asc } from 'drizzle-orm';
 
 export async function GET(
   request: NextRequest,
@@ -48,7 +48,7 @@ export async function GET(
       .select()
       .from(subscriptionAmounts)
       .where(eq(subscriptionAmounts.subscriptionId, subscriptionId))
-      .orderBy(desc(subscriptionAmounts.startDate));
+      .orderBy(asc(subscriptionAmounts.startDate));
     
     console.log('Found amounts:', amounts.length);
 

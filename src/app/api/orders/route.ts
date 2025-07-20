@@ -10,8 +10,6 @@ export async function GET(request: NextRequest) {
     // パラメータ取得
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '50');
-    const sort = searchParams.get('sort') || 'created';
-    const direction = searchParams.get('direction') || 'desc';
     const isPaid = searchParams.get('isPaid');
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
@@ -44,7 +42,6 @@ export async function GET(request: NextRequest) {
 
     // フィルター条件を追加
     if (isPaid !== null && isPaid !== '') {
-      const paidCondition = sql` AND o.is_paid = ${isPaid === 'true'}`;
       baseQuery = sql`${baseQuery} WHERE o.is_paid = ${isPaid === 'true'}`;
       countQuery = sql`${countQuery} WHERE o.is_paid = ${isPaid === 'true'}`;
     }

@@ -21,9 +21,11 @@ export async function GET(request: NextRequest) {
         description: subscriptions.description,
         createdAt: subscriptions.createdAt,
         updatedAt: subscriptions.updatedAt,
+        startDate: subscriptionAmounts.startDate,
       })
       .from(subscriptions)
-      .leftJoin(customers, eq(subscriptions.customerId, customers.customerId));
+      .leftJoin(customers, eq(subscriptions.customerId, customers.customerId))
+      .leftJoin(subscriptionAmounts, eq(subscriptions.subscriptionId, subscriptionAmounts.subscriptionId));
 
     // ソートとページネーション
     const offset = (page - 1) * limit;
@@ -39,22 +41,24 @@ export async function GET(request: NextRequest) {
           description: subscriptions.description,
           createdAt: subscriptions.createdAt,
           updatedAt: subscriptions.updatedAt,
+          startDate: subscriptionAmounts.startDate,
         })
         .from(subscriptions)
         .leftJoin(customers, eq(subscriptions.customerId, customers.customerId))
+        .leftJoin(subscriptionAmounts, eq(subscriptions.subscriptionId, subscriptionAmounts.subscriptionId))
         .where(
           or(
             like(customers.customerName, `%${search}%`),
             like(subscriptions.description, `%${search}%`)
           )
         )
-        .orderBy(desc(subscriptions.createdAt))
+        .orderBy(desc(subscriptionAmounts.startDate))
         .limit(limit)
         .offset(offset);
     } else {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       query = (query as any)
-        .orderBy(desc(subscriptions.createdAt))
+        .orderBy(desc(subscriptionAmounts.startDate))
         .limit(limit)
         .offset(offset);
     }
@@ -119,9 +123,10 @@ export async function GET(request: NextRequest) {
 
     // 総数を取得
     let totalCountQuery = db
-      .select({ count: sql`count(*)` })
+      .select({ count: sql`count(DISTINCT ${subscriptions.subscriptionId})` })
       .from(subscriptions)
-      .leftJoin(customers, eq(subscriptions.customerId, customers.customerId));
+      .leftJoin(customers, eq(subscriptions.customerId, customers.customerId))
+      .leftJoin(subscriptionAmounts, eq(subscriptions.subscriptionId, subscriptionAmounts.subscriptionId));
 
     if (search) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

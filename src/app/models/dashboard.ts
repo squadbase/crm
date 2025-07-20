@@ -170,38 +170,38 @@ export async function getMonthlySalesData(startDate?: string | null, endDate?: s
     // Get onetime sales data
     const onetimeResult = await db.execute(sql`
       SELECT 
-        EXTRACT(YEAR FROM sales_at) as year,
-        EXTRACT(MONTH FROM sales_at) as month,
-        COALESCE(SUM(amount), 0) as amount
+        EXTRACT(YEAR FROM ${orders.salesAt}) as year,
+        EXTRACT(MONTH FROM ${orders.salesAt}) as month,
+        COALESCE(SUM(${orders.amount}), 0) as amount
       FROM ${orders}
-      WHERE sales_at >= ${start.toISOString().split('T')[0]}
-      AND sales_at <= ${end.toISOString().split('T')[0]}
-      GROUP BY EXTRACT(YEAR FROM sales_at), EXTRACT(MONTH FROM sales_at)
+      WHERE ${orders.salesAt} >= ${start.toISOString().split('T')[0]}
+      AND ${orders.salesAt} <= ${end.toISOString().split('T')[0]}
+      GROUP BY EXTRACT(YEAR FROM ${orders.salesAt}), EXTRACT(MONTH FROM ${orders.salesAt})
     `);
 
     // Get subscription sales data (past)
     const subscriptionResult = await db.execute(sql`
       SELECT 
-        year,
-        month,
-        COALESCE(SUM(CASE WHEN is_paid = true THEN amount ELSE 0 END), 0) as amount
+        ${subscriptionPaid.year} as year,
+        ${subscriptionPaid.month} as month,
+        COALESCE(SUM(CASE WHEN ${subscriptionPaid.isPaid} = true THEN ${subscriptionPaid.amount} ELSE 0 END), 0) as amount
       FROM ${subscriptionPaid}
-      WHERE year >= ${start.getFullYear()}
-      AND year <= ${end.getFullYear()}
-      AND (year > ${start.getFullYear()} OR month >= ${start.getMonth() + 1})
-      AND (year < ${end.getFullYear()} OR month <= ${end.getMonth() + 1})
-      GROUP BY year, month
+      WHERE ${subscriptionPaid.year} >= ${start.getFullYear()}
+      AND ${subscriptionPaid.year} <= ${end.getFullYear()}
+      AND (${subscriptionPaid.year} > ${start.getFullYear()} OR ${subscriptionPaid.month} >= ${start.getMonth() + 1})
+      AND (${subscriptionPaid.year} < ${end.getFullYear()} OR ${subscriptionPaid.month} <= ${end.getMonth() + 1})
+      GROUP BY ${subscriptionPaid.year}, ${subscriptionPaid.month}
     `);
 
     // Get active subscriptions for future projection
     const activeSubscriptionsResult = await db.execute(sql`
       SELECT DISTINCT
-        s.subscription_id,
-        sa.amount
-      FROM ${subscriptions} s
-      JOIN ${subscriptionAmounts} sa ON s.subscription_id = sa.subscription_id
-      WHERE (sa.end_date IS NULL OR sa.end_date >= ${end.toISOString().split('T')[0]})
-      AND sa.start_date <= ${end.toISOString().split('T')[0]}
+        ${subscriptions.subscriptionId},
+        ${subscriptionAmounts.amount}
+      FROM ${subscriptions}
+      JOIN ${subscriptionAmounts} ON ${subscriptions.subscriptionId} = ${subscriptionAmounts.subscriptionId}
+      WHERE (${subscriptionAmounts.endDate} IS NULL OR ${subscriptionAmounts.endDate} >= ${end.toISOString().split('T')[0]})
+      AND ${subscriptionAmounts.startDate} <= ${end.toISOString().split('T')[0]}
     `);
 
     // Create maps for quick lookup

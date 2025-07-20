@@ -308,10 +308,6 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
             const centerX = padding.left + (index + 0.5) * (graphWidth / length);
             
             // ラベルの表示間隔を動的に調整（文字重複を防ぐ）
-            // 各ラベルの推定幅: 約50px (YYYY/MM形式)
-            const estimatedLabelWidth = 50;
-            const availableWidthPerLabel = graphWidth / length;
-            const optimalInterval = Math.max(1, Math.ceil(estimatedLabelWidth / availableWidthPerLabel));
             
             let shouldShowLabel = false;
             

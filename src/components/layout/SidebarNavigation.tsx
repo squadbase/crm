@@ -10,7 +10,8 @@ import {
   FileText,
   Settings,
   CreditCard,
-  RefreshCw
+  RefreshCw,
+  Receipt
 } from 'lucide-react';
 
 const getNavigationSections = (t: (key: TranslationKey) => string) => [
@@ -21,6 +22,7 @@ const getNavigationSections = (t: (key: TranslationKey) => string) => [
       { name: t('onetimeOrders'), href: '/orders', icon: CreditCard },
       { name: t('subscriptions'), href: '/subscriptions', icon: RefreshCw },
       { name: t('customers'), href: '/customers', icon: Users },
+      { name: t('unpaidPayments'), href: '/unpaid', icon: Receipt },
     ]
   },
   {
@@ -102,6 +104,7 @@ export function SidebarNavigation() {
         { name: 'Onetime Orders', href: '/orders', icon: CreditCard },
         { name: 'Subscriptions', href: '/subscriptions', icon: RefreshCw },
         { name: 'Customer Management', href: '/customers', icon: Users },
+        { name: 'Unpaid Payments', href: '/unpaid', icon: Receipt },
       ]
     },
     {

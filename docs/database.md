@@ -24,7 +24,7 @@ onetimeとsubscriptionの注文を分離して管理し、詳細な売上分析�
 | order_id | UUID | PRIMARY KEY | 注文ID |
 | customer_id | UUID | FOREIGN KEY | 顧客ID (customers.customer_id) |
 | amount | DECIMAL(15,2) | NOT NULL | 金額 |
-| sales_at | DECIMAL(15,2) | NOT NULL | 売り上げ日 |
+| sales_at | DATE | NOT NULL | 売り上げ日 |
 | is_paid | BOOLEAN | DEFAULT FALSE | 支払い済みフラグ |
 | description | TEXT | | 説明・備考 |
 | created_at | TIMESTAMP | DEFAULT NOW() | 作成日時 |
@@ -99,32 +99,49 @@ payment_typeとservice_typeの組み合わせごとの入力テンプレート�
 - UNIQUE INDEX: email
 - INDEX: customer_name (部分一致検索用)
 
-### orders テーブル
+### orders テーブル（onetime注文専用）
 - PRIMARY KEY: order_id
 - FOREIGN KEY INDEX: customer_id
-- INDEX: sales_start_dt (日付範囲検索用)
-- INDEX: payment_type, service_type (フィルタリング用)
+- INDEX: sales_at（売上日での範囲検索用）
+
+### subscriptions テーブル（サブスクリプション契約管理）
+- PRIMARY KEY: subscription_id
+- FOREIGN KEY INDEX: customer_id
+
+### subscription_amounts テーブル（サブスクリプション金額履歴）
+- PRIMARY KEY: amount_id
+- FOREIGN KEY INDEX: subscription_id
+- INDEX: start_date, end_date（期間検索用）
+
+### subscription_paid テーブル（サブスクリプション月次支払い管理）
+- PRIMARY KEY: paid_id
+- FOREIGN KEY INDEX: subscription_id
+- INDEX: year, month（年月での検索用）
 
 ### order_templates テーブル
 - PRIMARY KEY: template_id
-- UNIQUE INDEX: payment_type, service_type, template_name (同一条件での重複防止)
-- INDEX: payment_type, service_type (検索用)
+- UNIQUE INDEX: payment_type, template_name (同一条件での重複防止)
+- INDEX: payment_type (検索用)
 - INDEX: is_active (アクティブテンプレート抽出用)
 
 ## ビジネスルール
 
 ### 売上管理ルール
+
 1. **一回払い (onetime)**
-   - sales_end_dt は sales_start_dt と同じ日付
-   - 支払い完了後は is_paid = TRUE
+   - `orders`テーブルで管理する
+   - 売上日は `sales_at` カラムで管理
+   - 支払い完了時は `is_paid = TRUE` とする
 
 2. **継続課金 (subscription)**
-   - sales_end_dt は継続終了日または NULL（継続中）
-   - 月次課金の場合は毎月 is_paid をリセット
+   - `subscriptions` テーブルで契約情報を管理
+   - 金額履歴は `subscription_amounts` テーブルで管理し、期間は `start_date` ～ `end_date`（NULLは継続中）で表す
+   - 月次の支払い状況は `subscription_paid` テーブルで `year`, `month`, `is_paid` で管理
+   - 毎月の支払いごとに `subscription_paid` レコードを作成し、支払い完了時は `is_paid = TRUE` とする
 
 3. **金額管理**
-   - 金額は税込み価格で管理
-   - 通貨は JPY をデフォルトとするが、多通貨対応可能
+   - すべての金額は税込み価格で管理
+   - 通貨はデフォルトで JPY（日本円）とするが、多通貨対応も可能
 
 ### テンプレート管理ルール
 1. **テンプレート設計**

@@ -164,6 +164,11 @@ async function seed() {
       
       // Sub5 payments (July only)
       { subscriptionId: sub5.subscriptionId, year: 2025, month: 7, amount: '80000.00', isPaid: true },
+      
+      // Add some unpaid subscription payments for testing
+      { subscriptionId: sub1.subscriptionId, year: 2025, month: 8, amount: '50000.00', isPaid: false },
+      { subscriptionId: sub2.subscriptionId, year: 2025, month: 8, amount: '80000.00', isPaid: false },
+      { subscriptionId: sub4.subscriptionId, year: 2025, month: 8, amount: '100000.00', isPaid: false },
     ]);
 
     // Insert order templates
@@ -245,7 +250,7 @@ async function seed() {
     console.log(`💼 Created ${5} onetime orders`);
     console.log(`📅 Created ${5} subscriptions`);
     console.log(`💰 Created ${5} subscription amounts`);
-    console.log(`💳 Created ${13} subscription payments`);
+    console.log(`💳 Created ${16} subscription payments`);
     console.log(`📋 Created ${11} order templates`);
     console.log('');
     console.log('📊 Sales Summary:');

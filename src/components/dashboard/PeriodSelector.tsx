@@ -49,7 +49,6 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
     // 日本時間での日付計算を行う
     const year = now.getFullYear();
     const month = now.getMonth();
-    const day = now.getDate();
 
     switch (shortcut) {
       case 'halfYear':
