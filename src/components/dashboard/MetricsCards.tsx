@@ -163,18 +163,18 @@ export function MetricsCards() {
     return (
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-        gap: '16px',
-        marginBottom: '20px'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '12px',
+        marginBottom: '16px'
       }}>
         {[1, 2, 3].map((i) => (
           <div key={i} style={{
             backgroundColor: 'white',
             border: '1px solid #e2e8f0',
-            borderRadius: '12px',
-            padding: '20px',
+            borderRadius: '8px',
+            padding: '16px',
             boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-            height: '120px',
+            height: '100px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
@@ -197,18 +197,18 @@ export function MetricsCards() {
     return (
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-        gap: '16px',
-        marginBottom: '20px'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '12px',
+        marginBottom: '16px'
       }}>
         {metricsConfig.map((config) => (
           <div key={config.key} style={{
             backgroundColor: 'white',
             border: '1px solid #e2e8f0',
-            borderRadius: '12px',
-            padding: '20px',
+            borderRadius: '8px',
+            padding: '16px',
             boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-            height: '120px',
+            height: '100px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
@@ -240,15 +240,16 @@ export function MetricsCards() {
           <div key={config.key} style={{
             backgroundColor: 'white',
             border: '1px solid #e2e8f0',
-            borderRadius: '12px',
-            padding: '20px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+            borderRadius: '8px',
+            padding: '16px',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+            minHeight: '100px'
           }}>
             <div style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              marginBottom: '12px'
+              marginBottom: '8px'
             }}>
               <div>
                 <p style={{
@@ -260,18 +261,18 @@ export function MetricsCards() {
                   {config.title}
                 </p>
                 <p style={{
-                  fontSize: '20px',
+                  fontSize: '18px',
                   fontWeight: '600',
                   color: '#0f172a',
-                  marginTop: '4px',
+                  marginTop: '2px',
                   margin: 0
                 }}>
                   {metric && metric.value !== undefined && metric.value !== null ? config.formatter(typeof metric.value === 'string' ? parseInt(metric.value) : metric.value) : t('noData')}
                 </p>
               </div>
               <div style={{
-                height: '40px',
-                width: '40px',
+                height: '32px',
+                width: '32px',
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
@@ -279,13 +280,13 @@ export function MetricsCards() {
                 backgroundColor: config.iconBg
               }}>
                 <Icon style={{
-                  height: '20px',
-                  width: '20px',
+                  height: '16px',
+                  width: '16px',
                   color: config.iconColor
                 }} />
               </div>
             </div>
-            <div style={{ marginTop: '8px' }}>
+            <div style={{ marginTop: '6px' }}>
               {metric && metric.growth ? formatGrowth(metric.growth, config.isRevenue, config.isRate, config.isUnpaid) : (
                 <div style={{
                   display: 'flex',

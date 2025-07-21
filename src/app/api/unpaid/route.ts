@@ -96,13 +96,27 @@ export async function GET() {
       };
     });
 
-    // Combine both arrays and sort by due date (ascending)
+    // Get current date for filtering
+    const today = new Date();
+    today.setHours(23, 59, 59, 999); // Set to end of today for comparison
+    
+    // Combine both arrays, filter by due date (only past due or due today), and sort by due date (ascending)
     const allUnpaidPayments = [
       ...formattedOnetimeOrders,
       ...formattedSubscriptionPayments
-    ].sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+    ]
+    .filter(payment => {
+      const dueDate = new Date(payment.dueDate);
+      return dueDate <= today;
+    })
+    .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
-    console.log('Real data formatted - step 8:', allUnpaidPayments.length);
+    console.log('Filtering results:', {
+      totalBeforeFilter: formattedOnetimeOrders.length + formattedSubscriptionPayments.length,
+      totalAfterFilter: allUnpaidPayments.length,
+      todayDate: today.toISOString().split('T')[0],
+      sampleDueDates: allUnpaidPayments.slice(0, 3).map(p => p.dueDate)
+    });
 
     // Calculate total amount
     const totalAmount = allUnpaidPayments.reduce((sum, payment) => {

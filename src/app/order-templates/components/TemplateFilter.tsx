@@ -41,9 +41,9 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
       padding: '16px',
       backgroundColor: 'white',
       border: '1px solid #e2e8f0',
-      borderRadius: '12px',
+      borderRadius: '8px',
       boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-      marginBottom: '20px'
+      marginBottom: '16px'
     }}>
       <div style={{
         display: 'flex',

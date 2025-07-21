@@ -34,7 +34,7 @@ export function SubscriptionsFilter({ onFilterChange }: SubscriptionsFilterProps
       display: 'flex',
       alignItems: 'center',
       gap: '12px',
-      marginBottom: '20px'
+      marginBottom: '16px'
     }}>
       <div style={{ position: 'relative', width: '100%', maxWidth: '320px' }}>
         <Search style={{ 

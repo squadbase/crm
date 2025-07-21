@@ -41,9 +41,9 @@ export function OrdersFilter({ onFilterChange }: OrdersFilterProps) {
     <div style={{
       backgroundColor: 'white',
       border: '1px solid #e2e8f0',
-      borderRadius: '12px',
-      padding: '24px',
-      marginBottom: '20px',
+      borderRadius: '8px',
+      padding: '16px',
+      marginBottom: '16px',
       boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
       boxSizing: 'border-box'
     }}>

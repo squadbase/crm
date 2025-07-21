@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 
 interface PageHeaderProps {
   title: string;
@@ -9,19 +9,71 @@ interface PageHeaderProps {
 }
 
 export function PageHeader({ title, description, actions }: PageHeaderProps) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
   return (
-    <div className="border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm">
-      <div className="flex min-h-[52px] items-center justify-between px-5 py-3 gap-3 flex-wrap">
-        <div className="flex items-start flex-col gap-0.5 min-w-0 flex-1">
-          <h1 className="text-lg font-semibold text-slate-900 m-0 leading-tight">
+    <div style={{
+      borderBottom: '1px solid #e5e7eb',
+      backgroundColor: 'white',
+      position: 'sticky',
+      top: 0,
+      zIndex: 10,
+      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+    }}>
+      <div style={{
+        display: 'flex',
+        minHeight: '52px',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: isMobile ? '12px 16px' : '12px 24px',
+        gap: '16px',
+        flexWrap: 'wrap'
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          flexDirection: 'column',
+          gap: '2px',
+          minWidth: 0,
+          flex: 1,
+          marginRight: isMobile ? '16px' : '32px'
+        }}>
+          <h1 style={{
+            fontSize: '16px',
+            fontWeight: '600',
+            color: '#0f172a',
+            margin: 0,
+            lineHeight: '1.5'
+          }}>
             {title}
           </h1>
-          <p className="text-[13px] text-gray-500 m-0 leading-snug">
+          <p style={{
+            fontSize: '13px',
+            color: '#6b7280',
+            margin: 0,
+            lineHeight: '1.4'
+          }}>
             {description}
           </p>
         </div>
         {actions && (
-          <div className="flex items-center gap-3 flex-wrap">
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            flexWrap: 'wrap',
+            marginLeft: isMobile ? '8px' : '16px'
+          }}>
             {actions}
           </div>
         )}
