@@ -60,15 +60,21 @@ export async function getDashboardMetrics(): Promise<{
   const lastMonth = currentMonth === 1 ? 12 : currentMonth - 1;
   const lastMonthYear = currentMonth === 1 ? currentYear - 1 : currentYear;
 
+  console.log('Querying metrics for:', { currentYear, currentMonth, lastMonthYear, lastMonth });
+
   // Get current month metrics
   const currentMetrics = await db
     .select(getCurrentMonthMetricsQuery(currentYear, currentMonth))
     .from(orders);
 
+  console.log('Current metrics result:', currentMetrics);
+
   // Get last month metrics for comparison
   const lastMonthMetrics = await db
     .select(getCurrentMonthMetricsQuery(lastMonthYear, lastMonth))
     .from(orders);
+
+  console.log('Last month metrics result:', lastMonthMetrics);
 
   // Get KPI metrics
   const currentKPIMetrics = await db
@@ -84,19 +90,26 @@ export async function getDashboardMetrics(): Promise<{
   const currentKPI = currentKPIMetrics[0];
   const lastMonthKPI = lastMonthKPIMetrics[0];
 
-  // Parse values
-  const currentOnetimeRevenue = parseFloat(current.onetimeRevenue);
-  const currentSubscriptionRevenue = parseFloat(current.subscriptionRevenue);
+  console.log('Dashboard metrics debug:', {
+    current,
+    lastMonthData,
+    currentKPI,
+    lastMonthKPI
+  });
+
+  // Parse values with safe access
+  const currentOnetimeRevenue = parseFloat(current?.onetimeRevenue || '0');
+  const currentSubscriptionRevenue = parseFloat(current?.subscriptionRevenue || '0');
   const currentTotalRevenue = currentOnetimeRevenue + currentSubscriptionRevenue;
   
-  const lastMonthOnetimeRevenue = parseFloat(lastMonthData.onetimeRevenue);
-  const lastMonthSubscriptionRevenue = parseFloat(lastMonthData.subscriptionRevenue);
+  const lastMonthOnetimeRevenue = parseFloat(lastMonthData?.onetimeRevenue || '0');
+  const lastMonthSubscriptionRevenue = parseFloat(lastMonthData?.subscriptionRevenue || '0');
   const lastMonthTotalRevenue = lastMonthOnetimeRevenue + lastMonthSubscriptionRevenue;
 
-  const currentOnetimeAvg = parseFloat(currentKPI.onetimeAvgOrderValue);
-  const currentSubscriptionAvg = parseFloat(currentKPI.subscriptionAvgValue);
-  const lastMonthOnetimeAvg = parseFloat(lastMonthKPI.onetimeAvgOrderValue);
-  const lastMonthSubscriptionAvg = parseFloat(lastMonthKPI.subscriptionAvgValue);
+  const currentOnetimeAvg = parseFloat(currentKPI?.onetimeAvgOrderValue || '0');
+  const currentSubscriptionAvg = parseFloat(currentKPI?.subscriptionAvgValue || '0');
+  const lastMonthOnetimeAvg = parseFloat(lastMonthKPI?.onetimeAvgOrderValue || '0');
+  const lastMonthSubscriptionAvg = parseFloat(lastMonthKPI?.subscriptionAvgValue || '0');
 
   return {
     metrics: {
@@ -113,16 +126,16 @@ export async function getDashboardMetrics(): Promise<{
         growth: calculateGrowth(currentSubscriptionRevenue, lastMonthSubscriptionRevenue)
       },
       onetimeOrderCount: {
-        value: Number(current.onetimeOrderCount),
-        growth: calculateGrowth(Number(current.onetimeOrderCount), Number(lastMonthData.onetimeOrderCount))
+        value: Number(current?.onetimeOrderCount || 0),
+        growth: calculateGrowth(Number(current?.onetimeOrderCount || 0), Number(lastMonthData?.onetimeOrderCount || 0))
       },
       subscriptionOrderCount: {
-        value: Number(current.subscriptionOrderCount),
-        growth: calculateGrowth(Number(current.subscriptionOrderCount), Number(lastMonthData.subscriptionOrderCount))
+        value: Number(current?.subscriptionOrderCount || 0),
+        growth: calculateGrowth(Number(current?.subscriptionOrderCount || 0), Number(lastMonthData?.subscriptionOrderCount || 0))
       },
       totalCustomers: {
-        value: Number(current.totalCustomers),
-        growth: calculateGrowth(Number(current.totalCustomers), Number(lastMonthData.totalCustomers))
+        value: Number(current?.totalCustomers || 0),
+        growth: calculateGrowth(Number(current?.totalCustomers || 0), Number(lastMonthData?.totalCustomers || 0))
       },
       onetimeAvgOrderValue: {
         value: currentOnetimeAvg,

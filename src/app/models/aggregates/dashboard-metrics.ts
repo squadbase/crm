@@ -14,7 +14,7 @@ export const getCurrentMonthMetricsQuery = (year: number, month: number) => ({
        FROM ${orders} 
        WHERE EXTRACT(YEAR FROM ${orders.salesAt}) = ${year}
        AND EXTRACT(MONTH FROM ${orders.salesAt}) = ${month}), 
-      0
+      '0'
     )
   `,
   
@@ -26,7 +26,7 @@ export const getCurrentMonthMetricsQuery = (year: number, month: number) => ({
        WHERE ${subscriptionPaid.isPaid} = true 
        AND ${subscriptionPaid.year} = ${year}
        AND ${subscriptionPaid.month} = ${month}), 
-      0
+      '0'
     )
   `,
 
@@ -59,7 +59,7 @@ export const getKPIMetricsQuery = (year: number, month: number) => ({
        FROM ${orders} 
        WHERE EXTRACT(YEAR FROM ${orders.salesAt}) = ${year}
        AND EXTRACT(MONTH FROM ${orders.salesAt}) = ${month}), 
-      0
+      '0'
     )
   `,
   
@@ -70,7 +70,7 @@ export const getKPIMetricsQuery = (year: number, month: number) => ({
        FROM ${subscriptionPaid} 
        WHERE ${subscriptionPaid.year} = ${year}
        AND ${subscriptionPaid.month} = ${month}), 
-      0
+      '0'
     )
   `
 });
