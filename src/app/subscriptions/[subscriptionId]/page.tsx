@@ -434,7 +434,7 @@ export default function SubscriptionDetailPage({
           textAlign: 'center'
         }}>
           <div style={{
-            fontSize: '18px',
+            fontSize: '15px',
             fontWeight: '600',
             color: '#dc2626',
             marginBottom: '8px'
@@ -469,7 +469,7 @@ export default function SubscriptionDetailPage({
           textAlign: 'center'
         }}>
           <div style={{
-            fontSize: '18px',
+            fontSize: '15px',
             fontWeight: '600',
             color: '#111827',
             marginBottom: '8px'
@@ -517,7 +517,7 @@ export default function SubscriptionDetailPage({
           boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
         }}>
           <h3 style={{
-            fontSize: '18px',
+            fontSize: '15px',
             fontWeight: '600',
             color: '#0f172a',
             marginBottom: '16px'
@@ -588,7 +588,7 @@ export default function SubscriptionDetailPage({
                   {t('currentMonthlyFee')}
                 </p>
                 <p style={{
-                  fontSize: '18px',
+                  fontSize: '15px',
                   fontWeight: '600',
                   color: '#0f172a',
                   margin: 0
@@ -669,7 +669,7 @@ export default function SubscriptionDetailPage({
             boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
           }}>
             <h3 style={{
-              fontSize: '18px',
+              fontSize: '15px',
               fontWeight: '600',
               color: '#0f172a',
               marginBottom: '16px'
@@ -705,7 +705,7 @@ export default function SubscriptionDetailPage({
           boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
         }}>
           <h2 style={{
-            fontSize: '18px',
+            fontSize: '15px',
             fontWeight: '600',
             color: '#111827',
             marginBottom: '16px',
@@ -834,7 +834,7 @@ export default function SubscriptionDetailPage({
           boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
         }}>
           <h2 style={{
-            fontSize: '18px',
+            fontSize: '15px',
             fontWeight: '600',
             color: '#111827',
             marginBottom: '16px',
@@ -996,7 +996,7 @@ export default function SubscriptionDetailPage({
                   {t('totalPaid')}
                 </div>
                 <div style={{
-                  fontSize: '20px',
+                  fontSize: '15px',
                   fontWeight: '700',
                   color: '#166534'
                 }}>
@@ -1019,7 +1019,7 @@ export default function SubscriptionDetailPage({
                   {t('totalUnpaid')}
                 </div>
                 <div style={{
-                  fontSize: '20px',
+                  fontSize: '15px',
                   fontWeight: '700',
                   color: '#dc2626'
                 }}>
@@ -1042,7 +1042,7 @@ export default function SubscriptionDetailPage({
                   {t('totalRevenue')}
                 </div>
                 <div style={{
-                  fontSize: '20px',
+                  fontSize: '15px',
                   fontWeight: '700',
                   color: '#1e40af'
                 }}>
@@ -1095,7 +1095,7 @@ export default function SubscriptionDetailPage({
                 {t('currentMonthlyFee')}
               </div>
               <div style={{
-                fontSize: '16px',
+                fontSize: '15px',
                 fontWeight: '600',
                 color: '#111827'
               }}>
@@ -1230,7 +1230,7 @@ export default function SubscriptionDetailPage({
                 right: '16px',
                 background: 'none',
                 border: 'none',
-                fontSize: '20px',
+                fontSize: '15px',
                 color: '#6b7280',
                 cursor: 'pointer',
                 padding: '4px',
@@ -1340,7 +1340,7 @@ export default function SubscriptionDetailPage({
                 right: '16px',
                 background: 'none',
                 border: 'none',
-                fontSize: '20px',
+                fontSize: '15px',
                 color: '#6b7280',
                 cursor: 'pointer',
                 padding: '4px',
@@ -1384,7 +1384,7 @@ export default function SubscriptionDetailPage({
                 {t('lastMonthlyFee')}
               </div>
               <div style={{
-                fontSize: '16px',
+                fontSize: '15px',
                 fontWeight: '600',
                 color: '#111827'
               }}>

@@ -261,7 +261,7 @@ export function MetricsCards() {
                   {config.title}
                 </p>
                 <p style={{
-                  fontSize: '18px',
+                  fontSize: '14px',
                   fontWeight: '600',
                   color: '#0f172a',
                   marginTop: '2px',

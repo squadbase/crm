@@ -83,7 +83,7 @@ export function CreateOrderModal({ isOpen, onClose, template, onConfirm }: Creat
           borderBottom: '1px solid #e5e7eb'
         }}>
           <h2 style={{
-            fontSize: '18px',
+            fontSize: '15px',
             fontWeight: '600',
             color: '#111827',
             margin: 0

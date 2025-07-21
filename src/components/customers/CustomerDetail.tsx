@@ -207,7 +207,7 @@ export function CustomerDetail({ customerId }: CustomerDetailProps) {
               <Building style={{ height: '24px', width: '24px', color: '#2563eb' }} />
             </div>
             <div>
-              <h2 style={{ fontSize: '20px', fontWeight: '600', color: '#0f172a', margin: 0 }}>
+              <h2 style={{ fontSize: '15px', fontWeight: '600', color: '#0f172a', margin: 0 }}>
                 {data.customer.customerName}
               </h2>
               <p style={{ fontSize: '13px', color: '#6b7280', margin: 0 }}>
@@ -246,7 +246,7 @@ export function CustomerDetail({ customerId }: CustomerDetailProps) {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <p style={{ fontSize: '12px', fontWeight: '500', color: '#64748b', margin: 0 }}>{t('onetimeRevenue')}</p>
-                <p style={{ fontSize: '18px', fontWeight: '600', color: '#0f172a', margin: 0 }}>
+                <p style={{ fontSize: '14px', fontWeight: '600', color: '#0f172a', margin: 0 }}>
                   {formatCurrency(data.stats.onetimeRevenue)}
                 </p>
               </div>
@@ -274,7 +274,7 @@ export function CustomerDetail({ customerId }: CustomerDetailProps) {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <p style={{ fontSize: '12px', fontWeight: '500', color: '#64748b', margin: 0 }}>{t('subscriptionRevenue')}</p>
-                <p style={{ fontSize: '18px', fontWeight: '600', color: '#0f172a', margin: 0 }}>
+                <p style={{ fontSize: '14px', fontWeight: '600', color: '#0f172a', margin: 0 }}>
                   {formatCurrency(data.stats.subscriptionRevenue)}
                 </p>
               </div>
@@ -302,7 +302,7 @@ export function CustomerDetail({ customerId }: CustomerDetailProps) {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <p style={{ fontSize: '12px', fontWeight: '500', color: '#64748b', margin: 0 }}>{t('totalRevenue')}</p>
-                <p style={{ fontSize: '18px', fontWeight: '600', color: '#0f172a', margin: 0 }}>
+                <p style={{ fontSize: '14px', fontWeight: '600', color: '#0f172a', margin: 0 }}>
                   {formatCurrency(data.stats.totalRevenue)}
                 </p>
               </div>
@@ -330,7 +330,7 @@ export function CustomerDetail({ customerId }: CustomerDetailProps) {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <p style={{ fontSize: '12px', fontWeight: '500', color: '#64748b', margin: 0 }}>{t('ordersCount')} ({data.stats.totalOrders})</p>
-                <p style={{ fontSize: '18px', fontWeight: '600', color: '#0f172a', margin: 0 }}>
+                <p style={{ fontSize: '14px', fontWeight: '600', color: '#0f172a', margin: 0 }}>
                   {data.stats.paidOrders} {t('paidStatus')}
                 </p>
               </div>

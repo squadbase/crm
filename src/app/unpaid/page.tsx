@@ -235,7 +235,7 @@ export default function UnpaidPaymentsPage() {
                 {t('totalUnpaid')}
               </span>
             </div>
-            <div style={{ fontSize: '24px', fontWeight: '700', color: '#111827' }}>
+            <div style={{ fontSize: '14px', fontWeight: '600', color: '#111827' }}>
               {formatCurrency(totalAmount)}
             </div>
             <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
@@ -275,7 +275,7 @@ export default function UnpaidPaymentsPage() {
               textAlign: 'center'
             }}>
               <Check size={48} style={{ color: '#10b981', margin: '0 auto 16px', display: 'block' }} />
-              <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', margin: '0 0 8px 0' }}>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', color: '#111827', margin: '0 0 8px 0' }}>
                 {t('noUnpaidPayments')}
               </h3>
               <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>

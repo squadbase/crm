@@ -89,7 +89,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <h3 style={{
-                  fontSize: '18px',
+                  fontSize: '15px',
                   fontWeight: '600',
                   color: '#0f172a',
                   margin: '0 0 4px 0'
@@ -169,7 +169,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <h3 style={{
-                  fontSize: '18px',
+                  fontSize: '15px',
                   fontWeight: '600',
                   color: '#0f172a',
                   margin: '0 0 4px 0'

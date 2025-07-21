@@ -193,7 +193,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
       }}>
         <div>
           <h3 style={{
-            fontSize: '18px',
+            fontSize: '15px',
             fontWeight: '600',
             color: '#0f172a',
             margin: '0 0 4px 0'
@@ -246,19 +246,19 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
       }}>
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 4px 0' }}>{t('total')}</p>
-          <p style={{ fontSize: '16px', fontWeight: '600', color: '#2563eb', margin: 0 }}>
+          <p style={{ fontSize: '14px', fontWeight: '600', color: '#2563eb', margin: 0 }}>
             {formatCurrency(summary.totalPeriodSales)}
           </p>
         </div>
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 4px 0' }}>{t('onetime')}</p>
-          <p style={{ fontSize: '16px', fontWeight: '600', color: '#f97316', margin: 0 }}>
+          <p style={{ fontSize: '14px', fontWeight: '600', color: '#f97316', margin: 0 }}>
             {formatCurrency(summary.totalOnetimeSales)}
           </p>
         </div>
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 4px 0' }}>{t('subscription')}</p>
-          <p style={{ fontSize: '16px', fontWeight: '600', color: '#8b5cf6', margin: 0 }}>
+          <p style={{ fontSize: '14px', fontWeight: '600', color: '#8b5cf6', margin: 0 }}>
             {formatCurrency(summary.totalSubscriptionSales)}
           </p>
         </div>

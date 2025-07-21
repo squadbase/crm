@@ -72,7 +72,7 @@ export function SubscriptionsTable({
         boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
       }}>
         <div style={{
-          fontSize: '18px',
+          fontSize: '15px',
           fontWeight: '600',
           color: '#111827',
           marginBottom: '8px'

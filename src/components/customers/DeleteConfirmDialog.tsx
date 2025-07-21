@@ -73,7 +73,7 @@ export function DeleteConfirmDialog({ isOpen, onClose, onConfirm, customerName }
               <AlertTriangle style={{ height: '18px', width: '18px', color: '#dc2626' }} />
             </div>
             <h2 style={{
-              fontSize: '18px',
+              fontSize: '15px',
               fontWeight: '600',
               color: '#0f172a'
             }}>

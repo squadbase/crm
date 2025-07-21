@@ -97,7 +97,7 @@ export function TemplateDetailModal({ isOpen, onClose, template }: TemplateDetai
         }}>
           <div>
             <h2 style={{
-              fontSize: '20px',
+              fontSize: '15px',
               fontWeight: '600',
               color: '#111827',
               margin: 0,
@@ -190,8 +190,8 @@ export function TemplateDetailModal({ isOpen, onClose, template }: TemplateDetai
                 textAlign: 'center'
               }}>
                 <div style={{
-                  fontSize: '32px',
-                  fontWeight: '700',
+                  fontSize: '14px',
+                  fontWeight: '600',
                   color: '#111827',
                   marginBottom: '4px'
                 }}>
