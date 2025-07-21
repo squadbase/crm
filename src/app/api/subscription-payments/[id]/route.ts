@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { subscriptionPaid } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { updateSubscriptionPayment } from '@/app/models/subscriptions';
 
 export async function PUT(
   request: NextRequest,
@@ -20,14 +18,9 @@ export async function PUT(
     }
 
     // サブスクリプション支払い状況を更新
-    const [updatedPayment] = await db
-      .update(subscriptionPaid)
-      .set({
-        isPaid,
-        updatedAt: new Date()
-      })
-      .where(eq(subscriptionPaid.paidId, paidId))
-      .returning();
+    const updatedPayment = await updateSubscriptionPayment(paidId, {
+      isPaid
+    });
 
     if (!updatedPayment) {
       return NextResponse.json(
@@ -37,16 +30,7 @@ export async function PUT(
     }
 
     return NextResponse.json({
-      subscriptionPayment: {
-        paidId: updatedPayment.paidId,
-        subscriptionId: updatedPayment.subscriptionId,
-        year: updatedPayment.year,
-        month: updatedPayment.month,
-        amount: parseFloat(updatedPayment.amount),
-        isPaid: updatedPayment.isPaid,
-        createdAt: updatedPayment.createdAt ? new Date(updatedPayment.createdAt).toISOString() : null,
-        updatedAt: updatedPayment.updatedAt ? new Date(updatedPayment.updatedAt).toISOString() : null,
-      }
+      subscriptionPayment: updatedPayment
     });
   } catch (error) {
     console.error('Subscription payment update error:', error);

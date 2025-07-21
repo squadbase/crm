@@ -1,29 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { orderTemplates } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { getOrderTemplateById, updateOrderTemplate, deleteOrderTemplate } from '@/app/models/order-templates';
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id: templateId } = await params;
 
-    const template = await db
-      .select()
-      .from(orderTemplates)
-      .where(eq(orderTemplates.templateId, templateId))
-      .limit(1);
+    const template = await getOrderTemplateById(templateId);
 
-    if (template.length === 0) {
+    if (!template) {
       return NextResponse.json(
         { error: 'Template not found' },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(template[0]);
+    return NextResponse.json(template);
   } catch (error) {
     console.error('Failed to fetch template:', error);
     return NextResponse.json(
@@ -58,27 +52,22 @@ export async function PUT(
     }
 
     // テンプレート更新
-    const updatedTemplate = await db
-      .update(orderTemplates)
-      .set({
-        templateName,
-        paymentType,
-        amount,
-        description: description || null,
-        isActive: isActive ?? true,
-        updatedAt: new Date()
-      })
-      .where(eq(orderTemplates.templateId, templateId))
-      .returning();
+    const updatedTemplate = await updateOrderTemplate(templateId, {
+      templateName,
+      paymentType,
+      amount,
+      description: description || null,
+      isActive: isActive ?? true,
+    });
 
-    if (updatedTemplate.length === 0) {
+    if (!updatedTemplate) {
       return NextResponse.json(
         { error: 'Template not found' },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(updatedTemplate[0]);
+    return NextResponse.json(updatedTemplate);
   } catch (error) {
     console.error('Failed to update template:', error);
     return NextResponse.json(
@@ -89,18 +78,15 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id: templateId } = await params;
 
-    const deletedTemplate = await db
-      .delete(orderTemplates)
-      .where(eq(orderTemplates.templateId, templateId))
-      .returning();
+    const deletedTemplate = await deleteOrderTemplate(templateId);
 
-    if (deletedTemplate.length === 0) {
+    if (!deletedTemplate) {
       return NextResponse.json(
         { error: 'Template not found' },
         { status: 404 }

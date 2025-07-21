@@ -1,30 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { orderTemplates } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { getOrderTemplateById } from '@/app/models/order-templates';
 
 export async function POST(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id: templateId } = await params;
 
     // テンプレートが存在し、アクティブかどうか確認
-    const template = await db
-      .select()
-      .from(orderTemplates)
-      .where(eq(orderTemplates.templateId, templateId))
-      .limit(1);
+    const template = await getOrderTemplateById(templateId);
 
-    if (template.length === 0) {
+    if (!template) {
       return NextResponse.json(
         { error: 'Template not found' },
         { status: 404 }
       );
     }
 
-    if (!template[0].isActive) {
+    if (!template.isActive) {
       return NextResponse.json(
         { error: 'Template is not active' },
         { status: 400 }
@@ -33,7 +27,7 @@ export async function POST(
 
     // テンプレートデータを返す（注文作成ページで使用）
     return NextResponse.json({
-      template: template[0],
+      template: template,
       message: 'Template is ready for order creation'
     });
   } catch (error) {

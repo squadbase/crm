@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { subscriptions, customers, subscriptionPaid, subscriptionAmounts } from '@/lib/db/schema';
-import { eq, desc, like, and, or, sql, isNull } from 'drizzle-orm';
+import { getSubscriptions, getSubscriptionCount, getSubscriptionPaymentSummary, createSubscription, SubscriptionFilters } from '@/app/models/subscriptions';
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,134 +10,45 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50');
     const search = searchParams.get('search');
 
-    // サブスクリプション一覧を取得（顧客情報と現在の料金、支払い状況を含む）
-    let query = db
-      .select({
-        subscriptionId: subscriptions.subscriptionId,
-        customerId: subscriptions.customerId,
-        customerName: customers.customerName,
-        description: subscriptions.description,
-        createdAt: subscriptions.createdAt,
-        updatedAt: subscriptions.updatedAt,
-        startDate: subscriptionAmounts.startDate,
-      })
-      .from(subscriptions)
-      .leftJoin(customers, eq(subscriptions.customerId, customers.customerId))
-      .leftJoin(subscriptionAmounts, eq(subscriptions.subscriptionId, subscriptionAmounts.subscriptionId));
-
-    // ソートとページネーション
+    // フィルターオブジェクトを構築
+    const filters: SubscriptionFilters = {};
     const offset = (page - 1) * limit;
-
-    // フィルター適用
+    
     if (search) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      query = (db as any)
-        .select({
-          subscriptionId: subscriptions.subscriptionId,
-          customerId: subscriptions.customerId,
-          customerName: customers.customerName,
-          description: subscriptions.description,
-          createdAt: subscriptions.createdAt,
-          updatedAt: subscriptions.updatedAt,
-          startDate: subscriptionAmounts.startDate,
-        })
-        .from(subscriptions)
-        .leftJoin(customers, eq(subscriptions.customerId, customers.customerId))
-        .leftJoin(subscriptionAmounts, eq(subscriptions.subscriptionId, subscriptionAmounts.subscriptionId))
-        .where(
-          or(
-            like(customers.customerName, `%${search}%`),
-            like(subscriptions.description, `%${search}%`)
-          )
-        )
-        .orderBy(desc(subscriptionAmounts.startDate))
-        .limit(limit)
-        .offset(offset);
-    } else {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      query = (query as any)
-        .orderBy(desc(subscriptionAmounts.startDate))
-        .limit(limit)
-        .offset(offset);
+      filters.search = search;
     }
 
-    const subscriptionsData = await query;
+    // データ取得
+    const [subscriptionsData, total] = await Promise.all([
+      getSubscriptions({
+        filters,
+        sort: { field: 'startDate', direction: 'desc' },
+        limit,
+        offset
+      }),
+      getSubscriptionCount(filters)
+    ]);
 
     // 各サブスクリプションの詳細情報を取得
     const enrichedSubscriptions = await Promise.all(
       subscriptionsData.map(async (sub) => {
-        // 現在の料金を取得（最新の有効な料金）
-        const currentAmountResult = await db
-          .select({ 
-            amount: subscriptionAmounts.amount,
-            startDate: subscriptionAmounts.startDate,
-            endDate: subscriptionAmounts.endDate
-          })
-          .from(subscriptionAmounts)
-          .where(
-            and(
-              eq(subscriptionAmounts.subscriptionId, sub.subscriptionId),
-              or(
-                isNull(subscriptionAmounts.endDate), // 終了日がnull（継続中）
-                sql`${subscriptionAmounts.endDate} >= CURRENT_DATE` // または終了日が今日以降
-              )
-            )
-          )
-          .orderBy(desc(subscriptionAmounts.startDate))
-          .limit(1);
+        const paymentSummary = await getSubscriptionPaymentSummary(sub.subscriptionId);
 
-        // 支払い状況の集計
-        const paymentSummary = await db
-          .select({
-            totalPaid: sql<string>`SUM(CASE WHEN ${subscriptionPaid.isPaid} = true THEN ${subscriptionPaid.amount} ELSE 0 END)`,
-            totalUnpaid: sql<string>`SUM(CASE WHEN ${subscriptionPaid.isPaid} = false THEN ${subscriptionPaid.amount} ELSE 0 END)`,
-          })
-          .from(subscriptionPaid)
-          .where(eq(subscriptionPaid.subscriptionId, sub.subscriptionId));
-
-        const currentAmount = currentAmountResult[0]?.amount || 0;
-        const startDate = currentAmountResult[0]?.startDate || null;
-        const endDate = currentAmountResult[0]?.endDate || null;
-        const totalPaid = parseFloat(paymentSummary[0]?.totalPaid || '0');
-        const totalUnpaid = parseFloat(paymentSummary[0]?.totalUnpaid || '0');
-
-        // ステータス判定（現在の料金があればアクティブ）
-        const status = parseFloat(currentAmount.toString()) > 0 ? 'active' : 'inactive';
+        // ステータス判定（未払いがあれば inactive、なければ active）
+        const status = paymentSummary.unpaidAmount > 0 ? 'inactive' : 'active';
 
         return {
           ...sub,
-          currentAmount: parseFloat(currentAmount.toString()),
-          startDate: startDate ? startDate.toString() : null,
-          endDate: endDate ? endDate.toString() : null,
-          totalPaid,
-          totalUnpaid,
+          currentAmount: paymentSummary.totalAmount,
+          startDate: sub.startDate ? sub.startDate.toString() : null,
+          totalPaid: paymentSummary.paidAmount,
+          totalUnpaid: paymentSummary.unpaidAmount,
           status
         };
       })
     );
 
-    // フィルター済みのサブスクリプション（ステータスフィルターは削除）
     const filteredSubscriptions = enrichedSubscriptions;
-
-    // 総数を取得
-    let totalCountQuery = db
-      .select({ count: sql`count(DISTINCT ${subscriptions.subscriptionId})` })
-      .from(subscriptions)
-      .leftJoin(customers, eq(subscriptions.customerId, customers.customerId))
-      .leftJoin(subscriptionAmounts, eq(subscriptions.subscriptionId, subscriptionAmounts.subscriptionId));
-
-    if (search) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      totalCountQuery = (totalCountQuery as any).where(
-        or(
-          like(customers.customerName, `%${search}%`),
-          like(subscriptions.description, `%${search}%`)
-        )
-      );
-    }
-
-    const totalResult = await totalCountQuery;
-    const total = parseInt(totalResult[0]?.count?.toString() || '0');
 
     return NextResponse.json({
       subscriptions: filteredSubscriptions,
@@ -172,13 +81,10 @@ export async function POST(request: NextRequest) {
     }
 
     // サブスクリプションを作成
-    const [subscription] = await db
-      .insert(subscriptions)
-      .values({
-        customerId,
-        description: description || null
-      })
-      .returning();
+    const subscription = await createSubscription({
+      customerId,
+      description: description || null
+    });
 
     return NextResponse.json({
       subscription: {

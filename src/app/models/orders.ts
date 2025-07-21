@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
 import { orders, customers } from '@/lib/db/schema';
-import { eq, desc, asc, lte, gte, and, or, like, count } from 'drizzle-orm';
+import { eq, desc, asc, lte, gte, and, or, like, count, sum, sql } from 'drizzle-orm';
 
 export interface OrderFilters {
   customerId?: string;
@@ -37,6 +37,7 @@ export async function getOrders({
         customerId: orders.customerId,
         customerName: customers.customerName,
         amount: orders.amount,
+        salesAt: orders.salesAt,
         isPaid: orders.isPaid,
         description: orders.description,
         createdAt: orders.createdAt,
@@ -118,12 +119,44 @@ export async function getOrderById(orderId: string) {
 }
 
 /**
+ * Get a single order with customer details by ID
+ */
+export async function getOrderWithCustomerDetails(orderId: string) {
+  const result = await db
+    .select({
+      orderId: orders.orderId,
+      customerId: orders.customerId,
+      customerName: customers.customerName,
+      amount: orders.amount,
+      salesAt: orders.salesAt,
+      isPaid: orders.isPaid,
+      description: orders.description,
+      createdAt: orders.createdAt,
+      updatedAt: orders.updatedAt,
+    })
+    .from(orders)
+    .leftJoin(customers, eq(orders.customerId, customers.customerId))
+    .where(eq(orders.orderId, orderId))
+    .limit(1);
+  
+  return result[0] || null;
+}
+
+/**
  * Create a new order
  */
 export async function createOrder(orderData: typeof orders.$inferInsert) {
+  // salesAtが文字列の場合はDateオブジェクトに変換
+  const processedData = {
+    ...orderData,
+    salesAt: typeof orderData.salesAt === 'string' 
+      ? new Date(orderData.salesAt) 
+      : orderData.salesAt
+  };
+
   const result = await db
     .insert(orders)
-    .values(orderData)
+    .values(processedData)
     .returning();
   
   return result[0];
@@ -133,12 +166,19 @@ export async function createOrder(orderData: typeof orders.$inferInsert) {
  * Update an existing order
  */
 export async function updateOrder(orderId: string, orderData: Partial<typeof orders.$inferInsert>) {
+  // salesAtが文字列の場合はDateオブジェクトに変換
+  const processedData = {
+    ...orderData,
+    updatedAt: new Date()
+  };
+
+  if (orderData.salesAt && typeof orderData.salesAt === 'string') {
+    processedData.salesAt = new Date(orderData.salesAt);
+  }
+
   const result = await db
     .update(orders)
-    .set({
-      ...orderData,
-      updatedAt: new Date()
-    })
+    .set(processedData)
     .where(eq(orders.orderId, orderId))
     .returning();
   
@@ -210,4 +250,41 @@ export async function getOrderCount(filters: OrderFilters = {}) {
 
   const result = await query;
   return Number(result[0]?.count || 0);
+}
+
+/**
+ * Get orders summary with total and unpaid amounts for a date range
+ */
+export async function getOrdersSummary(salesStartDt?: string, salesEndDt?: string) {
+  try {
+    // WHERE条件を構築 (salesAtベースでフィルタリング)
+    const conditions = [];
+    
+    if (salesStartDt) {
+      conditions.push(gte(orders.salesAt, new Date(salesStartDt)));
+    }
+    if (salesEndDt) {
+      conditions.push(lte(orders.salesAt, new Date(salesEndDt)));
+    }
+
+    // 一回払い注文の集計（選んだ期間のtotalAmountとunpaidAmountのみ）
+    const onetimeSummary = await db
+      .select({
+        totalAmount: sum(orders.amount),
+        unpaidAmount: sql<string>`SUM(CASE WHEN ${orders.isPaid} = false THEN ${orders.amount} ELSE 0 END)`,
+      })
+      .from(orders)
+      .where(conditions.length > 0 ? and(...conditions) : undefined);
+
+    // 合計を計算（一回払いのみを対象とする）
+    const onetimeData = onetimeSummary[0];
+
+    return {
+      totalAmount: onetimeData.totalAmount || '0',
+      unpaidAmount: onetimeData.unpaidAmount || '0',
+    };
+  } catch (error) {
+    console.error('Error in getOrdersSummary:', error);
+    throw error;
+  }
 }

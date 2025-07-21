@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { subscriptionAmounts } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { updateSubscriptionAmount } from '@/app/models/subscriptions';
 
 export async function PUT(
   request: NextRequest,
@@ -20,14 +18,9 @@ export async function PUT(
     }
 
     // サブスクリプション料金を更新（終了日を設定）
-    const [updatedAmount] = await db
-      .update(subscriptionAmounts)
-      .set({
-        endDate,
-        updatedAt: new Date()
-      })
-      .where(eq(subscriptionAmounts.amountId, amountId))
-      .returning();
+    const updatedAmount = await updateSubscriptionAmount(amountId, {
+      endDate
+    });
 
     if (!updatedAmount) {
       return NextResponse.json(
@@ -37,15 +30,7 @@ export async function PUT(
     }
 
     return NextResponse.json({
-      subscriptionAmount: {
-        amountId: updatedAmount.amountId,
-        subscriptionId: updatedAmount.subscriptionId,
-        amount: parseFloat(updatedAmount.amount),
-        startDate: updatedAmount.startDate,
-        endDate: updatedAmount.endDate,
-        createdAt: updatedAmount.createdAt ? new Date(updatedAmount.createdAt).toISOString() : null,
-        updatedAt: updatedAmount.updatedAt ? new Date(updatedAmount.updatedAt).toISOString() : null,
-      }
+      subscriptionAmount: updatedAmount
     });
   } catch (error) {
     console.error('Subscription amount update error:', error);

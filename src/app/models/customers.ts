@@ -193,3 +193,122 @@ export async function searchCustomers(searchTerm: string, limit: number = 10): P
     limit
   });
 }
+
+/**
+ * Get customer details with orders, subscriptions, and stats
+ */
+export async function getCustomerDetails(customerId: string) {
+  try {
+    // Get customer basic info
+    const customer = await db
+      .select()
+      .from(customers)
+      .where(eq(customers.customerId, customerId))
+      .limit(1);
+
+    if (customer.length === 0) {
+      return null;
+    }
+
+    // Get customer's orders
+    const customerOrders = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.customerId, customerId))
+      .orderBy(desc(orders.salesAt));
+
+    // Get customer's subscriptions with payments
+    const customerSubscriptions = await db
+      .select({
+        subscriptionId: subscriptions.subscriptionId,
+        description: subscriptions.description,
+        createdAt: subscriptions.createdAt,
+        updatedAt: subscriptions.updatedAt,
+        year: subscriptionPaid.year,
+        month: subscriptionPaid.month,
+        amount: subscriptionPaid.amount,
+        isPaid: subscriptionPaid.isPaid,
+        paidCreatedAt: subscriptionPaid.createdAt
+      })
+      .from(subscriptions)
+      .leftJoin(subscriptionPaid, eq(subscriptions.subscriptionId, subscriptionPaid.subscriptionId))
+      .where(eq(subscriptions.customerId, customerId))
+      .orderBy(desc(subscriptionPaid.year), desc(subscriptionPaid.month), desc(subscriptionPaid.createdAt));
+
+    // Calculate stats
+    const totalOrders = customerOrders.length;
+    const onetimeRevenue = customerOrders
+      .filter(order => order.isPaid)
+      .reduce((sum, order) => sum + parseFloat(order.amount), 0);
+    const subscriptionRevenue = customerSubscriptions
+      .filter(sub => sub.isPaid)
+      .reduce((sum, sub) => sum + parseFloat(sub.amount || '0'), 0);
+    const totalRevenue = onetimeRevenue + subscriptionRevenue;
+    const unpaidOrders = customerOrders.filter(order => !order.isPaid).length;
+    const totalSubscriptions = Array.from(new Set(customerSubscriptions.map(s => s.subscriptionId))).length;
+
+    return {
+      customer: customer[0],
+      orders: customerOrders,
+      subscriptions: customerSubscriptions,
+      stats: {
+        totalOrders,
+        totalSubscriptions,
+        onetimeRevenue,
+        subscriptionRevenue,
+        totalRevenue,
+        unpaidOrders,
+        paidOrders: totalOrders - unpaidOrders
+      }
+    };
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Update a customer
+ */
+export async function updateCustomer(customerId: string, customerData: { customerName: string }) {
+  try {
+    const updatedCustomer = await db
+      .update(customers)
+      .set({
+        customerName: customerData.customerName,
+        updatedAt: new Date(),
+      })
+      .where(eq(customers.customerId, customerId))
+      .returning();
+
+    return updatedCustomer.length > 0 ? updatedCustomer[0] : null;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Delete a customer (only if no orders exist)
+ */
+export async function deleteCustomer(customerId: string) {
+  try {
+    // Check if customer has orders
+    const customerOrders = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.customerId, customerId))
+      .limit(1);
+
+    if (customerOrders.length > 0) {
+      throw new Error('Cannot delete customer with existing orders');
+    }
+
+    const deletedCustomer = await db
+      .delete(customers)
+      .where(eq(customers.customerId, customerId))
+      .returning();
+
+    return deletedCustomer.length > 0 ? deletedCustomer[0] : null;
+  } catch (error) {
+    throw error;
+  }
+}

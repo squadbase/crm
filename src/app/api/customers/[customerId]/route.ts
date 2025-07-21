@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { customers, orders, subscriptions, subscriptionPaid } from '@/lib/db/schema';
-import { eq, desc } from 'drizzle-orm';
 import { z } from 'zod';
+import { getCustomerDetails, updateCustomer, deleteCustomer } from '@/app/models/customers';
 
 const updateCustomerSchema = z.object({
   customer_name: z.string()
@@ -12,77 +10,22 @@ const updateCustomerSchema = z.object({
 });
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ customerId: string }> }
 ) {
   try {
     const { customerId } = await params;
 
-    // Get customer basic info
-    const customer = await db
-      .select()
-      .from(customers)
-      .where(eq(customers.customerId, customerId))
-      .limit(1);
+    const customerData = await getCustomerDetails(customerId);
 
-    if (customer.length === 0) {
+    if (!customerData) {
       return NextResponse.json(
         { error: 'Customer not found' },
         { status: 404 }
       );
     }
 
-    // Get customer's orders
-    const customerOrders = await db
-      .select()
-      .from(orders)
-      .where(eq(orders.customerId, customerId))
-      .orderBy(desc(orders.salesAt));
-
-    // Get customer's subscriptions with payments
-    const customerSubscriptions = await db
-      .select({
-        subscriptionId: subscriptions.subscriptionId,
-        description: subscriptions.description,
-        createdAt: subscriptions.createdAt,
-        updatedAt: subscriptions.updatedAt,
-        year: subscriptionPaid.year,
-        month: subscriptionPaid.month,
-        amount: subscriptionPaid.amount,
-        isPaid: subscriptionPaid.isPaid,
-        paidCreatedAt: subscriptionPaid.createdAt
-      })
-      .from(subscriptions)
-      .leftJoin(subscriptionPaid, eq(subscriptions.subscriptionId, subscriptionPaid.subscriptionId))
-      .where(eq(subscriptions.customerId, customerId))
-      .orderBy(desc(subscriptionPaid.year), desc(subscriptionPaid.month), desc(subscriptionPaid.createdAt));
-
-    // Calculate stats
-    const totalOrders = customerOrders.length;
-    const onetimeRevenue = customerOrders
-      .filter(order => order.isPaid)
-      .reduce((sum, order) => sum + parseFloat(order.amount), 0);
-    const subscriptionRevenue = customerSubscriptions
-      .filter(sub => sub.isPaid)
-      .reduce((sum, sub) => sum + parseFloat(sub.amount || '0'), 0);
-    const totalRevenue = onetimeRevenue + subscriptionRevenue;
-    const unpaidOrders = customerOrders.filter(order => !order.isPaid).length;
-    const totalSubscriptions = Array.from(new Set(customerSubscriptions.map(s => s.subscriptionId))).length;
-
-    return NextResponse.json({
-      customer: customer[0],
-      orders: customerOrders,
-      subscriptions: customerSubscriptions,
-      stats: {
-        totalOrders,
-        totalSubscriptions,
-        onetimeRevenue,
-        subscriptionRevenue,
-        totalRevenue,
-        unpaidOrders,
-        paidOrders: totalOrders - unpaidOrders
-      }
-    });
+    return NextResponse.json(customerData);
   } catch (error) {
     console.error('Error fetching customer:', error);
     return NextResponse.json(
@@ -101,23 +44,18 @@ export async function PUT(
     const body = await request.json();
     const validatedData = updateCustomerSchema.parse(body);
 
-    const updatedCustomer = await db
-      .update(customers)
-      .set({
-        customerName: validatedData.customer_name,
-        updatedAt: new Date(),
-      })
-      .where(eq(customers.customerId, customerId))
-      .returning();
+    const updatedCustomer = await updateCustomer(customerId, {
+      customerName: validatedData.customer_name
+    });
 
-    if (updatedCustomer.length === 0) {
+    if (!updatedCustomer) {
       return NextResponse.json(
         { error: 'Customer not found' },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(updatedCustomer[0]);
+    return NextResponse.json(updatedCustomer);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -135,32 +73,15 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ customerId: string }> }
 ) {
   try {
     const { customerId } = await params;
 
-    // Check if customer has orders
-    const customerOrders = await db
-      .select()
-      .from(orders)
-      .where(eq(orders.customerId, customerId))
-      .limit(1);
+    const deletedCustomer = await deleteCustomer(customerId);
 
-    if (customerOrders.length > 0) {
-      return NextResponse.json(
-        { error: 'Cannot delete customer with existing orders' },
-        { status: 400 }
-      );
-    }
-
-    const deletedCustomer = await db
-      .delete(customers)
-      .where(eq(customers.customerId, customerId))
-      .returning();
-
-    if (deletedCustomer.length === 0) {
+    if (!deletedCustomer) {
       return NextResponse.json(
         { error: 'Customer not found' },
         { status: 404 }
@@ -170,6 +91,12 @@ export async function DELETE(
     return NextResponse.json({ message: 'Customer deleted successfully' });
   } catch (error) {
     console.error('Error deleting customer:', error);
+    if (error instanceof Error && error.message === 'Cannot delete customer with existing orders') {
+      return NextResponse.json(
+        { error: 'Cannot delete customer with existing orders' },
+        { status: 400 }
+      );
+    }
     return NextResponse.json(
       { error: 'Failed to delete customer' },
       { status: 500 }

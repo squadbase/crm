@@ -1,35 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { subscriptionAmounts } from '@/lib/db/schema';
-import { eq, asc } from 'drizzle-orm';
+import { getSubscriptionAmounts } from '@/app/models/subscriptions';
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ subscriptionId: string }> }
 ) {
   try {
     const { subscriptionId } = await params;
 
     // サブスクリプション料金履歴を取得
-    const amounts = await db
-      .select({
-        amountId: subscriptionAmounts.amountId,
-        subscriptionId: subscriptionAmounts.subscriptionId,
-        amount: subscriptionAmounts.amount,
-        startDate: subscriptionAmounts.startDate,
-        endDate: subscriptionAmounts.endDate,
-        createdAt: subscriptionAmounts.createdAt,
-        updatedAt: subscriptionAmounts.updatedAt,
-      })
-      .from(subscriptionAmounts)
-      .where(eq(subscriptionAmounts.subscriptionId, subscriptionId))
-      .orderBy(asc(subscriptionAmounts.startDate));
+    const amounts = await getSubscriptionAmounts(subscriptionId);
 
     return NextResponse.json({
-      amounts: amounts.map(amount => ({
-        ...amount,
-        amount: parseFloat(amount.amount)
-      }))
+      amounts
     });
   } catch (error) {
     console.error('Subscription amounts API error:', error);

@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { orderTemplates } from '@/lib/db/schema';
-import { desc, and, or, eq, ilike, count } from 'drizzle-orm';
+import { getOrderTemplates, getOrderTemplateCount, createOrderTemplate, OrderTemplateFilters } from '@/app/models/order-templates';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,44 +13,32 @@ export async function GET(request: NextRequest) {
     const isActive = searchParams.get('isActive');
     const search = searchParams.get('search');
 
-    // WHERE条件を構築
-    const conditions = [];
-
+    // フィルターオブジェクトを構築
+    const filters: OrderTemplateFilters = {};
+    
     if (paymentType) {
-      conditions.push(eq(orderTemplates.paymentType, paymentType as 'onetime' | 'subscription'));
+      filters.paymentType = paymentType as 'onetime' | 'subscription';
     }
 
     if (isActive !== null && isActive !== '') {
-      conditions.push(eq(orderTemplates.isActive, isActive === 'true'));
+      filters.isActive = isActive === 'true';
     }
 
-    // 多言語検索（日本語・英語対応）
     if (search) {
-      const searchCondition = or(
-        ilike(orderTemplates.templateName, `%${search}%`),
-        ilike(orderTemplates.description, `%${search}%`)
-      );
-      conditions.push(searchCondition);
+      filters.search = search;
     }
-
-    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
     // データ取得
-    const [templates, totalResult] = await Promise.all([
-      db
-        .select()
-        .from(orderTemplates)
-        .where(whereClause)
-        .orderBy(desc(orderTemplates.updatedAt))
-        .limit(limit)
-        .offset(offset),
-      db
-        .select({ count: count() })
-        .from(orderTemplates)
-        .where(whereClause)
+    const [templates, total] = await Promise.all([
+      getOrderTemplates({
+        filters,
+        sort: { field: 'created', direction: 'desc' },
+        limit,
+        offset
+      }),
+      getOrderTemplateCount(filters)
     ]);
 
-    const total = totalResult[0].count;
     const totalPages = Math.ceil(total / limit);
 
     return NextResponse.json({
@@ -94,18 +80,15 @@ export async function POST(request: NextRequest) {
     }
 
     // テンプレート作成
-    const newTemplate = await db
-      .insert(orderTemplates)
-      .values({
-        templateName,
-        paymentType,
-        amount,
-        description: description || null,
-        isActive: isActive ?? true
-      })
-      .returning();
+    const newTemplate = await createOrderTemplate({
+      templateName,
+      paymentType,
+      amount,
+      description: description || null,
+      isActive: isActive ?? true
+    });
 
-    return NextResponse.json(newTemplate[0], { status: 201 });
+    return NextResponse.json(newTemplate, { status: 201 });
   } catch (error) {
     console.error('Failed to create template:', error);
     return NextResponse.json(

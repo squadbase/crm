@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { sql } from 'drizzle-orm';
-import { createOrder } from '@/app/models/orders';
+import { getOrders, getOrderCount, createOrder, OrderFilters } from '@/app/models/orders';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,70 +13,36 @@ export async function GET(request: NextRequest) {
     const endDate = searchParams.get('endDate');
     const search = searchParams.get('search');
 
-    // データ取得
+    // フィルターオブジェクトを構築
+    const filters: OrderFilters = {};
     const offset = (page - 1) * limit;
     
-    // 基本クエリを構築（シンプルなアプローチに変更）
-    let baseQuery = sql`
-      SELECT 
-        o.order_id as "orderId",
-        o.customer_id as "customerId", 
-        c.customer_name as "customerName",
-        o.amount,
-        o.sales_at as "salesAt",
-        o.is_paid as "isPaid",
-        o.description,
-        o.created_at as "createdAt",
-        o.updated_at as "updatedAt"
-      FROM orders o
-      LEFT JOIN customers c ON o.customer_id = c.customer_id
-    `;
-
-    let countQuery = sql`
-      SELECT COUNT(*) as count
-      FROM orders o
-      LEFT JOIN customers c ON o.customer_id = c.customer_id
-    `;
-
-    // フィルター条件を追加
     if (isPaid !== null && isPaid !== '') {
-      baseQuery = sql`${baseQuery} WHERE o.is_paid = ${isPaid === 'true'}`;
-      countQuery = sql`${countQuery} WHERE o.is_paid = ${isPaid === 'true'}`;
+      filters.isPaid = isPaid === 'true';
     }
     
     if (startDate) {
-      const hasWhere = isPaid !== null && isPaid !== '';
-      const connector = hasWhere ? sql` AND` : sql` WHERE`;
-      baseQuery = sql`${baseQuery}${connector} o.sales_at >= ${startDate}`;
-      countQuery = sql`${countQuery}${connector} o.sales_at >= ${startDate}`;
+      filters.startDate = new Date(startDate);
     }
     
     if (endDate) {
-      const hasWhere = isPaid !== null && isPaid !== '' || startDate;
-      const connector = hasWhere ? sql` AND` : sql` WHERE`;
-      const endDateTime = endDate + ' 23:59:59';
-      baseQuery = sql`${baseQuery}${connector} o.sales_at <= ${endDateTime}`;
-      countQuery = sql`${countQuery}${connector} o.sales_at <= ${endDateTime}`;
+      filters.endDate = new Date(endDate + ' 23:59:59');
     }
     
     if (search) {
-      const hasWhere = isPaid !== null && isPaid !== '' || startDate || endDate;
-      const connector = hasWhere ? sql` AND` : sql` WHERE`;
-      const searchPattern = `%${search}%`;
-      baseQuery = sql`${baseQuery}${connector} (c.customer_name ILIKE ${searchPattern} OR o.description ILIKE ${searchPattern})`;
-      countQuery = sql`${countQuery}${connector} (c.customer_name ILIKE ${searchPattern} OR o.description ILIKE ${searchPattern})`;
+      filters.search = search;
     }
 
-    // ORDER BY と LIMIT/OFFSET を追加
-    baseQuery = sql`${baseQuery} ORDER BY o.created_at DESC LIMIT ${limit} OFFSET ${offset}`;
-    
-    const [ordersResult, countResult] = await Promise.all([
-      db.execute(baseQuery),
-      db.execute(countQuery)
+    // データ取得
+    const [orders, totalCount] = await Promise.all([
+      getOrders({
+        filters,
+        sort: { field: 'created', direction: 'desc' },
+        limit,
+        offset
+      }),
+      getOrderCount(filters)
     ]);
-
-    const orders = ordersResult.rows;
-    const totalCount = parseInt((countResult.rows[0]?.count as string) || '0');
     
     console.log('Orders fetched:', orders.length);
     console.log('Total count:', totalCount);
@@ -104,6 +68,32 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    
+    // 基本的なバリデーション
+    if (!body.customerId || !body.amount || !body.salesAt) {
+      return NextResponse.json(
+        { error: 'customerId, amount, and salesAt are required' },
+        { status: 400 }
+      );
+    }
+
+    // 金額の数値チェック
+    const amount = parseFloat(body.amount);
+    if (isNaN(amount) || amount <= 0) {
+      return NextResponse.json(
+        { error: 'amount must be a positive number' },
+        { status: 400 }
+      );
+    }
+
+    // 日付の有効性チェック
+    const salesDate = new Date(body.salesAt);
+    if (isNaN(salesDate.getTime())) {
+      return NextResponse.json(
+        { error: 'salesAt must be a valid date' },
+        { status: 400 }
+      );
+    }
     
     const newOrder = await createOrder({
       customerId: body.customerId,

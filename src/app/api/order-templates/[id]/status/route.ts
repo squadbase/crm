@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { orderTemplates } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { updateOrderTemplate } from '@/app/models/order-templates';
 
 export async function PATCH(
   request: NextRequest,
@@ -20,23 +18,18 @@ export async function PATCH(
     }
 
     // テンプレートのアクティブ状態を更新
-    const updatedTemplate = await db
-      .update(orderTemplates)
-      .set({
-        isActive,
-        updatedAt: new Date()
-      })
-      .where(eq(orderTemplates.templateId, templateId))
-      .returning();
+    const updatedTemplate = await updateOrderTemplate(templateId, {
+      isActive,
+    });
 
-    if (updatedTemplate.length === 0) {
+    if (!updatedTemplate) {
       return NextResponse.json(
         { error: 'Template not found' },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(updatedTemplate[0]);
+    return NextResponse.json(updatedTemplate);
   } catch (error) {
     console.error('Failed to update template status:', error);
     return NextResponse.json(

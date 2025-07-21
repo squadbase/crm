@@ -1,36 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { subscriptionPaid } from '@/lib/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { getSubscriptionPayments } from '@/app/models/subscriptions';
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ subscriptionId: string }> }
 ) {
   try {
     const { subscriptionId } = await params;
 
     // サブスクリプション支払い履歴を取得
-    const payments = await db
-      .select({
-        paidId: subscriptionPaid.paidId,
-        subscriptionId: subscriptionPaid.subscriptionId,
-        year: subscriptionPaid.year,
-        month: subscriptionPaid.month,
-        amount: subscriptionPaid.amount,
-        isPaid: subscriptionPaid.isPaid,
-        createdAt: subscriptionPaid.createdAt,
-        updatedAt: subscriptionPaid.updatedAt,
-      })
-      .from(subscriptionPaid)
-      .where(eq(subscriptionPaid.subscriptionId, subscriptionId))
-      .orderBy(desc(subscriptionPaid.year), desc(subscriptionPaid.month));
+    const payments = await getSubscriptionPayments(subscriptionId);
 
     return NextResponse.json({
-      payments: payments.map(payment => ({
-        ...payment,
-        amount: parseFloat(payment.amount)
-      }))
+      payments
     });
   } catch (error) {
     console.error('Subscription payments API error:', error);

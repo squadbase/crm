@@ -1,85 +1,11 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { subscriptions, subscriptionPaid, subscriptionAmounts } from '@/lib/db/schema';
-import { sql, or, eq, isNull, and } from 'drizzle-orm';
+import { getSubscriptionSummaryMetrics } from '@/app/models/subscriptions';
 
 export async function GET() {
   try {
-    // 月間売上予定（全アクティブサブスクリプションの現在料金合計）
-    const monthlyRevenueResult = await db
-      .select({ 
-        totalAmount: sql<string>`SUM(${subscriptionAmounts.amount})` 
-      })
-      .from(subscriptionAmounts)
-      .where(
-        or(
-          isNull(subscriptionAmounts.endDate), // 終了日がnull（継続中）
-          sql`${subscriptionAmounts.endDate} >= CURRENT_DATE` // または終了日が今日以降
-        )
-      );
+    const summary = await getSubscriptionSummaryMetrics();
 
-    // 総未払い金額（今月以前の未払い合計）
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth() + 1;
-    
-    const totalUnpaidResult = await db
-      .select({
-        totalUnpaid: sql<string>`SUM(${subscriptionPaid.amount})`
-      })
-      .from(subscriptionPaid)
-      .where(
-        and(
-          eq(subscriptionPaid.isPaid, false),
-          or(
-            sql`${subscriptionPaid.year} < ${currentYear}`,
-            and(
-              eq(subscriptionPaid.year, currentYear),
-              sql`${subscriptionPaid.month} <= ${currentMonth}`
-            )
-          )
-        )
-      );
-
-    // 平均継続月数の計算
-    const continuationMonthsResult = await db
-      .select({
-        subscriptionId: subscriptions.subscriptionId,
-        startDate: sql<string>`MIN(${subscriptionAmounts.startDate})`,
-        endDate: sql<string>`MAX(${subscriptionAmounts.endDate})`
-      })
-      .from(subscriptions)
-      .leftJoin(subscriptionAmounts, eq(subscriptions.subscriptionId, subscriptionAmounts.subscriptionId))
-      .groupBy(subscriptions.subscriptionId);
-
-    // 各サブスクリプションの継続月数を計算
-    let totalMonths = 0;
-    let subscriptionCount = 0;
-    const currentDate = new Date();
-
-    for (const sub of continuationMonthsResult) {
-      if (sub.startDate) {
-        const startDate = new Date(sub.startDate);
-        const endDate = sub.endDate ? new Date(sub.endDate) : currentDate;
-        
-        // 月数の差を計算
-        const monthDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 + 
-                         (endDate.getMonth() - startDate.getMonth()) + 1;
-        
-        totalMonths += monthDiff;
-        subscriptionCount++;
-      }
-    }
-
-    const averageContinuationMonths = subscriptionCount > 0 ? totalMonths / subscriptionCount : 0;
-
-    const totalMonthlyRevenue = monthlyRevenueResult[0]?.totalAmount || '0';
-    const totalUnpaid = totalUnpaidResult[0]?.totalUnpaid || '0';
-
-    return NextResponse.json({
-      totalMonthlyRevenue,
-      totalUnpaid,
-      averageContinuationMonths,
-    });
+    return NextResponse.json(summary);
   } catch (error) {
     console.error('Subscriptions summary API error:', error);
     return NextResponse.json(

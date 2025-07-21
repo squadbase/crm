@@ -66,15 +66,25 @@ export function useClientI18n() {
   };
 
   // 日付フォーマット
-  const formatDate = (date: string | Date): string => {
+  const formatDate = (date: string | Date | null | undefined): string => {
+    // 日付が未定義またはnullの場合は「-」を返す
+    if (!date) {
+      return '-';
+    }
+
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    
+    // 無効な日付の場合は「-」を返す
+    if (isNaN(dateObj.getTime())) {
+      return '-';
+    }
+
     if (!isClient || isLoading) {
       // SSR中はシンプルなフォーマットを返す
-      const dateObj = typeof date === 'string' ? new Date(date) : date;
       return dateObj.toLocaleDateString();
     }
 
     const locale = settings.language === 'ja' ? 'ja-JP' : 'en-US';
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
     
     return dateObj.toLocaleDateString(locale, {
       year: 'numeric',

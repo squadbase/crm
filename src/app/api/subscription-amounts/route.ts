@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { subscriptionAmounts } from '@/lib/db/schema';
+import { createSubscriptionAmount } from '@/app/models/subscriptions';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,26 +21,15 @@ export async function POST(request: NextRequest) {
     }
 
     // サブスクリプション料金を作成
-    const [subscriptionAmount] = await db
-      .insert(subscriptionAmounts)
-      .values({
-        subscriptionId,
-        amount: amount.toString(),
-        startDate,
-        endDate: endDate || null
-      })
-      .returning();
+    const subscriptionAmount = await createSubscriptionAmount({
+      subscriptionId,
+      amount: amount.toString(),
+      startDate,
+      endDate: endDate || null
+    });
 
     return NextResponse.json({
-      subscriptionAmount: {
-        amountId: subscriptionAmount.amountId,
-        subscriptionId: subscriptionAmount.subscriptionId,
-        amount: parseFloat(subscriptionAmount.amount),
-        startDate: subscriptionAmount.startDate,
-        endDate: subscriptionAmount.endDate,
-        createdAt: subscriptionAmount.createdAt ? new Date(subscriptionAmount.createdAt).toISOString() : null,
-        updatedAt: subscriptionAmount.updatedAt ? new Date(subscriptionAmount.updatedAt).toISOString() : null,
-      }
+      subscriptionAmount
     });
   } catch (error) {
     console.error('Subscription amount creation error:', error);
