@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCustomers, getCustomerCount } from '@/app/models/customers';
+import { getCustomers, getCustomerCount } from '@/models/customers';
 import { z } from 'zod';
 
 const createCustomerSchema = z.object({

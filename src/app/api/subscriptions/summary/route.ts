@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSubscriptionSummaryMetrics } from '@/app/models/subscriptions';
+import { getSubscriptionSummaryMetrics } from '@/models/subscriptions';
 
 export async function GET() {
   try {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSubscriptionAmount } from '@/app/models/subscriptions';
+import { createSubscriptionAmount } from '@/models/subscriptions';
 
 export async function POST(request: NextRequest) {
   try {

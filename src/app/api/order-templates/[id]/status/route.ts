@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { updateOrderTemplate } from '@/app/models/order-templates';
+import { updateOrderTemplate } from '@/models/order-templates';
 
 export async function PATCH(
   request: NextRequest,

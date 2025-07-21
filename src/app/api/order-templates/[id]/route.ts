@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getOrderTemplateById, updateOrderTemplate, deleteOrderTemplate } from '@/app/models/order-templates';
+import { getOrderTemplateById, updateOrderTemplate, deleteOrderTemplate } from '@/models/order-templates';
 
 export async function GET(
   _request: NextRequest,

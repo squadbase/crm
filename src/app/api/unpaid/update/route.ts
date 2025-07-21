@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { updatePaymentStatus } from '@/app/models/unpaid';
+import { updatePaymentStatus } from '@/models/unpaid';
 
 interface UpdateRequest {
   items: Array<{

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getOrderTemplates, getOrderTemplateCount, createOrderTemplate, OrderTemplateFilters } from '@/app/models/order-templates';
+import { getOrderTemplates, getOrderTemplateCount, createOrderTemplate, OrderTemplateFilters } from '@/models/order-templates';
 
 export async function GET(request: NextRequest) {
   try {

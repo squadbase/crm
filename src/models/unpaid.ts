@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
-import { orders, subscriptionPaid, customers, subscriptions, subscriptionAmounts } from '@/lib/db/schema';
-import { eq, desc, and, or, sql } from 'drizzle-orm';
+import { orders, subscriptionPaid, customers, subscriptions } from '@/lib/db/schema';
+import { eq, desc, and } from 'drizzle-orm';
 
 export interface UnpaidPayment {
   id: string;

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getUnpaidPayments } from '@/app/models/unpaid';
+import { getUnpaidPayments } from '@/models/unpaid';
 
 export async function GET() {
   try {

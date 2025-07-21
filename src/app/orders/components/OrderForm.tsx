@@ -24,7 +24,7 @@ interface Order {
   orderId: string;
   customerId: string;
   customerName: string;
-  salesAt: string;
+  salesAt: string | null | undefined;
   amount: string;
   isPaid: boolean;
   description: string | null;
@@ -72,7 +72,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
     if (editingOrder) {
       setFormData({
         customerId: editingOrder.customerId,
-        salesAt: editingOrder.salesAt,
+        salesAt: editingOrder.salesAt || '',
         amount: editingOrder.amount,
         isPaid: editingOrder.isPaid,
         description: editingOrder.description || ''

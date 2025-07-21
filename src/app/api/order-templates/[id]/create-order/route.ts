@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getOrderTemplateById } from '@/app/models/order-templates';
+import { getOrderTemplateById } from '@/models/order-templates';
 
 export async function POST(
   _request: NextRequest,

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getOrders, getOrderCount, createOrder, OrderFilters } from '@/app/models/orders';
+import { getOrders, getOrderCount, createOrder, OrderFilters } from '@/models/orders';
 
 export async function GET(request: NextRequest) {
   try {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getMonthlySalesData } from '@/app/models/dashboard';
+import { getMonthlySalesData } from '@/models/dashboard';
 
 export async function GET(request: NextRequest) {
   try {

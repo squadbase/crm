@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getOrderTemplatesSummary } from '@/app/models/order-templates';
+import { getOrderTemplatesSummary } from '@/models/order-templates';
 
 export async function GET() {
   try {

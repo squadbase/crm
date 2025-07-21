@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getCustomerDetails, updateCustomer, deleteCustomer } from '@/app/models/customers';
+import { getCustomerDetails, updateCustomer, deleteCustomer } from '@/models/customers';
 
 const updateCustomerSchema = z.object({
   customer_name: z.string()

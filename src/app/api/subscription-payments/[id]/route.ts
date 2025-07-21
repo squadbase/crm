@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { updateSubscriptionPayment } from '@/app/models/subscriptions';
+import { updateSubscriptionPayment } from '@/models/subscriptions';
 
 export async function PUT(
   request: NextRequest,

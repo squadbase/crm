@@ -17,7 +17,7 @@ interface Order {
   customerId: string;
   customerName: string;
   amount: string;
-  salesAt: string;
+  salesAt: string | null | undefined;
   isPaid: boolean;
   description: string | null;
   createdAt: string;

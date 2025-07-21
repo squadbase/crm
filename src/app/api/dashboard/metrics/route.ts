@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getDashboardMetrics } from '@/app/models/dashboard';
+import { getDashboardMetrics } from '@/models/dashboard';
 
 export async function GET() {
   try {
