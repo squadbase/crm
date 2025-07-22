@@ -134,14 +134,44 @@ export async function getSubscriptionWithPaymentDetails(subscriptionId: string) 
       .orderBy(desc(subscriptionAmounts.startDate));
 
     // Get payment history
-    const payments = await db
+    const paymentsRaw = await db
       .select()
       .from(subscriptionPaid)
       .where(eq(subscriptionPaid.subscriptionId, subscriptionId))
       .orderBy(desc(subscriptionPaid.year), desc(subscriptionPaid.month));
 
+    // Convert payment amounts from strings to numbers
+    const payments = paymentsRaw.map(payment => ({
+      ...payment,
+      amount: parseFloat(payment.amount)
+    }));
+
+    // Calculate current amount and status from amounts data based on current date
+    const now = new Date();
+    const today = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+    
+    const currentAmountRecord = amounts.find(a => {
+      const startDate = a.startDate;
+      const endDate = a.endDate;
+      
+      // Start date <= current date AND (no end date OR end date > current date)
+      return startDate <= today && (!endDate || endDate > today);
+    });
+    
+    const currentAmount = currentAmountRecord ? parseFloat(currentAmountRecord.amount) : 0;
+    const status = currentAmountRecord ? 'active' : 'inactive';
+
+    // Add calculated fields to subscription
+    const subscriptionWithMetrics = {
+      ...subscription,
+      currentAmount,
+      status,
+      totalPaid: payments.filter(p => p.isPaid).reduce((sum, p) => sum + p.amount, 0),
+      totalUnpaid: payments.filter(p => !p.isPaid).reduce((sum, p) => sum + p.amount, 0)
+    };
+
     return {
-      subscription,
+      subscription: subscriptionWithMetrics,
       amounts,
       payments
     };
@@ -255,39 +285,30 @@ export async function getSubscriptionPaymentSummary(subscriptionId: string) {
  */
 export async function getSubscriptionSummaryMetrics() {
   try {
-    // Monthly revenue (sum of all active subscription amounts)
+    // Monthly revenue (sum of all active subscription amounts based on current date)
     const monthlyRevenueResult = await db
       .select({ 
         totalAmount: sql<string>`SUM(${subscriptionAmounts.amount})` 
       })
       .from(subscriptionAmounts)
       .where(
-        or(
-          isNull(subscriptionAmounts.endDate), // No end date (ongoing)
-          sql`${subscriptionAmounts.endDate} >= CURRENT_DATE` // Or end date is in the future
+        and(
+          sql`${subscriptionAmounts.startDate} <= CURRENT_DATE`, // Start date is today or in the past
+          or(
+            isNull(subscriptionAmounts.endDate), // No end date (ongoing)
+            sql`${subscriptionAmounts.endDate} > CURRENT_DATE` // Or end date is in the future
+          )
         )
       );
 
-    // Total unpaid amount (current month and before)
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth() + 1;
-    
+    // Total unpaid amount (all unpaid subscription payments)
     const totalUnpaidResult = await db
       .select({
         totalUnpaid: sql<string>`SUM(${subscriptionPaid.amount})`
       })
       .from(subscriptionPaid)
       .where(
-        and(
-          eq(subscriptionPaid.isPaid, false),
-          or(
-            sql`${subscriptionPaid.year} < ${currentYear}`,
-            and(
-              eq(subscriptionPaid.year, currentYear),
-              sql`${subscriptionPaid.month} <= ${currentMonth}`
-            )
-          )
-        )
+        eq(subscriptionPaid.isPaid, false)
       );
 
     // Average continuation months

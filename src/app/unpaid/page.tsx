@@ -140,14 +140,13 @@ export default function UnpaidPaymentsPage() {
     return Math.max(0, diffDays);
   };
 
-  // 日付フォーマット
+  // 日付フォーマット - yyyy/MM/dd形式
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('ja-JP', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}/${month}/${day}`;
   };
 
   const headerActions = (

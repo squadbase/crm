@@ -13,6 +13,7 @@ interface Subscription {
   endDate: string | null;
   totalPaid: number;
   totalUnpaid: number;
+  totalAmount: number;
   status: 'active' | 'inactive';
   createdAt: string;
   updatedAt: string;
@@ -176,6 +177,16 @@ export function SubscriptionsTable({
               </th>
               <th style={{
                 padding: '12px 16px',
+                textAlign: 'right',
+                fontSize: '13px',
+                fontWeight: '600',
+                color: '#374151',
+                borderBottom: '1px solid #e5e7eb'
+              }}>
+                {t('totalFee')}
+              </th>
+              <th style={{
+                padding: '12px 16px',
                 textAlign: 'center',
                 fontSize: '13px',
                 fontWeight: '600',
@@ -258,6 +269,15 @@ export function SubscriptionsTable({
                   color: '#dc2626'
                 }}>
                   {formatAmount(subscription.totalUnpaid)}
+                </td>
+                <td style={{
+                  padding: '12px 16px',
+                  textAlign: 'right',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: '#111827'
+                }}>
+                  {formatAmount(subscription.totalAmount)}
                 </td>
                 <td style={{
                   padding: '12px 16px',

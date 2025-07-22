@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { updateSubscriptionAmount } from '@/models/subscriptions';
+import { updateSubscriptionAmount, deleteSubscriptionAmount } from '@/models/subscriptions';
 
 export async function PUT(
   request: NextRequest,
@@ -8,19 +8,26 @@ export async function PUT(
   try {
     const { id: amountId } = await params;
     const body = await request.json();
-    const { endDate } = body;
+    const { amount, startDate, endDate } = body;
 
-    if (!endDate) {
-      return NextResponse.json(
-        { error: 'End date is required' },
-        { status: 400 }
-      );
+    const updateData: {
+      amount?: string;
+      startDate?: string;
+      endDate?: string | null;
+    } = {};
+
+    if (amount !== undefined) {
+      updateData.amount = amount.toString();
+    }
+    if (startDate !== undefined) {
+      updateData.startDate = startDate;
+    }
+    if (endDate !== undefined) {
+      updateData.endDate = endDate;
     }
 
-    // サブスクリプション料金を更新（終了日を設定）
-    const updatedAmount = await updateSubscriptionAmount(amountId, {
-      endDate
-    });
+    // サブスクリプション料金を更新
+    const updatedAmount = await updateSubscriptionAmount(amountId, updateData);
 
     if (!updatedAmount) {
       return NextResponse.json(
@@ -36,6 +43,36 @@ export async function PUT(
     console.error('Subscription amount update error:', error);
     return NextResponse.json(
       { error: 'Failed to update subscription amount' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id: amountId } = await params;
+
+    // サブスクリプション料金を削除
+    const deletedAmount = await deleteSubscriptionAmount(amountId);
+
+    if (!deletedAmount) {
+      return NextResponse.json(
+        { error: 'Subscription amount not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      message: 'Subscription amount deleted successfully',
+      deletedAmount
+    });
+  } catch (error) {
+    console.error('Subscription amount deletion error:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete subscription amount' },
       { status: 500 }
     );
   }

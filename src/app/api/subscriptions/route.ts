@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSubscriptions, getSubscriptionCount, getSubscriptionPaymentSummary, createSubscription, SubscriptionFilters } from '@/models/subscriptions';
+import { db } from '@/lib/db';
+import { subscriptionAmounts } from '@/lib/db/schema';
+import { eq, desc } from 'drizzle-orm';
 
 export async function GET(request: NextRequest) {
   try {
@@ -33,16 +36,44 @@ export async function GET(request: NextRequest) {
     const enrichedSubscriptions = await Promise.all(
       subscriptionsData.map(async (sub) => {
         const paymentSummary = await getSubscriptionPaymentSummary(sub.subscriptionId);
+        
+        // サブスクリプションの料金履歴を取得して現在の金額と契約終了日を計算
+        const amounts = await db
+          .select()
+          .from(subscriptionAmounts)
+          .where(eq(subscriptionAmounts.subscriptionId, sub.subscriptionId))
+          .orderBy(desc(subscriptionAmounts.startDate));
 
-        // ステータス判定（未払いがあれば inactive、なければ active）
-        const status = paymentSummary.unpaidAmount > 0 ? 'inactive' : 'active';
+        // 現在の日時を取得
+        const now = new Date();
+        const today = now.toISOString().split('T')[0]; // YYYY-MM-DD形式
+        
+        // 現在の日付で有効な料金を取得（開始日 <= 現在日 <= 終了日 または 終了日がnull）
+        const currentAmountRecord = amounts.find(a => {
+          const startDate = a.startDate;
+          const endDate = a.endDate;
+          
+          // 開始日が現在日以前で、かつ（終了日がnullまたは終了日が現在日より後）
+          return startDate <= today && (!endDate || endDate > today);
+        });
+        
+        const currentAmount = currentAmountRecord ? parseFloat(currentAmountRecord.amount) : 0;
+        
+        // 最後に終了した契約があればその終了日を取得
+        const lastEndedAmount = amounts.find(a => a.endDate);
+        const endDate = lastEndedAmount ? lastEndedAmount.endDate : null;
+
+        // ステータス判定（現在の日付で有効な料金があれば active、なければ inactive）
+        const status = currentAmountRecord ? 'active' : 'inactive';
 
         return {
           ...sub,
-          currentAmount: paymentSummary.totalAmount,
+          currentAmount: currentAmount,
           startDate: sub.startDate ? sub.startDate.toString() : null,
+          endDate: endDate ? endDate.toString() : null,
           totalPaid: paymentSummary.paidAmount,
           totalUnpaid: paymentSummary.unpaidAmount,
+          totalAmount: paymentSummary.totalAmount, // 支払い合計を別途追加
           status
         };
       })

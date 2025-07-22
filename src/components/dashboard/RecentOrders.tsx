@@ -153,7 +153,13 @@ export function RecentOrders({ orders: recentOrders, loading }: { orders: Order[
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <Calendar style={{ height: '11px', width: '11px', color: '#6b7280' }} />
                   <span style={{ fontSize: '11px', color: '#6b7280' }}>
-{order.salesStartDt ? (mounted ? formatDate(order.salesStartDt) : new Date(order.salesStartDt).toLocaleDateString('ja-JP')) : 'N/A'}
+{order.salesStartDt ? (mounted ? formatDate(order.salesStartDt) : (() => {
+                        const date = new Date(order.salesStartDt);
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        return `${year}/${month}/${day}`;
+                      })()) : 'N/A'}
                   </span>
                 </div>
               </div>

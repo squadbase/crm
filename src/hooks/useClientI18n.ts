@@ -65,7 +65,7 @@ export function useClientI18n() {
     }).format(amount);
   };
 
-  // 日付フォーマット
+  // 日付フォーマット - yyyy/MM/dd形式
   const formatDate = (date: string | Date | null | undefined): string => {
     // 日付が未定義またはnullの場合は「-」を返す
     if (!date) {
@@ -79,18 +79,11 @@ export function useClientI18n() {
       return '-';
     }
 
-    if (!isClient || isLoading) {
-      // SSR中はシンプルなフォーマットを返す
-      return dateObj.toLocaleDateString();
-    }
-
-    const locale = settings.language === 'ja' ? 'ja-JP' : 'en-US';
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
     
-    return dateObj.toLocaleDateString(locale, {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
+    return `${year}/${month}/${day}`;
   };
 
   const getLanguage = () => settings.language;

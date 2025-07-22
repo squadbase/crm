@@ -141,7 +141,13 @@ export function CustomerList({ customers: customerStats, loading }: { customers:
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Calendar style={{ height: '11px', width: '11px', color: '#6b7280' }} />
                     <span style={{ fontSize: '11px', color: '#6b7280' }}>
-                      {mounted ? formatDate(customer.createdAt) : new Date(customer.createdAt).toLocaleDateString('ja-JP')}
+                      {mounted ? formatDate(customer.createdAt) : (() => {
+                        const date = new Date(customer.createdAt);
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        return `${year}/${month}/${day}`;
+                      })()}
                     </span>
                   </div>
                 </div>

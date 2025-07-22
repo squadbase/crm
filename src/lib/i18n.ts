@@ -1250,6 +1250,10 @@ export const translations = {
     ja: '未払合計',
     en: 'Total Unpaid',
   },
+  totalFee: {
+    ja: '合計料金',
+    en: 'Total Fee',
+  },
   averageContinuationMonths: {
     ja: '平均継続月数',
     en: 'Average Continuation Months',
@@ -1427,6 +1431,20 @@ export const translations = {
     ja: '件選択中',
     en: ' items selected',
   },
+
+  // Price History Edit/Delete functionality
+  optional: {
+    ja: '任意',
+    en: 'Optional',
+  },
+  deletingRecord: {
+    ja: '削除対象のレコード',
+    en: 'Deleting record',
+  },
+  thisActionCannotBeUndone: {
+    ja: 'この操作は取り消せません。',
+    en: 'This action cannot be undone.',
+  },
 };
 
 export type TranslationKey = keyof typeof translations;
@@ -1466,17 +1484,14 @@ export const formatNumber = (value: number): string => {
 };
 
 /**
- * 日付フォーマット
+ * 日付フォーマット - yyyy/MM/dd形式
  */
 export const formatDate = (date: string | Date): string => {
-  const language = getLanguage();
-  const locale = language === 'ja' ? 'ja-JP' : 'en-US';
-
   const dateObj = typeof date === 'string' ? new Date(date) : date;
-
-  return dateObj.toLocaleDateString(locale, {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
+  
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  
+  return `${year}/${month}/${day}`;
 };

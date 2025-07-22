@@ -20,6 +20,7 @@ interface Subscription {
   endDate: string | null;
   totalPaid: number;
   totalUnpaid: number;
+  totalAmount: number;
   status: 'active' | 'inactive';
   createdAt: string;
   updatedAt: string;

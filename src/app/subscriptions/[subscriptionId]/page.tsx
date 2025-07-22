@@ -58,6 +58,9 @@ export default function SubscriptionDetailPage({
   const [showAmountModal, setShowAmountModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showRestartModal, setShowRestartModal] = useState(false);
+  const [showEditAmountModal, setShowEditAmountModal] = useState(false);
+  const [showDeleteAmountModal, setShowDeleteAmountModal] = useState(false);
+  const [editingAmount, setEditingAmount] = useState<SubscriptionAmount | null>(null);
 
   // Form states
   const [newAmount, setNewAmount] = useState('');
@@ -66,6 +69,12 @@ export default function SubscriptionDetailPage({
   const [cancelDate, setCancelDate] = useState('');
   const [restartDate, setRestartDate] = useState('');
   const [restartAmountDisplay, setRestartAmountDisplay] = useState('');
+  
+  // Edit amount form states
+  const [editAmount, setEditAmount] = useState('');
+  const [editAmountDisplay, setEditAmountDisplay] = useState('');
+  const [editStartDate, setEditStartDate] = useState('');
+  const [editEndDate, setEditEndDate] = useState('');
 
   const fetchSubscriptionDetail = useCallback(async () => {
     try {
@@ -235,6 +244,74 @@ export default function SubscriptionDetailPage({
     }
   };
 
+  const handleEditAmount = (amount: SubscriptionAmount) => {
+    setEditingAmount(amount);
+    const amountString = amount.amount.toString();
+    setEditAmount(amountString);
+    setEditAmountDisplay(formatNumberWithCommas(amountString));
+    setEditStartDate(amount.startDate);
+    setEditEndDate(amount.endDate || '');
+    setShowEditAmountModal(true);
+  };
+
+  const handleUpdateAmount = async () => {
+    if (!editingAmount || !editAmount || !editStartDate) {
+      setError('金額と開始日は必須です');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/subscription-amounts/${editingAmount.amountId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: Number(editAmount),
+          startDate: editStartDate,
+          endDate: editEndDate || null
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to update amount');
+
+      setShowEditAmountModal(false);
+      setEditingAmount(null);
+      setEditAmount('');
+      setEditAmountDisplay('');
+      setEditStartDate('');
+      setEditEndDate('');
+      setError(null);
+      fetchSubscriptionDetail();
+    } catch (error) {
+      console.error('Failed to update amount:', error);
+      setError('料金履歴の更新に失敗しました');
+    }
+  };
+
+  const handleDeleteAmount = (amount: SubscriptionAmount) => {
+    setEditingAmount(amount);
+    setShowDeleteAmountModal(true);
+  };
+
+  const handleConfirmDeleteAmount = async () => {
+    if (!editingAmount) return;
+
+    try {
+      const response = await fetch(`/api/subscription-amounts/${editingAmount.amountId}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) throw new Error('Failed to delete amount');
+
+      setShowDeleteAmountModal(false);
+      setEditingAmount(null);
+      setError(null);
+      fetchSubscriptionDetail();
+    } catch (error) {
+      console.error('Failed to delete amount:', error);
+      setError('料金履歴の削除に失敗しました');
+    }
+  };
+
   const formatAmount = (amount: number) => {
     return formatCurrency(amount);
   };
@@ -275,8 +352,16 @@ export default function SubscriptionDetailPage({
     router.push('/subscriptions');
   };
 
-  // 現在アクティブかどうかを判定
-  const isCurrentlyActive = subscription && amounts.some(a => !a.endDate);
+  // 現在アクティブかどうかを判定（現在の日付で有効かチェック）
+  const isCurrentlyActive = subscription && amounts.some(a => {
+    const now = new Date();
+    const today = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+    const startDate = a.startDate;
+    const endDate = a.endDate;
+    
+    // Start date <= current date AND (no end date OR end date >= current date)
+    return startDate <= today && (!endDate || endDate >= today);
+  });
 
   const headerActions = (
     <div style={{
@@ -770,6 +855,16 @@ export default function SubscriptionDetailPage({
                     }}>
                       {t('status')}
                     </th>
+                    <th style={{
+                      padding: '12px 16px',
+                      textAlign: 'center',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      color: '#374151',
+                      borderBottom: '1px solid #e5e7eb'
+                    }}>
+                      {t('actions')}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -816,6 +911,55 @@ export default function SubscriptionDetailPage({
                         }}>
                           {amount.endDate ? t('ended') : t('active')}
                         </span>
+                      </td>
+                      <td style={{
+                        padding: '12px 16px',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
+                          <button
+                            onClick={() => handleEditAmount(amount)}
+                            style={{
+                              padding: '4px 8px',
+                              fontSize: '12px',
+                              fontWeight: '500',
+                              color: '#2563eb',
+                              backgroundColor: 'white',
+                              border: '1px solid #2563eb',
+                              borderRadius: '4px',
+                              cursor: 'pointer'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = '#eff6ff';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = 'white';
+                            }}
+                          >
+                            {t('edit')}
+                          </button>
+                          <button
+                            onClick={() => handleDeleteAmount(amount)}
+                            style={{
+                              padding: '4px 8px',
+                              fontSize: '12px',
+                              fontWeight: '500',
+                              color: '#dc2626',
+                              backgroundColor: 'white',
+                              border: '1px solid #dc2626',
+                              borderRadius: '4px',
+                              cursor: 'pointer'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = '#fef2f2';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = 'white';
+                            }}
+                          >
+                            {t('delete')}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -1458,6 +1602,237 @@ export default function SubscriptionDetailPage({
                 }}
               >
                 {t('confirmRestart')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 料金履歴編集モーダル */}
+      {showEditAmountModal && editingAmount && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            padding: '24px',
+            width: '100%',
+            maxWidth: '500px',
+            margin: '16px'
+          }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>
+              {t('edit')} {t('priceHistory')}
+            </h3>
+            
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{
+                display: 'block',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#374151',
+                marginBottom: '6px'
+              }}>
+                {t('amount')}
+              </label>
+              <input
+                type="text"
+                value={editAmountDisplay}
+                onChange={(e) => handleAmountInputChange(e.target.value, setEditAmount, setEditAmountDisplay)}
+                placeholder="120,000"
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{
+                display: 'block',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#374151',
+                marginBottom: '6px'
+              }}>
+                {t('startDate')}
+              </label>
+              <input
+                type="date"
+                value={editStartDate}
+                onChange={(e) => setEditStartDate(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{
+                display: 'block',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#374151',
+                marginBottom: '6px'
+              }}>
+                {t('endDate')} ({t('optional')})
+              </label>
+              <input
+                type="date"
+                value={editEndDate}
+                onChange={(e) => setEditEndDate(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+              <button
+                onClick={() => {
+                  setShowEditAmountModal(false);
+                  setEditingAmount(null);
+                  setEditAmount('');
+                  setEditAmountDisplay('');
+                  setEditStartDate('');
+                  setEditEndDate('');
+                }}
+                style={{
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: '#374151',
+                  backgroundColor: 'white',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                {t('cancel')}
+              </button>
+              <button
+                onClick={handleUpdateAmount}
+                style={{
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: 'white',
+                  backgroundColor: '#2563eb',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                {t('update')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 料金履歴削除確認モーダル */}
+      {showDeleteAmountModal && editingAmount && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            padding: '24px',
+            width: '100%',
+            maxWidth: '400px',
+            margin: '16px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+              <AlertTriangle size={24} color="#dc2626" />
+              <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#dc2626', margin: 0 }}>
+                {t('delete')} {t('priceHistory')}
+              </h3>
+            </div>
+            
+            <div style={{
+              padding: '16px',
+              backgroundColor: '#f9fafb',
+              borderRadius: '8px',
+              marginBottom: '16px'
+            }}>
+              <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                {t('deletingRecord')}:
+              </div>
+              <div style={{ fontSize: '14px', fontWeight: '500', color: '#111827' }}>
+                {formatAmount(editingAmount.amount)} ({editingAmount.startDate} - {editingAmount.endDate || t('ongoing')})
+              </div>
+            </div>
+            
+            <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '24px' }}>
+              {t('deleteWarning')} {t('thisActionCannotBeUndone')}
+            </p>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+              <button
+                onClick={() => {
+                  setShowDeleteAmountModal(false);
+                  setEditingAmount(null);
+                }}
+                style={{
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: '#374151',
+                  backgroundColor: 'white',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                {t('cancel')}
+              </button>
+              <button
+                onClick={handleConfirmDeleteAmount}
+                style={{
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: 'white',
+                  backgroundColor: '#dc2626',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                {t('delete')}
               </button>
             </div>
           </div>
