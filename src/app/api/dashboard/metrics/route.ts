@@ -1,9 +1,13 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getDashboardMetrics } from '@/models/dashboard';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const result = await getDashboardMetrics();
+    const { searchParams } = new URL(request.url);
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+    
+    const result = await getDashboardMetrics(startDate || undefined, endDate || undefined);
     return NextResponse.json(result);
   } catch (error) {
     console.error('Dashboard metrics API error:', error);

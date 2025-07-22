@@ -112,7 +112,7 @@ export async function getUnpaidPayments(): Promise<{
         amount: payment.amount.toString(),
         description: payment.description || `Subscription Payment ${payment.year}/${payment.month}`,
         salesDate: salesDate.toISOString().split('T')[0],
-        dueDate: dueDate.toISOString().split('T')[0],
+        dueDate: `${dueDate.getFullYear()}-${String(dueDate.getMonth() + 1).padStart(2, '0')}-${String(dueDate.getDate()).padStart(2, '0')}`,
         isPaid: payment.isPaid,
         serviceType: 'subscription',
         paymentType: 'subscription',
@@ -125,15 +125,12 @@ export async function getUnpaidPayments(): Promise<{
 
     console.log('Formatted subscription payments count:', formattedSubscriptionPayments.length);
 
-    // Combine both arrays, filter by due date (only past due or due today), and sort by due date (ascending)
+    // Combine both arrays and sort by due date (ascending)
+    // Show all unpaid payments regardless of due date
     const allUnpaidPayments = [
       ...formattedOnetimeOrders,
       ...formattedSubscriptionPayments
     ]
-    .filter(payment => {
-      const dueDate = new Date(payment.dueDate);
-      return dueDate <= today;
-    })
     .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
     console.log('Filtered and sorted payments count:', allUnpaidPayments.length);

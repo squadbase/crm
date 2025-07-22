@@ -439,6 +439,108 @@ export const translations = {
     ja: 'データがありません',
     en: 'No data available',
   },
+  calculateMonthly: {
+    ja: '月額計算',
+    en: 'Calculate Monthly',
+  },
+  calculateMonthlyPayments: {
+    ja: '月額支払い計算',
+    en: 'Calculate Monthly Payments',
+  },
+  year: {
+    ja: '年',
+    en: 'Year',
+  },
+  month: {
+    ja: '月',
+    en: 'Month',
+  },
+  monthSuffix: {
+    ja: '月',
+    en: '',
+  },
+  calculate: {
+    ja: '計算',
+    en: 'Calculate',
+  },
+  calculating: {
+    ja: '計算中...',
+    en: 'Calculating...',
+  },
+  startYear: {
+    ja: '開始年',
+    en: 'Start Year',
+  },
+  startMonth: {
+    ja: '開始月',
+    en: 'Start Month',
+  },
+  endYear: {
+    ja: '終了年',
+    en: 'End Year',
+  },
+  endMonth: {
+    ja: '終了月',
+    en: 'End Month',
+  },
+  dateRange: {
+    ja: '期間',
+    en: 'Date Range',
+  },
+  to: {
+    ja: '〜',
+    en: 'to',
+  },
+  calculateRange: {
+    ja: '期間計算',
+    en: 'Calculate Range',
+  },
+  calculatePeriodPayments: {
+    ja: '期間の月額計算を実行',
+    en: 'Calculate Period Payments',
+  },
+  lastCalculation: {
+    ja: '最終計算実行',
+    en: 'Last Calculation',
+  },
+  cooldownMessage: {
+    ja: '前回の計算から15分経過していません。残り{minutes}分後に実行可能です。',
+    en: 'Please wait {minutes} more minutes before running the next calculation.',
+  },
+  futureMonthWarning: {
+    ja: '未来の月は計算できません。現在の月({currentYear}年{currentMonth}月)までを選択してください。',
+    en: 'Future months cannot be calculated. Please select up to the current month ({currentYear}/{currentMonth}).',
+  },
+  futureMonthWarningRange: {
+    ja: '未来の月は計算できません。終了月は現在の月({currentYear}年{currentMonth}月)までを選択してください。',
+    en: 'Future months cannot be calculated. Please select end month up to the current month ({currentYear}/{currentMonth}).',
+  },
+  calculationInProgress: {
+    ja: '計算実行中...',
+    en: 'Calculation in progress...',
+  },
+  calculationCompleted: {
+    ja: '計算が完了しました！',
+    en: 'Calculation completed!',
+  },
+  calculationFailed: {
+    ja: '計算に失敗しました。',
+    en: 'Calculation failed.',
+  },
+  
+  // Month names
+  january: { ja: '1月', en: 'January' },
+  february: { ja: '2月', en: 'February' },
+  march: { ja: '3月', en: 'March' },
+  april: { ja: '4月', en: 'April' },
+  may: { ja: '5月', en: 'May' },
+  june: { ja: '6月', en: 'June' },
+  july: { ja: '7月', en: 'July' },
+  august: { ja: '8月', en: 'August' },
+  september: { ja: '9月', en: 'September' },
+  october: { ja: '10月', en: 'October' },
+  november: { ja: '11月', en: 'November' },
+  december: { ja: '12月', en: 'December' },
 
   // Chart labels
   monthlySales: {
@@ -503,13 +605,25 @@ export const translations = {
     ja: '半年',
     en: '6 Months',
   },
+  sixMonthsAgo: {
+    ja: '過去6ヶ月',
+    en: '6 months ago',
+  },
   oneYear: {
     ja: '一年',
     en: '1 Year',
   },
+  oneYearAgo: {
+    ja: '過去1年',
+    en: '1 year ago',
+  },
   allPeriod: {
     ja: '全期間',
     en: 'All Time',
+  },
+  allTime: {
+    ja: '全期間',
+    en: 'All time',
   },
 
   // Data status
@@ -1474,6 +1588,27 @@ export const translations = {
   latestLabel: {
     ja: '最新:',
     en: 'Latest:',
+  },
+  // Sync status messages
+  syncInProgress: {
+    ja: '自動同期実行中（過去半年分の月額計算を処理しています）',
+    en: 'Auto sync in progress (processing monthly calculations for the past 6 months)',
+  },
+  syncCompleted: {
+    ja: '同期完了',
+    en: 'Sync completed',
+  },
+  lastExecution: {
+    ja: '最終実行',
+    en: 'Last execution',
+  },
+  manualExecutionInfo: {
+    ja: '手動実行は「月額計算」ボタンから可能',
+    en: 'Manual execution available from "Calculate Monthly" button',
+  },
+  minutesLater: {
+    ja: '分後',
+    en: ' minutes later',
   },
 };
 

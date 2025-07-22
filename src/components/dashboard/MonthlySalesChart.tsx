@@ -67,6 +67,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
     return `${year}/${monthNum}`;
   };
 
+
   if (loading) {
     return (
       <div style={{

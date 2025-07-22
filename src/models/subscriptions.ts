@@ -1,5 +1,10 @@
 import { db } from '@/lib/db';
-import { subscriptions, subscriptionPaid, subscriptionAmounts, customers } from '@/lib/db/schema';
+import {
+  subscriptions,
+  subscriptionPaid,
+  subscriptionAmounts,
+  customers,
+} from '@/lib/db/schema';
 import { eq, desc, asc, and, or, like, count, sql, isNull } from 'drizzle-orm';
 
 export interface SubscriptionFilters {
@@ -19,7 +24,7 @@ export async function getSubscriptions({
   filters = {},
   sort = { field: 'startDate', direction: 'desc' },
   limit,
-  offset = 0
+  offset = 0,
 }: {
   filters?: SubscriptionFilters;
   sort?: SubscriptionSortOptions;
@@ -39,43 +44,53 @@ export async function getSubscriptions({
       })
       .from(subscriptions)
       .leftJoin(customers, eq(subscriptions.customerId, customers.customerId))
-      .leftJoin(subscriptionAmounts, eq(subscriptions.subscriptionId, subscriptionAmounts.subscriptionId));
+      .leftJoin(
+        subscriptionAmounts,
+        eq(subscriptions.subscriptionId, subscriptionAmounts.subscriptionId),
+      );
 
     // Apply filters
     const conditions = [];
-    
+
     if (filters.customerId) {
       conditions.push(eq(subscriptions.customerId, filters.customerId));
     }
-    
+
     if (filters.search) {
       conditions.push(
         or(
           like(customers.customerName, `%${filters.search}%`),
-          like(subscriptions.description, `%${filters.search}%`)
-        )
+          like(subscriptions.description, `%${filters.search}%`),
+        ),
       );
     }
 
     if (conditions.length > 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      query = (query as any).where(conditions.length === 1 ? conditions[0] : and(...conditions));
+      query = (query as any).where(
+        conditions.length === 1 ? conditions[0] : and(...conditions),
+      );
     }
 
     // Apply sorting
-    const sortField = sort.field === 'created' ? subscriptions.createdAt :
-                     sort.field === 'customer' ? customers.customerName :
-                     subscriptionAmounts.startDate;
+    const sortField =
+      sort.field === 'created'
+        ? subscriptions.createdAt
+        : sort.field === 'customer'
+        ? customers.customerName
+        : subscriptionAmounts.startDate;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    query = (query as any).orderBy(sort.direction === 'desc' ? desc(sortField) : asc(sortField));
+    query = (query as any).orderBy(
+      sort.direction === 'desc' ? desc(sortField) : asc(sortField),
+    );
 
     // Apply pagination
     if (limit) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       query = (query as any).limit(limit);
     }
-    
+
     if (offset > 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       query = (query as any).offset(offset);
@@ -97,14 +112,16 @@ export async function getSubscriptionById(subscriptionId: string) {
     .from(subscriptions)
     .where(eq(subscriptions.subscriptionId, subscriptionId))
     .limit(1);
-  
+
   return result[0] || null;
 }
 
 /**
  * Get subscription with payment details
  */
-export async function getSubscriptionWithPaymentDetails(subscriptionId: string) {
+export async function getSubscriptionWithPaymentDetails(
+  subscriptionId: string,
+) {
   try {
     // Get subscription with customer details
     const subscriptionQuery = await db
@@ -141,24 +158,26 @@ export async function getSubscriptionWithPaymentDetails(subscriptionId: string) 
       .orderBy(desc(subscriptionPaid.year), desc(subscriptionPaid.month));
 
     // Convert payment amounts from strings to numbers
-    const payments = paymentsRaw.map(payment => ({
+    const payments = paymentsRaw.map((payment) => ({
       ...payment,
-      amount: parseFloat(payment.amount)
+      amount: parseFloat(payment.amount),
     }));
 
     // Calculate current amount and status from amounts data based on current date
     const now = new Date();
     const today = now.toISOString().split('T')[0]; // YYYY-MM-DD format
-    
-    const currentAmountRecord = amounts.find(a => {
+
+    const currentAmountRecord = amounts.find((a) => {
       const startDate = a.startDate;
       const endDate = a.endDate;
-      
+
       // Start date <= current date AND (no end date OR end date > current date)
       return startDate <= today && (!endDate || endDate > today);
     });
-    
-    const currentAmount = currentAmountRecord ? parseFloat(currentAmountRecord.amount) : 0;
+
+    const currentAmount = currentAmountRecord
+      ? parseFloat(currentAmountRecord.amount)
+      : 0;
     const status = currentAmountRecord ? 'active' : 'inactive';
 
     // Add calculated fields to subscription
@@ -166,14 +185,18 @@ export async function getSubscriptionWithPaymentDetails(subscriptionId: string) 
       ...subscription,
       currentAmount,
       status,
-      totalPaid: payments.filter(p => p.isPaid).reduce((sum, p) => sum + p.amount, 0),
-      totalUnpaid: payments.filter(p => !p.isPaid).reduce((sum, p) => sum + p.amount, 0)
+      totalPaid: payments
+        .filter((p) => p.isPaid)
+        .reduce((sum, p) => sum + p.amount, 0),
+      totalUnpaid: payments
+        .filter((p) => !p.isPaid)
+        .reduce((sum, p) => sum + p.amount, 0),
     };
 
     return {
       subscription: subscriptionWithMetrics,
       amounts,
-      payments
+      payments,
     };
   } catch (error) {
     throw error;
@@ -183,28 +206,33 @@ export async function getSubscriptionWithPaymentDetails(subscriptionId: string) 
 /**
  * Create a new subscription
  */
-export async function createSubscription(subscriptionData: typeof subscriptions.$inferInsert) {
+export async function createSubscription(
+  subscriptionData: typeof subscriptions.$inferInsert,
+) {
   const result = await db
     .insert(subscriptions)
     .values(subscriptionData)
     .returning();
-  
+
   return result[0];
 }
 
 /**
  * Update an existing subscription
  */
-export async function updateSubscription(subscriptionId: string, subscriptionData: Partial<typeof subscriptions.$inferInsert>) {
+export async function updateSubscription(
+  subscriptionId: string,
+  subscriptionData: Partial<typeof subscriptions.$inferInsert>,
+) {
   const result = await db
     .update(subscriptions)
     .set({
       ...subscriptionData,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     })
     .where(eq(subscriptions.subscriptionId, subscriptionId))
     .returning();
-  
+
   return result[0] || null;
 }
 
@@ -216,7 +244,7 @@ export async function deleteSubscription(subscriptionId: string) {
     .delete(subscriptions)
     .where(eq(subscriptions.subscriptionId, subscriptionId))
     .returning();
-  
+
   return result[0] || null;
 }
 
@@ -230,23 +258,25 @@ export async function getSubscriptionCount(filters: SubscriptionFilters = {}) {
     .leftJoin(customers, eq(subscriptions.customerId, customers.customerId));
 
   const conditions = [];
-  
+
   if (filters.customerId) {
     conditions.push(eq(subscriptions.customerId, filters.customerId));
   }
-  
+
   if (filters.search) {
     conditions.push(
       or(
         like(customers.customerName, `%${filters.search}%`),
-        like(subscriptions.description, `%${filters.search}%`)
-      )
+        like(subscriptions.description, `%${filters.search}%`),
+      ),
     );
   }
 
   if (conditions.length > 0) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    query = (query as any).where(conditions.length === 1 ? conditions[0] : and(...conditions));
+    query = (query as any).where(
+      conditions.length === 1 ? conditions[0] : and(...conditions),
+    );
   }
 
   const result = await query;
@@ -273,7 +303,7 @@ export async function getSubscriptionPaymentSummary(subscriptionId: string) {
       paidAmount: parseFloat(summary?.paidAmount || '0'),
       unpaidAmount: parseFloat(summary?.unpaidAmount || '0'),
       totalAmount: parseFloat(summary?.totalAmount || '0'),
-      totalPayments: parseInt(summary?.totalPayments || '0')
+      totalPayments: parseInt(summary?.totalPayments || '0'),
     };
   } catch (error) {
     throw error;
@@ -287,8 +317,8 @@ export async function getSubscriptionSummaryMetrics() {
   try {
     // Monthly revenue (sum of all active subscription amounts based on current date)
     const monthlyRevenueResult = await db
-      .select({ 
-        totalAmount: sql<string>`SUM(${subscriptionAmounts.amount})` 
+      .select({
+        totalAmount: sql<string>`SUM(${subscriptionAmounts.amount})`,
       })
       .from(subscriptionAmounts)
       .where(
@@ -296,30 +326,31 @@ export async function getSubscriptionSummaryMetrics() {
           sql`${subscriptionAmounts.startDate} <= CURRENT_DATE`, // Start date is today or in the past
           or(
             isNull(subscriptionAmounts.endDate), // No end date (ongoing)
-            sql`${subscriptionAmounts.endDate} > CURRENT_DATE` // Or end date is in the future
-          )
-        )
+            sql`${subscriptionAmounts.endDate} > CURRENT_DATE`, // Or end date is in the future
+          ),
+        ),
       );
 
     // Total unpaid amount (all unpaid subscription payments)
     const totalUnpaidResult = await db
       .select({
-        totalUnpaid: sql<string>`SUM(${subscriptionPaid.amount})`
+        totalUnpaid: sql<string>`SUM(${subscriptionPaid.amount})`,
       })
       .from(subscriptionPaid)
-      .where(
-        eq(subscriptionPaid.isPaid, false)
-      );
+      .where(eq(subscriptionPaid.isPaid, false));
 
     // Average continuation months
     const continuationMonthsResult = await db
       .select({
         subscriptionId: subscriptions.subscriptionId,
         startDate: sql<string>`MIN(${subscriptionAmounts.startDate})`,
-        endDate: sql<string>`MAX(${subscriptionAmounts.endDate})`
+        endDate: sql<string>`MAX(${subscriptionAmounts.endDate})`,
       })
       .from(subscriptions)
-      .leftJoin(subscriptionAmounts, eq(subscriptions.subscriptionId, subscriptionAmounts.subscriptionId))
+      .leftJoin(
+        subscriptionAmounts,
+        eq(subscriptions.subscriptionId, subscriptionAmounts.subscriptionId),
+      )
       .groupBy(subscriptions.subscriptionId);
 
     // Calculate average continuation months
@@ -331,17 +362,20 @@ export async function getSubscriptionSummaryMetrics() {
       if (sub.startDate) {
         const startDate = new Date(sub.startDate);
         const endDate = sub.endDate ? new Date(sub.endDate) : currentDate;
-        
+
         // Calculate month difference
-        const monthDiff = (endDate.getFullYear() - startDate.getFullYear()) * 12 + 
-                         (endDate.getMonth() - startDate.getMonth()) + 1;
-        
+        const monthDiff =
+          (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+          (endDate.getMonth() - startDate.getMonth()) +
+          1;
+
         totalMonths += monthDiff;
         subscriptionCount++;
       }
     }
 
-    const averageContinuationMonths = subscriptionCount > 0 ? totalMonths / subscriptionCount : 0;
+    const averageContinuationMonths =
+      subscriptionCount > 0 ? totalMonths / subscriptionCount : 0;
     const totalMonthlyRevenue = monthlyRevenueResult[0]?.totalAmount || '0';
     const totalUnpaid = totalUnpaidResult[0]?.totalUnpaid || '0';
 
@@ -371,7 +405,7 @@ export async function createSubscriptionAmount(amountData: {
         subscriptionId: amountData.subscriptionId,
         amount: amountData.amount,
         startDate: amountData.startDate,
-        endDate: amountData.endDate || null
+        endDate: amountData.endDate || null,
       })
       .returning();
 
@@ -381,8 +415,12 @@ export async function createSubscriptionAmount(amountData: {
       amount: parseFloat(subscriptionAmount.amount),
       startDate: subscriptionAmount.startDate,
       endDate: subscriptionAmount.endDate,
-      createdAt: subscriptionAmount.createdAt ? new Date(subscriptionAmount.createdAt).toISOString() : null,
-      updatedAt: subscriptionAmount.updatedAt ? new Date(subscriptionAmount.updatedAt).toISOString() : null,
+      createdAt: subscriptionAmount.createdAt
+        ? new Date(subscriptionAmount.createdAt).toISOString()
+        : null,
+      updatedAt: subscriptionAmount.updatedAt
+        ? new Date(subscriptionAmount.updatedAt).toISOString()
+        : null,
     };
   } catch (error) {
     throw error;
@@ -392,11 +430,14 @@ export async function createSubscriptionAmount(amountData: {
 /**
  * Update a subscription amount
  */
-export async function updateSubscriptionAmount(amountId: string, updateData: {
-  amount?: string;
-  startDate?: string;
-  endDate?: string | null;
-}) {
+export async function updateSubscriptionAmount(
+  amountId: string,
+  updateData: {
+    amount?: string;
+    startDate?: string;
+    endDate?: string | null;
+  },
+) {
   try {
     const [updatedAmount] = await db
       .update(subscriptionAmounts)
@@ -415,8 +456,12 @@ export async function updateSubscriptionAmount(amountId: string, updateData: {
       amount: parseFloat(updatedAmount.amount),
       startDate: updatedAmount.startDate,
       endDate: updatedAmount.endDate,
-      createdAt: updatedAmount.createdAt ? new Date(updatedAmount.createdAt).toISOString() : null,
-      updatedAt: updatedAmount.updatedAt ? new Date(updatedAmount.updatedAt).toISOString() : null,
+      createdAt: updatedAmount.createdAt
+        ? new Date(updatedAmount.createdAt).toISOString()
+        : null,
+      updatedAt: updatedAmount.updatedAt
+        ? new Date(updatedAmount.updatedAt).toISOString()
+        : null,
     };
   } catch (error) {
     throw error;
@@ -468,8 +513,12 @@ export async function createSubscriptionPayment(paymentData: {
       month: payment.month,
       amount: parseFloat(payment.amount),
       isPaid: payment.isPaid,
-      createdAt: payment.createdAt ? new Date(payment.createdAt).toISOString() : null,
-      updatedAt: payment.updatedAt ? new Date(payment.updatedAt).toISOString() : null,
+      createdAt: payment.createdAt
+        ? new Date(payment.createdAt).toISOString()
+        : null,
+      updatedAt: payment.updatedAt
+        ? new Date(payment.updatedAt).toISOString()
+        : null,
     };
   } catch (error) {
     throw error;
@@ -479,10 +528,13 @@ export async function createSubscriptionPayment(paymentData: {
 /**
  * Update a subscription payment
  */
-export async function updateSubscriptionPayment(paidId: string, updateData: {
-  amount?: string;
-  isPaid?: boolean;
-}) {
+export async function updateSubscriptionPayment(
+  paidId: string,
+  updateData: {
+    amount?: string;
+    isPaid?: boolean;
+  },
+) {
   try {
     const [updatedPayment] = await db
       .update(subscriptionPaid)
@@ -502,8 +554,12 @@ export async function updateSubscriptionPayment(paidId: string, updateData: {
       month: updatedPayment.month,
       amount: parseFloat(updatedPayment.amount),
       isPaid: updatedPayment.isPaid,
-      createdAt: updatedPayment.createdAt ? new Date(updatedPayment.createdAt).toISOString() : null,
-      updatedAt: updatedPayment.updatedAt ? new Date(updatedPayment.updatedAt).toISOString() : null,
+      createdAt: updatedPayment.createdAt
+        ? new Date(updatedPayment.createdAt).toISOString()
+        : null,
+      updatedAt: updatedPayment.updatedAt
+        ? new Date(updatedPayment.updatedAt).toISOString()
+        : null,
     };
   } catch (error) {
     throw error;
@@ -545,9 +601,9 @@ export async function getSubscriptionAmounts(subscriptionId: string) {
       .where(eq(subscriptionAmounts.subscriptionId, subscriptionId))
       .orderBy(asc(subscriptionAmounts.startDate));
 
-    return amounts.map(amount => ({
+    return amounts.map((amount) => ({
       ...amount,
-      amount: parseFloat(amount.amount)
+      amount: parseFloat(amount.amount),
     }));
   } catch (error) {
     throw error;
@@ -565,17 +621,224 @@ export async function getSubscriptionPayments(subscriptionId: string) {
       .where(eq(subscriptionPaid.subscriptionId, subscriptionId))
       .orderBy(desc(subscriptionPaid.year), desc(subscriptionPaid.month));
 
-    return payments.map(payment => ({
+    return payments.map((payment) => ({
       paidId: payment.paidId,
       subscriptionId: payment.subscriptionId,
       year: payment.year,
       month: payment.month,
       amount: parseFloat(payment.amount),
       isPaid: payment.isPaid,
-      createdAt: payment.createdAt ? new Date(payment.createdAt).toISOString() : null,
-      updatedAt: payment.updatedAt ? new Date(payment.updatedAt).toISOString() : null,
+      createdAt: payment.createdAt
+        ? new Date(payment.createdAt).toISOString()
+        : null,
+      updatedAt: payment.updatedAt
+        ? new Date(payment.updatedAt).toISOString()
+        : null,
     }));
   } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Calculate and update subscription payments for a date range or specific month
+ */
+export async function calculateAndUpdateMonthlyPayments(
+  startYear: number,
+  startMonth: number,
+  endYear?: number,
+  endMonth?: number,
+) {
+  const finalEndYear = endYear ?? startYear;
+  const finalEndMonth = endMonth ?? startMonth;
+  
+  try {
+    console.log(`Starting monthly payment calculation for ${startYear}/${startMonth} to ${finalEndYear}/${finalEndMonth}`);
+
+    // Get all active subscriptions with their amounts
+    const subscriptionsWithAmounts = await db
+      .select({
+        subscriptionId: subscriptions.subscriptionId,
+        customerId: subscriptions.customerId,
+        description: subscriptions.description,
+        amountId: subscriptionAmounts.amountId,
+        amount: subscriptionAmounts.amount,
+        startDate: subscriptionAmounts.startDate,
+        endDate: subscriptionAmounts.endDate,
+      })
+      .from(subscriptions)
+      .innerJoin(
+        subscriptionAmounts,
+        eq(subscriptions.subscriptionId, subscriptionAmounts.subscriptionId),
+      )
+      .orderBy(
+        subscriptions.subscriptionId,
+        desc(subscriptionAmounts.startDate),
+      );
+
+    // Group amounts by subscription
+    const subscriptionAmountGroups = subscriptionsWithAmounts.reduce(
+      (acc, row) => {
+        if (!acc[row.subscriptionId]) {
+          acc[row.subscriptionId] = [];
+        }
+        acc[row.subscriptionId].push(row);
+        return acc;
+      },
+      {} as Record<string, typeof subscriptionsWithAmounts>,
+    );
+
+    // Generate list of months to process
+    const monthsToProcess = [];
+    let currentYear = startYear;
+    let currentMonth = startMonth;
+    
+    while (currentYear < finalEndYear || (currentYear === finalEndYear && currentMonth <= finalEndMonth)) {
+      monthsToProcess.push({ year: currentYear, month: currentMonth });
+      
+      currentMonth++;
+      if (currentMonth > 12) {
+        currentMonth = 1;
+        currentYear++;
+      }
+    }
+
+    console.log(`Processing ${monthsToProcess.length} months: ${monthsToProcess.map(m => `${m.year}/${m.month}`).join(', ')}`);
+
+    const results = [];
+
+    // Process each month in the range
+    for (const { year, month } of monthsToProcess) {
+      const targetDate = `${year}-${month.toString().padStart(2, '0')}-01`;
+      
+      for (const [subscriptionId, amounts] of Object.entries(
+        subscriptionAmountGroups,
+      )) {
+        // Find the applicable amount for the target month
+        const applicableAmount = amounts.find((a) => {
+          const startDate = a.startDate;
+          const endDate = a.endDate;
+
+          // Check if the target date falls within the amount period
+          return startDate <= targetDate && (!endDate || endDate >= targetDate);
+        });
+
+        if (!applicableAmount) {
+          console.log(
+            `No applicable amount found for subscription ${subscriptionId} in ${year}/${month}`,
+          );
+          continue;
+        }
+
+        const monthlyAmount = parseFloat(applicableAmount.amount);
+
+        // Check if payment record already exists for this subscription, year, and month
+        const existingPayment = await db
+          .select()
+          .from(subscriptionPaid)
+          .where(
+            and(
+              eq(subscriptionPaid.subscriptionId, subscriptionId),
+              eq(subscriptionPaid.year, year),
+              eq(subscriptionPaid.month, month),
+            ),
+          )
+          .limit(1);
+
+        if (existingPayment.length > 0) {
+          const existing = existingPayment[0];
+          const existingAmount = parseFloat(existing.amount);
+
+          if (existing.isPaid && existingAmount !== monthlyAmount) {
+            // Create difference record for paid payments with amount changes
+            const differenceAmount = monthlyAmount - existingAmount;
+
+            if (differenceAmount !== 0) {
+              await db.insert(subscriptionPaid).values({
+                subscriptionId,
+                year,
+                month,
+                amount: differenceAmount.toFixed(2),
+                isPaid: false, // New difference record starts as unpaid
+              });
+
+              results.push({
+                subscriptionId,
+                year,
+                month,
+                action: 'created_difference',
+                amount: differenceAmount,
+                originalAmount: existingAmount,
+                newAmount: monthlyAmount,
+              });
+            }
+          } else if (!existing.isPaid) {
+            // Update unpaid record with latest amount
+            await db
+              .update(subscriptionPaid)
+              .set({
+                amount: monthlyAmount.toFixed(2),
+                updatedAt: new Date(),
+              })
+              .where(eq(subscriptionPaid.paidId, existing.paidId));
+
+            results.push({
+              subscriptionId,
+              year,
+              month,
+              action: 'updated',
+              amount: monthlyAmount,
+              previousAmount: existingAmount,
+            });
+          } else {
+            // Paid record with same amount - no action needed
+            results.push({
+              subscriptionId,
+              year,
+              month,
+              action: 'no_change',
+              amount: monthlyAmount,
+            });
+          }
+        } else {
+          // Create new payment record
+          await db.insert(subscriptionPaid).values({
+            subscriptionId,
+            year,
+            month,
+            amount: monthlyAmount.toFixed(2),
+            isPaid: false,
+          });
+
+          results.push({
+            subscriptionId,
+            year,
+            month,
+            action: 'created',
+            amount: monthlyAmount,
+          });
+        }
+      }
+    }
+
+    console.log(
+      `Monthly payment calculation completed for ${startYear}/${startMonth} to ${finalEndYear}/${finalEndMonth}. Processed ${results.length} payments across ${monthsToProcess.length} months.`,
+    );
+
+    return {
+      startYear,
+      startMonth,
+      endYear: finalEndYear,
+      endMonth: finalEndMonth,
+      monthsProcessed: monthsToProcess.length,
+      processedCount: results.length,
+      results,
+    };
+  } catch (error) {
+    console.error(
+      `Error calculating monthly payments for ${startYear}/${startMonth} to ${finalEndYear}/${finalEndMonth}:`,
+      error,
+    );
     throw error;
   }
 }

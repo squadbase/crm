@@ -3,14 +3,11 @@
 import './globals.css'
 import { SidebarLayout } from '@/components/layout/SidebarLayout'
 import { ContentLayout } from '@/components/layout/ContentLayout'
+import { SettingsProvider } from '@/contexts/SettingsContext'
 import { useClientI18n } from '@/hooks/useClientI18n'
 import { useEffect } from 'react'
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+function RootLayoutContent({ children }: { children: React.ReactNode }) {
   const { getLanguage } = useClientI18n();
   const language = getLanguage();
   
@@ -20,13 +17,27 @@ export default function RootLayout({
   }, [language]);
 
   return (
-    <html lang={language}>
+    <SidebarLayout>
+      <ContentLayout>
+        {children}
+      </ContentLayout>
+    </SidebarLayout>
+  );
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html>
       <body className="antialiased">
-        <SidebarLayout>
-          <ContentLayout>
+        <SettingsProvider>
+          <RootLayoutContent>
             {children}
-          </ContentLayout>
-        </SidebarLayout>
+          </RootLayoutContent>
+        </SettingsProvider>
       </body>
     </html>
   )

@@ -1,8 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar } from 'lucide-react';
+import { Calendar, Calculator } from 'lucide-react';
 import { useClientI18n } from '@/hooks/useClientI18n';
+import { 
+  canExecuteCalculation, 
+  getRemainingCooldownMinutes, 
+  markCalculationExecuted,
+  getLastExecutionTime,
+  setCalculationExecuting
+} from '@/lib/calculation-cooldown';
 
 interface PeriodValues {
   startDate: string;
@@ -19,17 +26,150 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
     startDate: '',
     endDate: ''
   });
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [remainingCooldown, setRemainingCooldown] = useState(0);
+  const [lastCalculationTime, setLastCalculationTime] = useState<Date | null>(null);
 
   // 初期値として半年を設定
   useEffect(() => {
     setShortcutPeriod('halfYear');
+    // 初期計算状態を更新
+    updateCalculationStatus();
+    
+    // 15分以上経過していたら自動実行
+    if (canExecuteCalculation()) {
+      console.log('Auto-executing monthly calculation on dashboard load...');
+      executeMonthlyCalculationSilently();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // 1分ごとにクールダウン状態を更新
+  useEffect(() => {
+    const interval = setInterval(updateCalculationStatus, 60000); // 1分ごと
+    return () => clearInterval(interval);
+  }, []);
+
+  const updateCalculationStatus = () => {
+    setRemainingCooldown(getRemainingCooldownMinutes());
+    setLastCalculationTime(getLastExecutionTime());
+  };
 
   const handlePeriodChange = (key: keyof PeriodValues, value: string) => {
     const newPeriod = { ...period, [key]: value };
     setPeriod(newPeriod);
     onPeriodChange(newPeriod);
+  };
+
+  // サイレント実行用（アラートなし） - 常に過去半年分を実行
+  const executeMonthlyCalculationSilently = async () => {
+    if (!canExecuteCalculation()) {
+      return;
+    }
+
+    setIsCalculating(true);
+    setCalculationExecuting(true);
+    
+    try {
+      // 過去半年の期間を計算
+      const now = new Date();
+      const endYear = now.getFullYear();
+      const endMonth = now.getMonth() + 1;
+      
+      // 6ヶ月前を計算
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      const startYear = sixMonthsAgo.getFullYear();
+      const startMonth = sixMonthsAgo.getMonth() + 1;
+
+      const response = await fetch('/api/subscriptions/calculate-monthly', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          startYear,
+          startMonth,
+          endYear,
+          endMonth
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
+        markCalculationExecuted();
+        updateCalculationStatus();
+        console.log('Auto period calculation completed for past 6 months:', result.data);
+      } else {
+        console.error('Auto period calculation failed:', result);
+      }
+    } catch (error) {
+      console.error('Failed to execute auto period calculation:', error);
+    } finally {
+      setIsCalculating(false);
+      setCalculationExecuting(false);
+    }
+  };
+
+  // 期間での月額計算を実行
+  const executeMonthlyCalculation = async () => {
+    if (!canExecuteCalculation() || !period.startDate || !period.endDate) {
+      return;
+    }
+
+    setIsCalculating(true);
+    setCalculationExecuting(true);
+    
+    try {
+      // 期間をyear/monthに変換
+      const startDate = new Date(period.startDate);
+      const endDate = new Date(period.endDate);
+      
+      const startYear = startDate.getFullYear();
+      const startMonth = startDate.getMonth() + 1;
+      const endYear = endDate.getFullYear();
+      const endMonth = endDate.getMonth() + 1;
+
+      const response = await fetch('/api/subscriptions/calculate-monthly', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          startYear,
+          startMonth,
+          endYear,
+          endMonth
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
+        markCalculationExecuted();
+        updateCalculationStatus();
+        console.log('Period calculation completed:', result.data);
+        alert(t('calculationCompleted'));
+      } else {
+        console.error('Period calculation failed:', result);
+        alert(`${t('calculationFailed')} ${result.error || '不明なエラー'}`);
+      }
+    } catch (error) {
+      console.error('Failed to execute period calculation:', error);
+      alert(`${t('calculationFailed')} ${error.message || '不明なエラー'}`);
+    } finally {
+      setIsCalculating(false);
+      setCalculationExecuting(false);
+    }
   };
 
   // const clearPeriod = () => { // Currently not used
@@ -136,7 +276,7 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
             cursor: 'pointer'
           }}
         >
-{t('halfYear')}
+{t('sixMonthsAgo')}
         </button>
         <button
           onClick={() => setShortcutPeriod('oneYear')}
@@ -151,7 +291,7 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
             cursor: 'pointer'
           }}
         >
-{t('oneYear')}
+{t('oneYearAgo')}
         </button>
         <button
           onClick={() => setShortcutPeriod('all')}
@@ -166,7 +306,7 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
             cursor: 'pointer'
           }}
         >
-{t('allPeriod')}
+{t('allTime')}
         </button>
       </div>
 
@@ -231,6 +371,7 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
           />
         </div>
       </div>
+
     </div>
   );
 }

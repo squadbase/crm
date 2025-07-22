@@ -122,7 +122,7 @@ export default function HomePage() {
       {/* Content */}
       <div className="p-4">
         {/* Metrics Cards */}
-        <MetricsCards />
+        <MetricsCards period={period} />
 
         {/* Period Selector */}
         <PeriodSelector onPeriodChange={handlePeriodChange} />

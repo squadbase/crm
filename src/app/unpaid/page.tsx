@@ -3,7 +3,12 @@
 import { useState, useEffect } from 'react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { useClientI18n } from '@/hooks/useClientI18n';
-import { Receipt, Check, AlertCircle } from 'lucide-react';
+import { Receipt, Check, AlertCircle, Calculator, RefreshCw, Info } from 'lucide-react';
+import { 
+  isCalculationExecuting, 
+  getLastExecutionTime, 
+  getRemainingCooldownMinutes 
+} from '@/lib/calculation-cooldown';
 
 interface UnpaidPayment {
   id: string;
@@ -42,6 +47,32 @@ export default function UnpaidPaymentsPage() {
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [updating, setUpdating] = useState(false);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [showCalculationModal, setShowCalculationModal] = useState(false);
+  const [calculationYear, setCalculationYear] = useState(new Date().getFullYear());
+  const [calculationMonth, setCalculationMonth] = useState(new Date().getMonth() + 1);
+  const [calculating, setCalculating] = useState(false);
+  const [isRangeMode, setIsRangeMode] = useState(false);
+  const [endYear, setEndYear] = useState(new Date().getFullYear());
+  const [endMonth, setEndMonth] = useState(new Date().getMonth() + 1);
+  const [isSyncInProgress, setIsSyncInProgress] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+  const [remainingCooldown, setRemainingCooldown] = useState(0);
+  
+  // 現在の年月を取得
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
+  
+  // 選択した年月が未来かどうかをチェック
+  const isSelectedDateInFuture = isRangeMode 
+    ? endYear > currentYear || (endYear === currentYear && endMonth > currentMonth)
+    : calculationYear > currentYear || (calculationYear === currentYear && calculationMonth > currentMonth);
+
+  // 月名を取得する関数
+  const getMonthName = (monthNumber: number): string => {
+    const monthKeys = ['january', 'february', 'march', 'april', 'may', 'june', 
+                     'july', 'august', 'september', 'october', 'november', 'december'];
+    return t(monthKeys[monthNumber - 1]);
+  };
 
   // 未払い取引を取得
   const fetchUnpaidPayments = async () => {
@@ -59,9 +90,23 @@ export default function UnpaidPaymentsPage() {
     }
   };
 
+  // 同期状態を更新する関数
+  const updateSyncStatus = () => {
+    setIsSyncInProgress(isCalculationExecuting());
+    setLastSyncTime(getLastExecutionTime());
+    setRemainingCooldown(getRemainingCooldownMinutes());
+  };
+
   // 初期データ取得
   useEffect(() => {
     fetchUnpaidPayments();
+    updateSyncStatus();
+  }, []);
+
+  // 5秒ごとに同期状態を更新
+  useEffect(() => {
+    const interval = setInterval(updateSyncStatus, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   // 個別選択のトグル
@@ -83,6 +128,53 @@ export default function UnpaidPaymentsPage() {
       setSelectedItems(new Set());
     } else {
       setSelectedItems(new Set(unpaidPayments.map(p => p.id)));
+    }
+  };
+
+  // 月次支払い計算
+  const calculateMonthlyPayments = async () => {
+    setCalculating(true);
+    try {
+      const requestBody = isRangeMode
+        ? {
+            startYear: calculationYear,
+            startMonth: calculationMonth,
+            endYear: endYear,
+            endMonth: endMonth
+          }
+        : {
+            year: calculationYear,
+            month: calculationMonth
+          };
+
+      const response = await fetch('/api/subscriptions/calculate-monthly', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        // 計算成功時：未払いリストを再取得
+        await fetchUnpaidPayments();
+        setShowCalculationModal(false);
+        console.log('Monthly calculation completed:', result.data);
+      } else {
+        console.error('Monthly calculation failed:', result);
+        alert(`計算に失敗しました: ${result.error || '不明なエラー'}`);
+      }
+    } catch (error) {
+      console.error('Failed to calculate monthly payments:', error);
+      alert(`API呼び出しに失敗しました: ${error.message}`);
+    } finally {
+      setCalculating(false);
     }
   };
 
@@ -162,6 +254,26 @@ export default function UnpaidPaymentsPage() {
       )}
       
       <button
+        onClick={() => setShowCalculationModal(true)}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '6px 12px',
+          fontSize: '14px',
+          fontWeight: '500',
+          color: '#374151',
+          backgroundColor: 'white',
+          border: '1px solid #d1d5db',
+          borderRadius: '6px',
+          cursor: 'pointer'
+        }}
+      >
+        <Calculator size={16} />
+        {t('calculateMonthly')}
+      </button>
+      
+      <button
         onClick={toggleSelectAll}
         disabled={!unpaidPayments || unpaidPayments.length === 0}
         style={{
@@ -206,12 +318,290 @@ export default function UnpaidPaymentsPage() {
   );
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'white' }}>
+    <>
+      {/* CSS Animation */}
+      <style jsx>{`
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
+      
+      {/* 月次計算モーダル */}
+      {showCalculationModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            padding: '24px',
+            width: '400px',
+            maxWidth: '90vw',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+          }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', margin: '0 0 16px 0' }}>
+              {t('calculateMonthlyPayments')}
+            </h3>
+            
+            {/* Range mode toggle */}
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#374151' }}>
+                <input
+                  type="checkbox"
+                  checked={isRangeMode}
+                  onChange={(e) => setIsRangeMode(e.target.checked)}
+                  style={{ cursor: 'pointer' }}
+                />
+                {t('dateRange')}
+              </label>
+            </div>
+            
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+                {isRangeMode ? t('startYear') : t('year')}
+              </label>
+              <input
+                type="number"
+                value={calculationYear}
+                onChange={(e) => {
+                  const newYear = parseInt(e.target.value);
+                  setCalculationYear(newYear);
+                  // 現在年より未来の年が選択された場合、当月に戻す
+                  if (newYear > currentYear || (newYear === currentYear && calculationMonth > currentMonth)) {
+                    setCalculationMonth(newYear === currentYear ? currentMonth : 12);
+                  }
+                }}
+                min="2020"
+                max={currentYear}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+            
+            <div style={{ marginBottom: isRangeMode ? '16px' : '24px' }}>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+                {isRangeMode ? t('startMonth') : t('month')}
+              </label>
+              <select
+                value={calculationMonth}
+                onChange={(e) => setCalculationMonth(parseInt(e.target.value))}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  boxSizing: 'border-box'
+                }}
+              >
+                {Array.from({ length: calculationYear === currentYear ? currentMonth : 12 }, (_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {getMonthName(i + 1)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {/* End date inputs (only shown in range mode) */}
+            {isRangeMode && (
+              <>
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+                    {t('endYear')}
+                  </label>
+                  <input
+                    type="number"
+                    value={endYear}
+                    onChange={(e) => {
+                      const newEndYear = parseInt(e.target.value);
+                      setEndYear(newEndYear);
+                      // If end year is less than start year, adjust start year
+                      if (newEndYear < calculationYear) {
+                        setCalculationYear(newEndYear);
+                      }
+                      // If end year is current year and end month > current month, adjust
+                      if (newEndYear === currentYear && endMonth > currentMonth) {
+                        setEndMonth(currentMonth);
+                      }
+                    }}
+                    min="2020"
+                    max={currentYear}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+                
+                <div style={{ marginBottom: '24px' }}>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+                    {t('endMonth')}
+                  </label>
+                  <select
+                    value={endMonth}
+                    onChange={(e) => setEndMonth(parseInt(e.target.value))}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      boxSizing: 'border-box'
+                    }}
+                  >
+                    {Array.from({ length: endYear === currentYear ? currentMonth : 12 }, (_, i) => (
+                      <option key={i + 1} value={i + 1}>
+                        {getMonthName(i + 1)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </>
+            )}
+            
+            {isSelectedDateInFuture && (
+              <div style={{
+                padding: '12px',
+                marginBottom: '16px',
+                backgroundColor: '#fef3c7',
+                border: '1px solid #f59e0b',
+                borderRadius: '6px',
+                fontSize: '14px',
+                color: '#92400e'
+              }}>
+{isRangeMode 
+                  ? t('futureMonthWarningRange')
+                      .replace('{currentYear}', currentYear.toString())
+                      .replace('{currentMonth}', currentMonth.toString())
+                  : t('futureMonthWarning')
+                      .replace('{currentYear}', currentYear.toString())
+                      .replace('{currentMonth}', currentMonth.toString())}
+              </div>
+            )}
+            
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowCalculationModal(false)}
+                disabled={calculating}
+                style={{
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: '#374151',
+                  backgroundColor: 'white',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  cursor: calculating ? 'not-allowed' : 'pointer',
+                  opacity: calculating ? 0.5 : 1
+                }}
+              >
+                {t('cancel')}
+              </button>
+              <button
+                onClick={calculateMonthlyPayments}
+                disabled={calculating || isSelectedDateInFuture}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: 'white',
+                  backgroundColor: (calculating || isSelectedDateInFuture) ? '#9ca3af' : '#2563eb',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: (calculating || isSelectedDateInFuture) ? 'not-allowed' : 'pointer'
+                }}
+              >
+                <Calculator size={16} />
+                {calculating ? t('calculating') : (isRangeMode ? t('calculateRange') : t('calculate'))}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      <div style={{ minHeight: '100vh', backgroundColor: 'white' }}>
       <PageHeader
         title={t('unpaidPayments')}
         description={t('unpaidPaymentsDescription')}
         actions={headerActions}
       />
+
+      {/* 同期状態インジケータ */}
+      <div style={{
+        margin: '0 24px 16px 24px',
+        backgroundColor: isSyncInProgress ? '#fef3c7' : '#f0f9ff',
+        border: `1px solid ${isSyncInProgress ? '#f59e0b' : '#0ea5e9'}`,
+        borderRadius: '8px',
+        padding: '12px 16px'
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          fontSize: '14px'
+        }}>
+          {isSyncInProgress ? (
+            <>
+              <RefreshCw 
+                size={16} 
+                style={{ 
+                  color: '#f59e0b',
+                  animation: 'spin 1s linear infinite'
+                }} 
+              />
+              <span style={{ color: '#92400e', fontWeight: '500' }}>
+                {t('syncInProgress')}
+              </span>
+            </>
+          ) : (
+            <>
+              <Check size={16} style={{ color: '#0ea5e9' }} />
+              <div style={{ color: '#075985' }}>
+                <span style={{ fontWeight: '500' }}>{t('syncCompleted')}</span>
+                {lastSyncTime && (
+                  <span style={{ marginLeft: '8px', fontSize: '13px', opacity: 0.8 }}>
+                    {t('lastExecution')}: {lastSyncTime.toLocaleString()}
+                  </span>
+                )}
+              </div>
+            </>
+          )}
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Info size={14} style={{ color: '#6b7280' }} />
+            <span style={{ fontSize: '12px', color: '#6b7280' }}>
+              {t('manualExecutionInfo')}
+              {remainingCooldown > 0 && ` (${remainingCooldown}${t('minutesLater')})`}
+            </span>
+          </div>
+        </div>
+      </div>
 
       <div style={{ padding: '24px' }}>
         {/* サマリーカード */}
@@ -464,6 +854,7 @@ export default function UnpaidPaymentsPage() {
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

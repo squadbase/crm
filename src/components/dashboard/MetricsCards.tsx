@@ -29,23 +29,32 @@ interface MetricsResponse {
   metrics: MetricsData;
 }
 
-// MetricsCards コンポーネントはプロパティを受け取らない
+interface MetricsCardsProps {
+  period: {
+    startDate: string;
+    endDate: string;
+  };
+}
 
-export function MetricsCards() {
+export function MetricsCards({ period }: MetricsCardsProps) {
   const { t, formatCurrency } = useClientI18n();
   const [data, setData] = useState<MetricsResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [period]);
 
   const fetchData = async () => {
     try {
       setLoading(true);
       
-      // 期間パラメータは不要 - 常に最新のメトリクスを取得
-      const response = await fetch('/api/dashboard/metrics');
+      // 期間パラメータを含めてAPIを呼び出し
+      let url = '/api/dashboard/metrics';
+      if (period.startDate && period.endDate) {
+        url += `?startDate=${period.startDate}&endDate=${period.endDate}`;
+      }
+      const response = await fetch(url);
       const result = await response.json();
       setData(result);
     } catch (error) {
@@ -225,13 +234,24 @@ export function MetricsCards() {
     );
   }
 
+  // 期間表示の生成
+  const getPeriodDisplay = () => {
+    if (period.startDate && period.endDate) {
+      const startDate = new Date(period.startDate);
+      const endDate = new Date(period.endDate);
+      const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+      return `${startDate.toLocaleDateString('ja-JP', options)} - ${endDate.toLocaleDateString('ja-JP', options)}`;
+    }
+    return t('currentMonth');
+  };
+
   return (
     <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-      gap: '16px',
-      marginBottom: '20px'
-    }}>
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+        gap: '16px',
+        marginBottom: '20px'
+      }}>
       {metricsConfig.map((config) => {
         const metric = data.metrics[config.key];
         const Icon = config.icon;
@@ -315,7 +335,6 @@ export function MetricsCards() {
           </div>
         );
       })}
-      
     </div>
   );
 }

@@ -3,7 +3,9 @@ import { orders, subscriptionPaid, subscriptions, subscriptionAmounts } from '@/
 import { sql } from 'drizzle-orm';
 import { 
   getCurrentMonthMetricsQuery, 
-  getKPIMetricsQuery
+  getKPIMetricsQuery,
+  getDateRangeMetricsQuery,
+  getDateRangeKPIMetricsQuery
 } from './aggregates/dashboard-metrics';
 
 export interface MetricGrowth {
@@ -49,14 +51,21 @@ function calculateGrowth(current: number, previous: number): MetricGrowth {
 }
 
 /**
- * Get dashboard metrics with growth comparison to last month
+ * Get dashboard metrics with growth comparison to last month or previous period
  */
-export async function getDashboardMetrics(): Promise<{
+export async function getDashboardMetrics(startDate?: string, endDate?: string): Promise<{
   metrics: DashboardMetrics;
 }> {
   const now = new Date();
+  
+  if (startDate && endDate) {
+    // Use date range queries for period aggregation
+    return await getDashboardMetricsForPeriod(startDate, endDate);
+  }
+  
+  // Traditional single month metrics for backward compatibility
   const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth() + 1; // JavaScript months are 0-indexed
+  const currentMonth = now.getMonth() + 1;
   const lastMonth = currentMonth === 1 ? 12 : currentMonth - 1;
   const lastMonthYear = currentMonth === 1 ? currentYear - 1 : currentYear;
 
@@ -67,14 +76,10 @@ export async function getDashboardMetrics(): Promise<{
     .select(getCurrentMonthMetricsQuery(currentYear, currentMonth))
     .from(orders);
 
-  console.log('Current metrics result:', currentMetrics);
-
   // Get last month metrics for comparison
   const lastMonthMetrics = await db
     .select(getCurrentMonthMetricsQuery(lastMonthYear, lastMonth))
     .from(orders);
-
-  console.log('Last month metrics result:', lastMonthMetrics);
 
   // Get KPI metrics
   const currentKPIMetrics = await db
@@ -144,6 +149,111 @@ export async function getDashboardMetrics(): Promise<{
       subscriptionAvgValue: {
         value: currentSubscriptionAvg,
         growth: calculateGrowth(currentSubscriptionAvg, lastMonthSubscriptionAvg)
+      }
+    }
+  };
+}
+
+/**
+ * Get dashboard metrics for a specific period with proper date range aggregation
+ */
+async function getDashboardMetricsForPeriod(startDate: string, endDate: string): Promise<{
+  metrics: DashboardMetrics;
+}> {
+  // Calculate the same period from the previous timeframe for comparison
+  const startDateObj = new Date(startDate);
+  const endDateObj = new Date(endDate);
+  const periodLength = endDateObj.getTime() - startDateObj.getTime();
+  
+  const prevEndDate = new Date(startDateObj.getTime() - 24 * 60 * 60 * 1000); // Day before start
+  const prevStartDate = new Date(prevEndDate.getTime() - periodLength);
+
+  const prevStartDateStr = prevStartDate.toISOString().split('T')[0];
+  const prevEndDateStr = prevEndDate.toISOString().split('T')[0];
+
+  console.log('Querying period metrics:', {
+    currentPeriod: { startDate, endDate },
+    previousPeriod: { start: prevStartDateStr, end: prevEndDateStr }
+  });
+
+  // Get current period metrics
+  const currentMetrics = await db
+    .select(getDateRangeMetricsQuery(startDate, endDate))
+    .from(orders);
+
+  // Get previous period metrics for comparison
+  const previousMetrics = await db
+    .select(getDateRangeMetricsQuery(prevStartDateStr, prevEndDateStr))
+    .from(orders);
+
+  // Get KPI metrics
+  const currentKPIMetrics = await db
+    .select(getDateRangeKPIMetricsQuery(startDate, endDate))
+    .from(orders);
+
+  const previousKPIMetrics = await db
+    .select(getDateRangeKPIMetricsQuery(prevStartDateStr, prevEndDateStr))
+    .from(orders);
+
+  const current = currentMetrics[0];
+  const previous = previousMetrics[0];
+  const currentKPI = currentKPIMetrics[0];
+  const previousKPI = previousKPIMetrics[0];
+
+  console.log('Period metrics debug:', {
+    current,
+    previous,
+    currentKPI,
+    previousKPI
+  });
+
+  // Parse values with safe access
+  const currentOnetimeRevenue = parseFloat(current?.onetimeRevenue || '0');
+  const currentSubscriptionRevenue = parseFloat(current?.subscriptionRevenue || '0');
+  const currentTotalRevenue = currentOnetimeRevenue + currentSubscriptionRevenue;
+  
+  const previousOnetimeRevenue = parseFloat(previous?.onetimeRevenue || '0');
+  const previousSubscriptionRevenue = parseFloat(previous?.subscriptionRevenue || '0');
+  const previousTotalRevenue = previousOnetimeRevenue + previousSubscriptionRevenue;
+
+  const currentOnetimeAvg = parseFloat(currentKPI?.onetimeAvgOrderValue || '0');
+  const currentSubscriptionAvg = parseFloat(currentKPI?.subscriptionAvgValue || '0');
+  const previousOnetimeAvg = parseFloat(previousKPI?.onetimeAvgOrderValue || '0');
+  const previousSubscriptionAvg = parseFloat(previousKPI?.subscriptionAvgValue || '0');
+
+  return {
+    metrics: {
+      currentMonthRevenue: {
+        value: currentTotalRevenue,
+        growth: calculateGrowth(currentTotalRevenue, previousTotalRevenue)
+      },
+      onetimeRevenue: {
+        value: currentOnetimeRevenue,
+        growth: calculateGrowth(currentOnetimeRevenue, previousOnetimeRevenue)
+      },
+      subscriptionRevenue: {
+        value: currentSubscriptionRevenue,
+        growth: calculateGrowth(currentSubscriptionRevenue, previousSubscriptionRevenue)
+      },
+      onetimeOrderCount: {
+        value: Number(current?.onetimeOrderCount || 0),
+        growth: calculateGrowth(Number(current?.onetimeOrderCount || 0), Number(previous?.onetimeOrderCount || 0))
+      },
+      subscriptionOrderCount: {
+        value: Number(current?.subscriptionOrderCount || 0),
+        growth: calculateGrowth(Number(current?.subscriptionOrderCount || 0), Number(previous?.subscriptionOrderCount || 0))
+      },
+      totalCustomers: {
+        value: Number(current?.totalCustomers || 0),
+        growth: calculateGrowth(Number(current?.totalCustomers || 0), Number(previous?.totalCustomers || 0))
+      },
+      onetimeAvgOrderValue: {
+        value: currentOnetimeAvg,
+        growth: calculateGrowth(currentOnetimeAvg, previousOnetimeAvg)
+      },
+      subscriptionAvgValue: {
+        value: currentSubscriptionAvg,
+        growth: calculateGrowth(currentSubscriptionAvg, previousSubscriptionAvg)
       }
     }
   };

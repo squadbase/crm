@@ -1,43 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { translations, TranslationKey } from '@/lib/i18n';
-
-interface Settings {
-  language: 'ja' | 'en';
-  currency: 'jpy' | 'usd';
-}
+import { useSettings } from '@/contexts/SettingsContext';
 
 /**
  * クライアント専用の国際化フック
- * SSRとの不整合を避けるため、APIから設定を取得
+ * SettingsContextから共有された設定を使用
  */
 export function useClientI18n() {
-  const [isClient, setIsClient] = useState(false);
-  const [settings, setSettings] = useState<Settings>({ language: 'en', currency: 'usd' });
-  const [isLoading, setIsLoading] = useState(true);
-  
-  useEffect(() => {
-    setIsClient(true);
-    fetchSettings();
-  }, []);
-
-  const fetchSettings = async () => {
-    try {
-      const response = await fetch('/api/settings');
-      const data = await response.json();
-      setSettings({
-        language: data.language === 'ja' ? 'ja' : 'en',
-        currency: data.currency === 'jpy' ? 'jpy' : 'usd'
-      });
-    } catch (error) {
-      console.error('Failed to fetch settings:', error);
-      // フォールバック値を使用
-      setSettings({ language: 'en', currency: 'usd' });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { settings, isLoading, isClient } = useSettings();
 
   // 翻訳関数
   const t = (key: TranslationKey): string => {
