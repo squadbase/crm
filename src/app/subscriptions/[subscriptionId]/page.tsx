@@ -81,7 +81,7 @@ export default function SubscriptionDetailPage({
       setLoading(true);
       setError(null);
 
-      // サブスクリプション基本情報と料金履歴、支払い履歴を一括取得
+      // Fetch subscription basic info, pricing history, and payment history in batch
       const subscriptionResponse = await fetch(`/api/subscriptions/${subscriptionId}`);
       if (!subscriptionResponse.ok) {
         const errorData = await subscriptionResponse.json();
@@ -89,14 +89,14 @@ export default function SubscriptionDetailPage({
       }
       
       const data = await subscriptionResponse.json();
-      console.log('Subscription data received:', data);
+      // Subscription data received successfully
       
       setSubscription(data.subscription);
       setAmounts(data.amounts || []);
       setPayments(data.payments || []);
 
     } catch (err) {
-      console.error('Error fetching subscription detail:', err);
+      // Error fetching subscription detail
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
@@ -115,7 +115,7 @@ export default function SubscriptionDetailPage({
     }
   }, [subscriptionId, fetchSubscriptionDetail]);
 
-  // ページタイトル設定
+  // Set page title
   useEffect(() => {
     if (subscription?.customerName) {
       document.title = `${subscription.customerName} - ${t('subscription')} ${t('details')}`;
@@ -126,12 +126,12 @@ export default function SubscriptionDetailPage({
 
   const handleAmountChange = async () => {
     if (!newAmount || !effectiveDate) {
-      setError('金額と適用日を入力してください');
+      setError('Please enter amount and effective date');
       return;
     }
 
     try {
-      // 既存の料金を終了
+      // Terminate existing amount
       const currentAmount = amounts.find(a => !a.endDate);
       if (currentAmount) {
         await fetch(`/api/subscription-amounts/${currentAmount.amountId}`, {
@@ -141,7 +141,7 @@ export default function SubscriptionDetailPage({
         });
       }
 
-      // 新しい料金を作成
+      // Create new amount
       const response = await fetch('/api/subscription-amounts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -160,20 +160,20 @@ export default function SubscriptionDetailPage({
       setEffectiveDate('');
       setError(null);
       fetchSubscriptionDetail();
-    } catch (error) {
-      console.error('Failed to update amount:', error);
-      setError('料金変更に失敗しました');
+    } catch {
+      // Failed to update amount
+      setError('Failed to update fee');
     }
   };
 
   const handleCancelSubscription = async () => {
     if (!cancelDate) {
-      setError(t('cancelDate') + 'を入力してください');
+      setError('Please enter ' + t('cancelDate'));
       return;
     }
 
     try {
-      // 現在の料金を終了
+      // Terminate current amount
       const currentAmount = amounts.find(a => !a.endDate);
       if (currentAmount) {
         const response = await fetch(`/api/subscription-amounts/${currentAmount.amountId}`, {
@@ -189,20 +189,20 @@ export default function SubscriptionDetailPage({
       setCancelDate('');
       setError(null);
       fetchSubscriptionDetail();
-    } catch (error) {
-      console.error('Failed to cancel subscription:', error);
-      setError('サブスクリプションのキャンセルに失敗しました');
+    } catch {
+      // Failed to cancel subscription
+      setError('Failed to cancel subscription');
     }
   };
 
   const handleRestartSubscription = async () => {
     if (!restartDate || !newAmount) {
-      setError(t('restartDate') + 'と金額を入力してください');
+      setError('Please enter ' + t('restartDate') + ' and amount');
       return;
     }
 
     try {
-      // 新しい料金を作成
+      // Create new amount
       const response = await fetch('/api/subscription-amounts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -221,9 +221,9 @@ export default function SubscriptionDetailPage({
       setRestartAmountDisplay('');
       setError(null);
       fetchSubscriptionDetail();
-    } catch (error) {
-      console.error('Failed to restart subscription:', error);
-      setError('サブスクリプションの再開に失敗しました');
+    } catch {
+      // Failed to restart subscription
+      setError('Failed to restart subscription');
     }
   };
 
@@ -238,9 +238,9 @@ export default function SubscriptionDetailPage({
       if (!response.ok) throw new Error('Failed to update payment');
 
       fetchSubscriptionDetail();
-    } catch (error) {
-      console.error('Failed to update payment:', error);
-      setError('支払い状況の更新に失敗しました');
+    } catch {
+      // Failed to update payment
+      setError('Failed to update payment status');
     }
   };
 
@@ -256,7 +256,7 @@ export default function SubscriptionDetailPage({
 
   const handleUpdateAmount = async () => {
     if (!editingAmount || !editAmount || !editStartDate) {
-      setError('金額と開始日は必須です');
+      setError('Amount and start date are required');
       return;
     }
 
@@ -281,9 +281,9 @@ export default function SubscriptionDetailPage({
       setEditEndDate('');
       setError(null);
       fetchSubscriptionDetail();
-    } catch (error) {
-      console.error('Failed to update amount:', error);
-      setError('料金履歴の更新に失敗しました');
+    } catch {
+      // Failed to update amount
+      setError('Failed to update fee history');
     }
   };
 
@@ -306,9 +306,9 @@ export default function SubscriptionDetailPage({
       setEditingAmount(null);
       setError(null);
       fetchSubscriptionDetail();
-    } catch (error) {
-      console.error('Failed to delete amount:', error);
-      setError('料金履歴の削除に失敗しました');
+    } catch {
+      // Failed to delete amount
+      setError('Failed to delete fee history');
     }
   };
 
@@ -316,19 +316,19 @@ export default function SubscriptionDetailPage({
     return formatCurrency(amount);
   };
 
-  // 数値をカンマ区切りにフォーマット
+  // Format numbers with comma separators
   const formatNumberWithCommas = (value: string) => {
     const numericValue = value.replace(/[^\d]/g, '');
     if (!numericValue) return '';
     return parseInt(numericValue).toLocaleString();
   };
 
-  // カンマ区切りの値から数値を取得
+  // Get numeric value from comma-separated string
   const getNumericValue = (value: string) => {
     return value.replace(/[^\d]/g, '');
   };
 
-  // 金額入力のハンドラー
+  // Amount input handler
   const handleAmountInputChange = (value: string, setAmount: (v: string) => void, setDisplay: (v: string) => void) => {
     const numericValue = getNumericValue(value);
     setAmount(numericValue);
@@ -352,7 +352,7 @@ export default function SubscriptionDetailPage({
     router.push('/subscriptions');
   };
 
-  // 現在アクティブかどうかを判定（現在の日付で有効かチェック）
+  // Check if currently active (validate with current date)
   const isCurrentlyActive = subscription && amounts.some(a => {
     const now = new Date();
     const today = now.toISOString().split('T')[0]; // YYYY-MM-DD format
@@ -524,7 +524,7 @@ export default function SubscriptionDetailPage({
             color: '#dc2626',
             marginBottom: '8px'
           }}>
-            エラーが発生しました
+            An error occurred
           </div>
           <div style={{
             fontSize: '14px',
@@ -559,7 +559,7 @@ export default function SubscriptionDetailPage({
             color: '#111827',
             marginBottom: '8px'
           }}>
-            サブスクリプションが見つかりません
+            Subscription not found
           </div>
         </div>
       </div>
@@ -579,7 +579,7 @@ export default function SubscriptionDetailPage({
       />
 
       <div style={{ padding: '24px' }}>
-        {/* エラーメッセージ */}
+        {/* Error message */}
         {error && (
           <div style={{
             backgroundColor: '#fef2f2',
@@ -592,7 +592,7 @@ export default function SubscriptionDetailPage({
           </div>
         )}
 
-        {/* 基本情報 */}
+        {/* Basic information */}
         <div style={{
           backgroundColor: 'white',
           border: '1px solid #e2e8f0',
@@ -615,7 +615,7 @@ export default function SubscriptionDetailPage({
             gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
             gap: '20px'
           }}>
-            {/* 顧客情報 */}
+            {/* Customer information */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -654,7 +654,7 @@ export default function SubscriptionDetailPage({
               </div>
             </div>
 
-            {/* 現在の月額料金 */}
+            {/* Current monthly fee */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -683,7 +683,7 @@ export default function SubscriptionDetailPage({
               </div>
             </div>
 
-            {/* ステータス */}
+            {/* Status */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -712,7 +712,7 @@ export default function SubscriptionDetailPage({
               </div>
             </div>
 
-            {/* 作成日 */}
+            {/* Created date */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -743,7 +743,7 @@ export default function SubscriptionDetailPage({
           </div>
         </div>
 
-        {/* 説明 */}
+        {/* Description */}
         {subscription.description && (
           <div style={{
             backgroundColor: 'white',
@@ -780,7 +780,7 @@ export default function SubscriptionDetailPage({
           </div>
         )}
 
-        {/* 料金履歴 */}
+        {/* Price history */}
         <div style={{
           backgroundColor: 'white',
           border: '1px solid #e2e8f0',
@@ -969,7 +969,7 @@ export default function SubscriptionDetailPage({
           )}
         </div>
 
-        {/* 支払い履歴 */}
+        {/* Payment history */}
         <div style={{
           backgroundColor: 'white',
           border: '1px solid #e2e8f0',
@@ -1117,7 +1117,7 @@ export default function SubscriptionDetailPage({
             </div>
           )}
 
-          {/* 支払い統計 */}
+          {/* Payment statistics */}
           {payments.length > 0 && (
             <div style={{ 
               marginTop: '16px',
@@ -1198,7 +1198,7 @@ export default function SubscriptionDetailPage({
         </div>
       </div>
 
-      {/* 料金変更モーダル */}
+      {/* Amount change modal */}
       {showAmountModal && (
         <div style={{
           position: 'fixed',
@@ -1222,7 +1222,7 @@ export default function SubscriptionDetailPage({
           }}>
             <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>{t('changeFee')}</h3>
             
-            {/* 現在の金額表示 */}
+            {/* Current amount display */}
             <div style={{ 
               marginBottom: '16px',
               padding: '12px',
@@ -1339,7 +1339,7 @@ export default function SubscriptionDetailPage({
         </div>
       )}
 
-      {/* キャンセルモーダル */}
+      {/* Cancel modal */}
       {showCancelModal && (
         <div style={{
           position: 'fixed',
@@ -1362,7 +1362,7 @@ export default function SubscriptionDetailPage({
             margin: '16px',
             position: 'relative'
           }}>
-            {/* 右上のXボタン */}
+            {/* Top right X button */}
             <button
               onClick={() => {
                 setShowCancelModal(false);
@@ -1447,7 +1447,7 @@ export default function SubscriptionDetailPage({
         </div>
       )}
 
-      {/* 再開モーダル */}
+      {/* Restart modal */}
       {showRestartModal && (
         <div style={{
           position: 'fixed',
@@ -1470,7 +1470,7 @@ export default function SubscriptionDetailPage({
             margin: '16px',
             position: 'relative'
           }}>
-            {/* 右上のXボタン */}
+            {/* Top right X button */}
             <button
               onClick={() => {
                 setShowRestartModal(false);
@@ -1511,7 +1511,7 @@ export default function SubscriptionDetailPage({
               {t('restartWarning')}
             </p>
 
-            {/* 最後の金額表示 */}
+            {/* Last amount display */}
             <div style={{ 
               marginBottom: '16px',
               padding: '12px',
@@ -1608,7 +1608,7 @@ export default function SubscriptionDetailPage({
         </div>
       )}
 
-      {/* 料金履歴編集モーダル */}
+      {/* Price history edit modal */}
       {showEditAmountModal && editingAmount && (
         <div style={{
           position: 'fixed',
@@ -1753,7 +1753,7 @@ export default function SubscriptionDetailPage({
         </div>
       )}
 
-      {/* 料金履歴削除確認モーダル */}
+      {/* Price history deletion confirmation modal */}
       {showDeleteAmountModal && editingAmount && (
         <div style={{
           position: 'fixed',

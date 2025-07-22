@@ -34,7 +34,7 @@ export default function OrderTemplatesPage() {
   const { t } = useClientI18n();
   const router = useRouter();
   
-  // ページタイトル設定
+  // Set page title
   useEffect(() => {
     document.title = t('orderTemplatesTitle');
   }, [t]);
@@ -49,7 +49,7 @@ export default function OrderTemplatesPage() {
     totalPages: 0
   });
 
-  // モーダル状態管理
+  // Modal state management
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<OrderTemplate | null>(null);
@@ -89,8 +89,8 @@ export default function OrderTemplatesPage() {
         total: data.pagination?.total || 0,
         totalPages: data.pagination?.totalPages || 0
       }));
-    } catch (error) {
-      console.error('Failed to fetch templates:', error);
+    } catch {
+      // Error handled silently - failed to fetch templates
     } finally {
       setLoading(false);
     }
@@ -128,10 +128,10 @@ export default function OrderTemplatesPage() {
       if (response.ok) {
         fetchTemplates();
       } else {
-        console.error('Failed to delete template');
+        // Failed to delete template
       }
-    } catch (error) {
-      console.error('Delete error:', error);
+    } catch {
+      // Delete error - handled silently
     }
   };
 
@@ -148,10 +148,10 @@ export default function OrderTemplatesPage() {
       if (response.ok) {
         fetchTemplates();
       } else {
-        console.error('Failed to update template status');
+        // Failed to update template status
       }
-    } catch (error) {
-      console.error('Status update error:', error);
+    } catch {
+      // Status update error - handled silently
     }
   };
 
@@ -214,7 +214,7 @@ export default function OrderTemplatesPage() {
           onStatusToggle={handleStatusToggle}
         />
 
-        {/* モーダル */}
+        {/* Modals */}
         <TemplateModal
           isOpen={isCreateDialogOpen}
           onClose={() => setIsCreateDialogOpen(false)}
@@ -262,7 +262,7 @@ export default function OrderTemplatesPage() {
           templateName={deletingTemplate ? deletingTemplate.templateName : ''}
         />
 
-        {/* ページネーション */}
+        {/* Pagination */}
         {pagination.totalPages > 1 && (
           <div style={{
             display: 'flex',

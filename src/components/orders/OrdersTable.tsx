@@ -23,7 +23,7 @@ type OrderData = {
 const columns: ColumnDef<OrderData>[] = [
   {
     accessorKey: 'customerName',
-    header: '顧客',
+    header: 'Customer',
     cell: ({ row }) => (
       <Link
         href={`/customers/${row.original.customerId}`}
@@ -35,7 +35,7 @@ const columns: ColumnDef<OrderData>[] = [
   },
   {
     accessorKey: 'description',
-    header: '説明',
+    header: 'Description',
     cell: ({ row }) => (
       <div className="text-body text-foreground max-w-xs truncate">
         {row.original.description}
@@ -44,7 +44,7 @@ const columns: ColumnDef<OrderData>[] = [
   },
   {
     accessorKey: 'amount',
-    header: '金額',
+    header: 'Amount',
     cell: ({ row }) => (
       <div className="text-body font-semibold text-foreground">
         ¥{Number(row.original.amount).toLocaleString()}
@@ -53,14 +53,14 @@ const columns: ColumnDef<OrderData>[] = [
   },
   {
     accessorKey: 'isPaid',
-    header: 'ステータス',
+    header: 'Status',
     cell: ({ row }) => (
-      <StatusBadge status={row.original.isPaid ? '支払い済み' : '未払い'} />
+      <StatusBadge status={row.original.isPaid ? 'Paid' : 'Unpaid'} />
     ),
   },
   {
     accessorKey: 'salesAt',
-    header: '売上日',
+    header: 'Sales Date',
     cell: ({ row }) => (
       <div className="text-body text-foreground">
         {(() => {
@@ -102,10 +102,10 @@ export function OrdersTable({ data }: OrdersTableProps) {
   );
 
   const sortOptions = [
-    { id: 'created-desc', label: '作成日（新しい順）', value: 'desc' as const },
-    { id: 'created-asc', label: '作成日（古い順）', value: 'asc' as const },
-    { id: 'amount-desc', label: '金額（高い順）', value: 'desc' as const },
-    { id: 'amount-asc', label: '金額（低い順）', value: 'asc' as const },
+    { id: 'created-desc', label: 'Created Date (Newest)', value: 'desc' as const },
+    { id: 'created-asc', label: 'Created Date (Oldest)', value: 'asc' as const },
+    { id: 'amount-desc', label: 'Amount (Highest)', value: 'desc' as const },
+    { id: 'amount-asc', label: 'Amount (Lowest)', value: 'asc' as const },
   ];
 
   return (
@@ -113,28 +113,28 @@ export function OrdersTable({ data }: OrdersTableProps) {
       <div className="p-6 border-b border-line">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-subheading font-semibold text-foreground">注文一覧</h2>
+            <h2 className="text-subheading font-semibold text-foreground">Orders List</h2>
             <p className="text-body text-muted-foreground mt-1">
-              すべての注文を表示・管理できます
+              View and manage all orders
             </p>
           </div>
           <div className="flex items-center gap-3">
             <Badge variant="outline" className="text-muted-foreground">
-              {filteredData.length}件
+              {filteredData.length} items
             </Badge>
             <Button variant="outline" size="sm">
               <Download className="h-4 w-4 mr-2" />
-              エクスポート
+              Export
             </Button>
             <Button size="sm">
               <Plus className="h-4 w-4 mr-2" />
-              新規注文
+              New Order
             </Button>
           </div>
         </div>
         
         <FilterBar
-          placeholder="顧客名や説明で検索..."
+          placeholder="Search by customer name or description..."
           searchValue={searchValue}
           onSearchChange={setSearchValue}
           filters={filters}

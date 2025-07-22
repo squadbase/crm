@@ -12,7 +12,7 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
   const language = getLanguage();
   
   useEffect(() => {
-    // HTMLのlang属性を動的に設定
+    // Dynamically set HTML lang attribute
     document.documentElement.lang = language;
   }, [language]);
 

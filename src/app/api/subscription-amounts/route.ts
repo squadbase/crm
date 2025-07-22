@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // サブスクリプション料金を作成
+    // Create subscription pricing
     const subscriptionAmount = await createSubscriptionAmount({
       subscriptionId,
       amount: amount.toString(),
@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       subscriptionAmount
     });
-  } catch (error) {
-    console.error('Subscription amount creation error:', error);
+  } catch {
+    // Subscription amount creation error
     return NextResponse.json(
       { error: 'Failed to create subscription amount' },
       { status: 500 }

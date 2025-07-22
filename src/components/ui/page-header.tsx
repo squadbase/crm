@@ -104,7 +104,7 @@ interface PageHeaderSearchProps {
 }
 
 export function PageHeaderSearch({
-  placeholder = "検索...",
+  placeholder = "Search...",
   value,
   onChange,
   className = ""

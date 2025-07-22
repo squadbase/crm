@@ -159,7 +159,7 @@ export function OrdersTable({
       boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
       overflow: 'hidden'
     }}>
-      {/* 一括操作バー */}
+      {/* Bulk action bar */}
       {selectedOrders.length > 0 && (
         <div style={{
           padding: '12px 20px',
@@ -170,7 +170,7 @@ export function OrdersTable({
           justifyContent: 'space-between'
         }}>
           <span style={{ fontSize: '14px', color: '#374151' }}>
-            {selectedOrders.length}件選択中
+            {selectedOrders.length} items selected
           </span>
           <div style={{ display: 'flex', gap: '8px' }}>
             <button
@@ -185,7 +185,7 @@ export function OrdersTable({
                 cursor: 'pointer'
               }}
             >
-              支払済にする
+              Mark as Paid
             </button>
             <button
               onClick={() => handleBulkPaymentStatusUpdate(false)}
@@ -199,13 +199,13 @@ export function OrdersTable({
                 cursor: 'pointer'
               }}
             >
-              未払にする
+              Mark as Unpaid
             </button>
           </div>
         </div>
       )}
 
-      {/* テーブル */}
+      {/* Table */}
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
@@ -376,7 +376,7 @@ export function OrdersTable({
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}
-                      title="編集"
+                      title="Edit"
                     >
                       <Edit size={14} color="#6b7280" />
                     </button>
@@ -392,7 +392,7 @@ export function OrdersTable({
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}
-                      title="削除"
+                      title="Delete"
                     >
                       <Trash2 size={14} color="#ef4444" />
                     </button>

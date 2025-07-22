@@ -10,8 +10,8 @@ export async function GET() {
       activeTemplates: summary.activeCount,
       inactiveTemplates: summary.inactiveCount
     });
-  } catch (error) {
-    console.error('Failed to fetch template summary:', error);
+  } catch {
+    // Failed to fetch template summary
     return NextResponse.json(
       { error: 'Failed to fetch template summary' },
       { status: 500 }

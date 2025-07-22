@@ -58,7 +58,7 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
           color: '#374151',
           margin: 0
         }}>
-          フィルター・検索
+          Filter & Search
         </h3>
       </div>
 
@@ -68,7 +68,7 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
         gap: '12px',
         alignItems: 'end'
       }}>
-        {/* 多言語検索ボックス */}
+        {/* Multilingual search box */}
         <div>
           <label style={{
             display: 'block',
@@ -77,7 +77,7 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
             color: '#374151',
             marginBottom: '4px'
           }}>
-            テンプレート検索
+            Template Search
           </label>
           <div style={{ position: 'relative' }}>
             <Search 
@@ -92,7 +92,7 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
             />
             <input
               type="text"
-              placeholder="テンプレート名や説明で検索 (日本語・English)"
+              placeholder="Search by template name or description (Japanese・English)"
               value={filters.search}
               onChange={(e) => handleFilterUpdate('search', e.target.value)}
               style={{
@@ -115,7 +115,7 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
         </div>
 
 
-        {/* 支払い形態フィルター */}
+        {/* Payment type filter */}
         <div>
           <label style={{
             display: 'block',
@@ -124,7 +124,7 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
             color: '#374151',
             marginBottom: '4px'
           }}>
-            支払い形態
+            Payment Type
           </label>
           <select
             value={filters.paymentType}
@@ -140,13 +140,13 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
               cursor: 'pointer'
             }}
           >
-            <option value="">すべて</option>
-            <option value="onetime">一回払い</option>
-            <option value="subscription">サブスクリプション</option>
+            <option value="">All</option>
+            <option value="onetime">One-time Payment</option>
+            <option value="subscription">Subscription</option>
           </select>
         </div>
 
-        {/* アクティブ状態フィルター */}
+        {/* Active status filter */}
         <div>
           <label style={{
             display: 'block',
@@ -155,7 +155,7 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
             color: '#374151',
             marginBottom: '4px'
           }}>
-            ステータス
+            Status
           </label>
           <select
             value={filters.isActive}
@@ -171,13 +171,13 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
               cursor: 'pointer'
             }}
           >
-            <option value="">すべて</option>
-            <option value="true">アクティブ</option>
-            <option value="false">非アクティブ</option>
+            <option value="">All</option>
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
           </select>
         </div>
 
-        {/* クリアボタン */}
+        {/* Clear button */}
         <div>
           <button
             onClick={clearFilters}
@@ -199,7 +199,7 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
               e.currentTarget.style.backgroundColor = 'white';
             }}
           >
-            クリア
+            Clear
           </button>
         </div>
       </div>

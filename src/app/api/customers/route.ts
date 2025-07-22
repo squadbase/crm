@@ -4,8 +4,8 @@ import { z } from 'zod';
 
 const createCustomerSchema = z.object({
   customer_name: z.string()
-    .min(1, "顧客名は必須です")
-    .max(255, "顧客名は255文字以内で入力してください")
+    .min(1, "Customer name is required")
+    .max(255, "Customer name must be within 255 characters")
     .trim()
 });
 
@@ -19,13 +19,13 @@ export async function GET(request: NextRequest) {
     const direction = searchParams.get('direction') || 'desc';
     const offset = (page - 1) * limit;
 
-    // フィルター構築 - ensure filters is always a valid object
+    // Build filters - ensure filters is always a valid object
     const filters = {};
     if (search && search.trim() !== '') {
       Object.assign(filters, { search: search.trim() });
     }
 
-    // ソート設定
+    // Set sort configuration
     const sortField = sort === 'revenue' ? 'revenue' :
                      sort === 'orders' ? 'orders' :
                      sort === 'name' ? 'name' :
@@ -36,29 +36,29 @@ export async function GET(request: NextRequest) {
       direction: direction as 'asc' | 'desc'
     };
 
-    console.log('Fetching customers with filters:', filters, 'sort:', sortOptions);
+    // Fetching customers with filters and sort options
 
     let customerList, totalCount;
     try {
-      console.log('Calling getCustomers...');
+      // Calling getCustomers
       customerList = await getCustomers({
         filters,
         sort: sortOptions,
         limit,
         offset
       });
-      console.log('getCustomers result:', customerList);
+      // getCustomers completed successfully
     } catch (error) {
-      console.error('Error in getCustomers:', error);
+      // Error in getCustomers
       throw error;
     }
 
     try {
-      console.log('Calling getCustomerCount...');
+      // Calling getCustomerCount
       totalCount = await getCustomerCount(filters);
-      console.log('getCustomerCount result:', totalCount);
+      // getCustomerCount completed successfully
     } catch (error) {
-      console.error('Error in getCustomerCount:', error);
+      // Error in getCustomerCount
       throw error;
     }
 
@@ -82,8 +82,8 @@ export async function GET(request: NextRequest) {
         hasPreviousPage: page > 1,
       }
     });
-  } catch (error) {
-    console.error('Error fetching customers:', error);
+  } catch {
+    // Error fetching customers
     return NextResponse.json(
       { error: 'Failed to fetch customers' },
       { status: 500 }
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    console.error('Error creating customer:', error);
+    // Error creating customer
     return NextResponse.json(
       { error: 'Failed to create customer' },
       { status: 500 }

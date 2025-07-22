@@ -28,7 +28,7 @@ interface PaginationData {
 export function CustomerManagement() {
   const { t } = useClientI18n();
   
-  // ページタイトル設定
+  // Set page title
   useEffect(() => {
     document.title = t('customersTitle');
   }, [t]);

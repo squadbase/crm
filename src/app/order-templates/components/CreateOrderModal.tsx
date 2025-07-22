@@ -150,7 +150,7 @@ export function CreateOrderModal({ isOpen, onClose, template, onConfirm }: Creat
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {/* テンプレート名 */}
+              {/* Template name */}
               <div>
                 <div style={{
                   fontSize: '16px',
@@ -169,7 +169,7 @@ export function CreateOrderModal({ isOpen, onClose, template, onConfirm }: Creat
                 </div>
               </div>
 
-              {/* 金額 */}
+              {/* Amount */}
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -195,7 +195,7 @@ export function CreateOrderModal({ isOpen, onClose, template, onConfirm }: Creat
                 </span>
               </div>
 
-              {/* 説明 */}
+              {/* Description */}
               {template.description && (
                 <div style={{
                   padding: '12px',
@@ -254,10 +254,10 @@ export function CreateOrderModal({ isOpen, onClose, template, onConfirm }: Creat
               paddingLeft: '20px',
               lineHeight: '1.5'
             }}>
-              <li>{t('newOrderModal')}ページに移動</li>
-              <li>{t('customer')}を選択</li>
-              <li>必要に応じて{t('amountTemplate')}や{t('descriptionTemplate')}を調整</li>
-              <li>注文を作成</li>
+              <li>{t('newOrderModal')}{t('goToOrderPage')}</li>
+              <li>{t('customer')}{t('selectCustomerStep')}</li>
+              <li>{t('adjustFieldsStep')}</li>
+              <li>{t('createOrderStep')}</li>
             </ol>
           </div>
         </div>

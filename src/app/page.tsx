@@ -12,7 +12,7 @@ import { MetricsCards } from '@/components/dashboard/MetricsCards';
 export default function HomePage() {
   const { t } = useClientI18n();
   
-  // ページタイトル設定
+  // Page title setup
   useEffect(() => {
     document.title = t('dashboardTitle');
   }, [t]);
@@ -63,8 +63,7 @@ export default function HomePage() {
       } else {
         setRecentOrders([]);
       }
-    } catch (error) {
-      console.error('Failed to fetch recent orders:', error);
+    } catch {
       setRecentOrders([]);
     } finally {
       setLoadingOrders(false);
@@ -96,8 +95,7 @@ export default function HomePage() {
       } else {
         setCustomerStats([]);
       }
-    } catch (error) {
-      console.error('Failed to fetch top customers:', error);
+    } catch {
       setCustomerStats([]);
     } finally {
       setLoadingCustomers(false);

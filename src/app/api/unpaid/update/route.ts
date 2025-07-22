@@ -24,7 +24,7 @@ export async function PUT(request: NextRequest) {
 
     const results = await updatePaymentStatus(body.items);
     
-    // 成功した件数と失敗した件数を集計
+    // Count successful and failed updates
     const successCount = results.filter(r => r.result && r.result.length > 0).length;
     const failureCount = results.length - successCount;
 
@@ -39,8 +39,8 @@ export async function PUT(request: NextRequest) {
       }))
     });
 
-  } catch (error) {
-    console.error('Payment update API error:', error);
+  } catch {
+    // Payment update API error
     return NextResponse.json(
       { error: 'Failed to update payment status' },
       { status: 500 }

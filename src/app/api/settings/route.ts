@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    // サーバーサイドでのみ環境変数を読み取り
+    // Read environment variables only on server side
     const language = process.env.LANGUAGE || 'en';
     const currency = process.env.CURRENCY || 'usd';
 
@@ -10,8 +10,8 @@ export async function GET() {
       language: language.toLowerCase(),
       currency: currency.toLowerCase()
     });
-  } catch (error) {
-    console.error('Settings API error:', error);
+  } catch {
+    // Settings API error
     return NextResponse.json(
       { error: 'Failed to fetch settings' },
       { status: 500 }

@@ -20,8 +20,8 @@ export function DeleteConfirmDialog({ isOpen, onClose, onConfirm, orderName }: D
     try {
       await onConfirm();
       onClose();
-    } catch (error) {
-      console.error('Delete failed:', error);
+    } catch {
+      // Delete operation failed - error handling preserved for UI state
     } finally {
       setIsDeleting(false);
     }
@@ -51,7 +51,7 @@ export function DeleteConfirmDialog({ isOpen, onClose, onConfirm, orderName }: D
         maxWidth: '400px',
         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
       }}>
-        {/* ヘッダー */}
+        {/* Header */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -105,7 +105,7 @@ export function DeleteConfirmDialog({ isOpen, onClose, onConfirm, orderName }: D
           </button>
         </div>
 
-        {/* 内容 */}
+        {/* Content */}
         <div style={{ marginBottom: '24px' }}>
           <p style={{
             fontSize: '14px',
@@ -141,7 +141,7 @@ export function DeleteConfirmDialog({ isOpen, onClose, onConfirm, orderName }: D
           </p>
         </div>
 
-        {/* ボタン */}
+        {/* Buttons */}
         <div style={{
           display: 'flex',
           justifyContent: 'flex-end',

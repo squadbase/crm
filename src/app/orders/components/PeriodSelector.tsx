@@ -40,7 +40,7 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
     let startDate: Date;
     let endDate: Date;
 
-    // 日本時間での日付計算を行う
+    // Calculate dates in local time
     const year = now.getFullYear();
     const month = now.getMonth();
     const day = now.getDate();
@@ -52,7 +52,7 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
         break;
       case 'lastMonth':
         startDate = new Date(year, month - 1, 1);
-        endDate = new Date(year, month, 0); // 前月末日
+        endDate = new Date(year, month, 0); // Last day of previous month
         break;
       case 'halfYear':
         startDate = new Date(year, month - 6, 1);
@@ -64,7 +64,7 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
         break;
     }
 
-    // ローカル時間での日付文字列を作成
+    // Create date string in local time
     const formatDate = (date: Date) => {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -126,7 +126,7 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
         </button>
       </div>
 
-      {/* ショートカットボタン */}
+      {/* Shortcut buttons */}
       <div style={{
         display: 'flex',
         gap: '8px',
@@ -200,7 +200,7 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
         gridTemplateColumns: '1fr 1fr',
         gap: '16px'
       }}>
-        {/* 販売日開始 */}
+        {/* Sales start date */}
         <div style={{ minWidth: 0 }}>
           <label style={{
             display: 'block',
@@ -228,7 +228,7 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
           />
         </div>
 
-        {/* 販売日終了 */}
+        {/* Sales end date */}
         <div style={{ minWidth: 0 }}>
           <label style={{
             display: 'block',

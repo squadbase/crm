@@ -30,8 +30,8 @@ export function TemplateSummary() {
       const response = await fetch('/api/order-templates/summary');
       const data = await response.json();
       setSummary(data);
-    } catch (error) {
-      console.error('Failed to fetch summary:', error);
+    } catch {
+      // Failed to fetch template summary data
     } finally {
       setLoading(false);
     }
@@ -94,7 +94,7 @@ export function TemplateSummary() {
               color: '#9ca3af'
             }}
           >
-            読み込み中...
+            Loading...
           </div>
         ))}
       </div>

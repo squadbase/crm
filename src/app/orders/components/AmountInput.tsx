@@ -22,19 +22,19 @@ export function AmountInput({
   const [isFocused, setIsFocused] = useState(false);
   const { getCurrencySymbol, isLoading } = useClientI18n();
 
-  // 数値をカンマ区切りにフォーマット
+  // Format number with comma separators
   const formatNumber = (num: string) => {
     const numericValue = num.replace(/[^\d]/g, '');
     if (numericValue === '') return '';
     return Number(numericValue).toLocaleString();
   };
 
-  // カンマ区切りから数値文字列に変換
+  // Convert from comma-separated to numeric string
   const parseNumber = (formatted: string) => {
     return formatted.replace(/,/g, '');
   };
 
-  // 初期化時とvalue変更時に表示値を更新
+  // Update display value on initialization and value changes
   useEffect(() => {
     if (!isFocused) {
       setDisplayValue(formatNumber(value));
@@ -44,38 +44,38 @@ export function AmountInput({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     
-    // 数字とカンマのみ許可
+    // Allow only digits and commas
     const numericValue = inputValue.replace(/[^\d,]/g, '');
     
-    // カンマを削除して純粋な数値文字列を取得
+    // Remove commas to get pure numeric string
     const pureNumeric = parseNumber(numericValue);
     
-    // 表示値を更新（フォーカス中はカンマなし、フォーカス外ではカンマあり）
+    // Update display value (no comma when focused, with comma when not focused)
     if (isFocused) {
       setDisplayValue(pureNumeric);
     } else {
       setDisplayValue(formatNumber(pureNumeric));
     }
     
-    // 親コンポーネントに純粋な数値文字列を送信
+    // Send pure numeric string to parent component
     onChange(pureNumeric);
   };
 
   const handleFocus = () => {
     setIsFocused(true);
-    // フォーカス時はカンマを削除
+    // Remove commas when focused
     setDisplayValue(parseNumber(displayValue));
   };
 
   const handleBlur = () => {
     setIsFocused(false);
-    // フォーカスアウト時はカンマを追加
+    // Add commas when focus is lost
     setDisplayValue(formatNumber(value));
   };
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>
-      {/* 通貨記号を数字の前に表示 */}
+      {/* Display currency symbol before the number */}
       <div style={{
         position: 'absolute',
         left: '12px',

@@ -42,7 +42,7 @@ export default function SubscriptionsPage() {
   const { t } = useClientI18n();
   const router = useRouter();
   
-  // ページタイトル設定
+  // Set page title
   useEffect(() => {
     document.title = t('subscriptionsTitle');
   }, [t]);
@@ -86,8 +86,8 @@ export default function SubscriptionsPage() {
         total: data.pagination?.total || 0,
         totalPages: data.pagination?.totalPages || 0
       }));
-    } catch (error) {
-      console.error('Failed to fetch subscriptions:', error);
+    } catch {
+      // Error handled silently - failed to fetch subscriptions
     } finally {
       setLoading(false);
     }
@@ -154,7 +154,7 @@ export default function SubscriptionsPage() {
           onCreateNew={handleAddSubscription}
         />
 
-        {/* ページネーション */}
+        {/* Pagination */}
         {pagination.totalPages > 1 && (
           <div style={{
             display: 'flex',
@@ -204,7 +204,7 @@ export default function SubscriptionsPage() {
         )}
       </div>
 
-      {/* サブスクリプション作成フォーム */}
+      {/* Subscription Creation Form */}
       <SubscriptionForm
         isOpen={showSubscriptionForm}
         onClose={() => setShowSubscriptionForm(false)}

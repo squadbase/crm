@@ -23,8 +23,8 @@ export function SubscriptionsSummary() {
       const response = await fetch('/api/subscriptions/summary');
       const result = await response.json();
       setData(result);
-    } catch (error) {
-      console.error('Failed to fetch summary:', error);
+    } catch {
+      // Failed to fetch subscriptions summary data
     } finally {
       setLoading(false);
     }

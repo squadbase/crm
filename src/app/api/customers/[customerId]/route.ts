@@ -4,8 +4,8 @@ import { getCustomerDetails, updateCustomer, deleteCustomer } from '@/models/cus
 
 const updateCustomerSchema = z.object({
   customer_name: z.string()
-    .min(1, "顧客名は必須です")
-    .max(255, "顧客名は255文字以内で入力してください")
+    .min(1, "Customer name is required")
+    .max(255, "Customer name must be within 255 characters")
     .trim()
 });
 
@@ -26,8 +26,8 @@ export async function GET(
     }
 
     return NextResponse.json(customerData);
-  } catch (error) {
-    console.error('Error fetching customer:', error);
+  } catch {
+    // Error fetching customer
     return NextResponse.json(
       { error: 'Failed to fetch customer' },
       { status: 500 }
@@ -64,7 +64,7 @@ export async function PUT(
       );
     }
     
-    console.error('Error updating customer:', error);
+    // Error updating customer
     return NextResponse.json(
       { error: 'Failed to update customer' },
       { status: 500 }
@@ -90,7 +90,7 @@ export async function DELETE(
 
     return NextResponse.json({ message: 'Customer deleted successfully' });
   } catch (error) {
-    console.error('Error deleting customer:', error);
+    // Error deleting customer
     if (error instanceof Error && error.message === 'Cannot delete customer with existing orders') {
       return NextResponse.json(
         { error: 'Cannot delete customer with existing orders' },

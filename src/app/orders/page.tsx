@@ -45,7 +45,7 @@ export default function OrdersPage() {
   const { t } = useClientI18n();
   const router = useRouter();
   
-  // ページタイトル設定
+  // Set page title
   useEffect(() => {
     document.title = t('ordersTitle');
   }, [t]);
@@ -67,7 +67,7 @@ export default function OrdersPage() {
     totalPages: 0
   });
 
-  // モーダル状態管理
+  // Modal state management
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
@@ -102,8 +102,8 @@ export default function OrdersPage() {
         total: data.pagination?.total || 0,
         totalPages: data.pagination?.totalPages || 0
       }));
-    } catch (error) {
-      console.error('Failed to fetch orders:', error);
+    } catch {
+      // Error handled silently - failed to fetch orders
     } finally {
       setLoading(false);
     }
@@ -140,10 +140,10 @@ export default function OrdersPage() {
       if (response.ok) {
         fetchOrders();
       } else {
-        console.error('Failed to delete order');
+        // Failed to delete order
       }
-    } catch (error) {
-      console.error('Delete error:', error);
+    } catch {
+      // Delete error - handled silently
     }
   };
 
@@ -163,10 +163,10 @@ export default function OrdersPage() {
       if (response.ok) {
         fetchOrders();
       } else {
-        console.error('Failed to update payment status');
+        // Failed to update payment status
       }
-    } catch (error) {
-      console.error('Payment status update error:', error);
+    } catch {
+      // Payment status update error - handled silently
     }
   };
 
@@ -230,7 +230,7 @@ export default function OrdersPage() {
           onCreateNew={handleAddOrder}
         />
 
-        {/* モーダル */}
+        {/* Modals */}
         <OrderForm
           isOpen={isCreateDialogOpen}
           onClose={() => setIsCreateDialogOpen(false)}
@@ -257,7 +257,7 @@ export default function OrdersPage() {
           orderName={deletingOrder ? `${deletingOrder.customerName} - ${deletingOrder.description || 'Order'}` : ''}
         />
 
-        {/* ページネーション */}
+        {/* Pagination */}
         {pagination.totalPages > 1 && (
           <div style={{
             display: 'flex',

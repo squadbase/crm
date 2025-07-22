@@ -25,8 +25,8 @@ export async function GET(request: NextRequest) {
         monthCount: monthlySales.length
       }
     });
-  } catch (error) {
-    console.error('Monthly sales API error:', error);
+  } catch {
+    // Monthly sales API error
     return NextResponse.json(
       { error: 'Failed to fetch monthly sales data' },
       { status: 500 }

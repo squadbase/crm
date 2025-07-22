@@ -54,8 +54,8 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
       const response = await fetch(url);
       const result = await response.json();
       setData(result);
-    } catch (error) {
-      console.error('Failed to fetch monthly sales data:', error);
+    } catch {
+      // Failed to fetch monthly sales data
     } finally {
       setLoading(false);
     }
@@ -117,13 +117,13 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
 
   const { monthlySales, summary } = data;
 
-  // グラフの描画設定
+  // Graph drawing settings
   const chartHeight = 350;
   const padding = { top: 20, right: 80, bottom: 60, left: 120 };
   
-  // 動的な幅計算：データ量に応じてチャート幅を調整
+  // Dynamic width calculation: adjust chart width based on data volume
   const minChartWidth = 900;
-  const minWidthPerMonth = 15; // 月あたりの最小幅
+  const minWidthPerMonth = 15; // Minimum width per month
   const dynamicWidth = monthlySales && monthlySales.length > 0 
     ? Math.max(minChartWidth, monthlySales.length * minWidthPerMonth + padding.left + padding.right)
     : minChartWidth;
@@ -131,12 +131,12 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
   const graphWidth = dynamicWidth - padding.left - padding.right;
   const graphHeight = chartHeight - padding.top - padding.bottom;
 
-  // 最大値を計算 - データが空の場合のエラーを防ぐ
+  // Calculate maximum value - prevent errors when data is empty
   const maxAmount = monthlySales && monthlySales.length > 0 ? Math.max(...monthlySales.map(item => item.totalAmount)) : 0;
-  const yAxisMax = Math.ceil(maxAmount * 1.1 / 100000) * 100000; // 10万円単位で切り上げ
+  const yAxisMax = Math.ceil(maxAmount * 1.1 / 100000) * 100000; // Round up to 100,000 units
 
-  // 棒グラフ用の座標計算関数（スタック形式）
-  const barWidth = monthlySales && monthlySales.length > 0 ? graphWidth / monthlySales.length * 0.6 : 0; // 棒の幅（60%使用）
+  // Coordinate calculation function for bar chart (stack format)
+  const barWidth = monthlySales && monthlySales.length > 0 ? graphWidth / monthlySales.length * 0.6 : 0; // Bar width (60% usage)
   
   const getBarX = (index: number) => {
     const length = monthlySales && monthlySales.length > 0 ? monthlySales.length : 1;
@@ -150,10 +150,10 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
   const getBarColor = (baseColor: string, monthIndex: number, barType: 'onetime' | 'subscription') => {
     const isHovered = hoveredBar?.monthIndex === monthIndex && hoveredBar?.barType === barType;
     if (isHovered) {
-      // ホバー時に明るくする
+      // Brighten on hover
       const colors = {
-        '#f97316': '#fb923c', // オレンジ系
-        '#8b5cf6': '#a78bfa', // 紫系
+        '#f97316': '#fb923c', // Orange series
+        '#8b5cf6': '#a78bfa', // Purple series
       };
       return colors[baseColor as keyof typeof colors] || baseColor;
     }
@@ -185,7 +185,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
       padding: '24px',
       boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
     }}>
-      {/* ヘッダー */}
+      {/* Header */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -235,7 +235,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
         </div>
       </div>
 
-      {/* サマリー */}
+      {/* Summary */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
@@ -265,10 +265,10 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
         </div>
       </div>
 
-      {/* グラフ */}
+      {/* Graph */}
       <div style={{ overflowX: 'auto', position: 'relative', width: '100%' }}>
         <svg width="100%" height={chartHeight} style={{ display: 'block', minWidth: `${dynamicWidth}px` }} viewBox={`0 0 ${dynamicWidth} 350`} preserveAspectRatio="none">
-          {/* 背景グリッド */}
+          {/* Background grid */}
           <defs>
             <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
               <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f1f5f9" strokeWidth="1"/>
@@ -276,7 +276,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
           </defs>
           <rect width={dynamicWidth} height="350" fill="url(#grid)" />
 
-          {/* Y軸ラベル */}
+          {/* Y-axis labels */}
           {[0, 0.25, 0.5, 0.75, 1].map((ratio, index) => {
             const y = padding.top + graphHeight - (ratio * graphHeight);
             const value = yAxisMax * ratio;
@@ -303,32 +303,32 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
             );
           })}
 
-          {/* X軸ラベル */}
+          {/* X-axis labels */}
           {monthlySales && monthlySales.map((item, index) => {
             const length = monthlySales.length;
             const centerX = padding.left + (index + 0.5) * (graphWidth / length);
             
-            // ラベルの表示間隔を動的に調整（文字重複を防ぐ）
+            // Dynamically adjust label display interval (prevent text overlap)
             
             let shouldShowLabel = false;
             
             if (length <= 12) {
-              // 12ヶ月以下の場合は全て表示
+              // Display all if 12 months or less
               shouldShowLabel = true;
             } else if (length <= 24) {
-              // 13-24ヶ月の場合は2ヶ月おき
+              // Every 2 months for 13-24 months
               shouldShowLabel = index % 2 === 0;
             } else if (length <= 36) {
-              // 25-36ヶ月の場合は3ヶ月おき
+              // Every 3 months for 25-36 months
               shouldShowLabel = index % 3 === 0;
             } else if (length <= 60) {
-              // 37-60ヶ月の場合は4ヶ月おき
+              // Every 4 months for 37-60 months
               shouldShowLabel = index % 4 === 0;
             } else if (length <= 72) {
-              // 61-72ヶ月の場合は6ヶ月おき
+              // Every 6 months for 61-72 months
               shouldShowLabel = index % 6 === 0;
             } else {
-              // 73ヶ月以上の場合は年単位（12ヶ月おき）
+              // Yearly (every 12 months) for 73+ months
               shouldShowLabel = index % 12 === 0;
             }
             
@@ -348,7 +348,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
             );
           })}
 
-          {/* 棒グラフ（スタック形式） */}
+          {/* Bar chart (stack format) */}
           {monthlySales && monthlySales.map((item, index) => {
             const x = getBarX(index);
             const onetimeHeight = getBarHeight(item.onetimeAmount);
@@ -358,7 +358,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
             
             return (
               <g key={index}>
-                {/* Subscriptionの棒（下部） */}
+                {/* Subscription bar (bottom) */}
                 <rect
                   x={x}
                   y={subscriptionY}
@@ -370,7 +370,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
                   onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'subscription' })}
                   onMouseLeave={() => setHoveredBar(null)}
                 />
-                {/* One-timeの棒（上部） */}
+                {/* One-time bar (top) */}
                 <rect
                   x={x}
                   y={onetimeY}
@@ -387,7 +387,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
           })}
         </svg>
         
-        {/* ツールチップ */}
+        {/* Tooltip */}
         {hoveredBar && (
           <div
             style={{

@@ -146,7 +146,7 @@ export async function getOrderWithCustomerDetails(orderId: string) {
  * Create a new order
  */
 export async function createOrder(orderData: typeof orders.$inferInsert) {
-  // salesAtが文字列の場合はDateオブジェクトに変換
+  // Convert salesAt to Date object if it's a string
   const processedData = {
     ...orderData,
     salesAt: typeof orderData.salesAt === 'string' 
@@ -166,7 +166,7 @@ export async function createOrder(orderData: typeof orders.$inferInsert) {
  * Update an existing order
  */
 export async function updateOrder(orderId: string, orderData: Partial<typeof orders.$inferInsert>) {
-  // salesAtが文字列の場合はDateオブジェクトに変換
+  // Convert salesAt to Date object if it's a string
   const processedData = {
     ...orderData,
     updatedAt: new Date()
@@ -257,7 +257,7 @@ export async function getOrderCount(filters: OrderFilters = {}) {
  */
 export async function getOrdersSummary(salesStartDt?: string, salesEndDt?: string) {
   try {
-    // WHERE条件を構築 (salesAtベースでフィルタリング)
+    // Build WHERE conditions (filter based on salesAt)
     const conditions = [];
     
     if (salesStartDt) {
@@ -267,7 +267,7 @@ export async function getOrdersSummary(salesStartDt?: string, salesEndDt?: strin
       conditions.push(lte(orders.salesAt, new Date(salesEndDt)));
     }
 
-    // 一回払い注文の集計（選んだ期間のtotalAmountとunpaidAmountのみ）
+    // Aggregate one-time payment orders (only totalAmount and unpaidAmount for selected period)
     const onetimeSummary = await db
       .select({
         totalAmount: sum(orders.amount),
@@ -276,7 +276,7 @@ export async function getOrdersSummary(salesStartDt?: string, salesEndDt?: strin
       .from(orders)
       .where(conditions.length > 0 ? and(...conditions) : undefined);
 
-    // 合計を計算（一回払いのみを対象とする）
+    // Calculate totals (only one-time payments are targeted)
     const onetimeData = onetimeSummary[0];
 
     return {
@@ -284,7 +284,7 @@ export async function getOrdersSummary(salesStartDt?: string, salesEndDt?: strin
       unpaidAmount: onetimeData.unpaidAmount || '0',
     };
   } catch (error) {
-    console.error('Error in getOrdersSummary:', error);
+    // Error occurred while calculating orders summary
     throw error;
   }
 }

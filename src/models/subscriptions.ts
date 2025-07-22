@@ -653,7 +653,7 @@ export async function calculateAndUpdateMonthlyPayments(
   const finalEndMonth = endMonth ?? startMonth;
   
   try {
-    console.log(`Starting monthly payment calculation for ${startYear}/${startMonth} to ${finalEndYear}/${finalEndMonth}`);
+    // Calculate monthly payments for specified date range
 
     // Get all active subscriptions with their amounts
     const subscriptionsWithAmounts = await db
@@ -703,7 +703,7 @@ export async function calculateAndUpdateMonthlyPayments(
       }
     }
 
-    console.log(`Processing ${monthsToProcess.length} months: ${monthsToProcess.map(m => `${m.year}/${m.month}`).join(', ')}`);
+    // Process each month in the specified range
 
     const results = [];
 
@@ -724,9 +724,7 @@ export async function calculateAndUpdateMonthlyPayments(
         });
 
         if (!applicableAmount) {
-          console.log(
-            `No applicable amount found for subscription ${subscriptionId} in ${year}/${month}`,
-          );
+          // Skip subscription if no applicable amount found for this month
           continue;
         }
 
@@ -821,9 +819,7 @@ export async function calculateAndUpdateMonthlyPayments(
       }
     }
 
-    console.log(
-      `Monthly payment calculation completed for ${startYear}/${startMonth} to ${finalEndYear}/${finalEndMonth}. Processed ${results.length} payments across ${monthsToProcess.length} months.`,
-    );
+    // Monthly payment calculation completed successfully
 
     return {
       startYear,
@@ -835,10 +831,7 @@ export async function calculateAndUpdateMonthlyPayments(
       results,
     };
   } catch (error) {
-    console.error(
-      `Error calculating monthly payments for ${startYear}/${startMonth} to ${finalEndYear}/${finalEndMonth}:`,
-      error,
-    );
+    // Error occurred during monthly payment calculation
     throw error;
   }
 }

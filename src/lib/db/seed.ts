@@ -2,11 +2,8 @@ import { db } from './index';
 import { customers, orders, subscriptions, subscriptionAmounts, subscriptionPaid, orderTemplates } from './schema';
 
 async function seed() {
-  console.log('🌱 Starting database seed...');
-
   try {
     // Clear existing data
-    console.log('🗑️ Clearing existing data...');
     await db.delete(subscriptionPaid);
     await db.delete(subscriptionAmounts);
     await db.delete(subscriptions);
@@ -15,92 +12,88 @@ async function seed() {
     await db.delete(customers);
 
     // Insert customers
-    console.log('🏢 Inserting customers...');
     const [customer1, customer2, customer3, customer4, customer5] = await db.insert(customers).values([
       {
-        customerName: '株式会社テックソリューションズ',
+        customerName: 'TechSolutions Inc.',
       },
       {
-        customerName: '株式会社マーケティングプロ',
+        customerName: 'Marketing Pro Corp.',
       },
       {
-        customerName: '株式会社スタートアップイノベーションズ',
+        customerName: 'Startup Innovations LLC',
       },
       {
-        customerName: '株式会社コンサルティングファーム',
+        customerName: 'Consulting Firm Ltd.',
       },
       {
-        customerName: '株式会社Eコマースプラス',
+        customerName: 'E-Commerce Plus Co.',
       },
     ]).returning();
 
     // Insert onetime orders
-    console.log('💼 Inserting onetime orders...');
     await db.insert(orders).values([
       {
         customerId: customer1.customerId,
         amount: '500000.00',
         salesAt: new Date('2025-06-15'),
         isPaid: true,
-        description: 'CRMシステム導入プロジェクト',
+        description: 'CRM System Implementation Project',
       },
       {
         customerId: customer4.customerId,
         amount: '800000.00',
         salesAt: new Date('2025-05-20'),
         isPaid: true,
-        description: 'マーケティングオートメーション構築',
+        description: 'Marketing Automation Platform Development',
       },
       {
         customerId: customer5.customerId,
         amount: '1200000.00',
         salesAt: new Date('2025-07-10'),
         isPaid: false,
-        description: 'Eコマースプラットフォーム開発',
+        description: 'E-commerce Platform Development',
       },
       {
         customerId: customer2.customerId,
         amount: '600000.00',
         salesAt: new Date('2025-04-25'),
         isPaid: true,
-        description: 'データ分析ダッシュボード構築',
+        description: 'Data Analytics Dashboard Development',
       },
       {
         customerId: customer3.customerId,
         amount: '300000.00',
         salesAt: new Date('2025-06-05'),
         isPaid: true,
-        description: 'ウェブサイトリニューアル',
+        description: 'Website Redesign and Development',
       },
     ]);
 
     // Insert subscriptions
-    console.log('📅 Inserting subscriptions...');
     const [sub1, sub2, sub3, sub4, sub5] = await db.insert(subscriptions).values([
       {
         customerId: customer1.customerId,
-        description: 'プロダクト月額プラン - スタンダード',
+        description: 'Monthly Product Plan - Standard',
       },
       {
         customerId: customer2.customerId,
-        description: 'プロダクト月額プラン - プロフェッショナル',
+        description: 'Monthly Product Plan - Professional',
       },
       {
         customerId: customer3.customerId,
-        description: 'プロダクト月額プラン - ベーシック',
+        description: 'Monthly Product Plan - Basic',
       },
       {
         customerId: customer4.customerId,
-        description: 'プロダクト月額プラン - エンタープライズ',
+        description: 'Monthly Product Plan - Enterprise',
       },
       {
         customerId: customer5.customerId,
-        description: 'プロダクト月額プラン - プロフェッショナル',
+        description: 'Monthly Product Plan - Professional',
       },
     ]).returning();
 
     // Insert subscription amounts (pricing history)
-    console.log('💰 Inserting subscription amounts...');
     await db.insert(subscriptionAmounts).values([
       // Subscription 1 - Standard plan
       {
@@ -140,7 +133,6 @@ async function seed() {
     ]);
 
     // Insert subscription payments
-    console.log('💳 Inserting subscription payments...');
     await db.insert(subscriptionPaid).values([
       // Sub1 payments (April-July)
       { subscriptionId: sub1.subscriptionId, year: 2025, month: 4, amount: '50000.00', isPaid: true },
@@ -172,76 +164,75 @@ async function seed() {
     ]);
 
     // Insert order templates
-    console.log('📋 Inserting order templates...');
     await db.insert(orderTemplates).values([
       // Subscription templates
       {
         paymentType: 'subscription',
-        templateName: 'ベーシックプラン',
+        templateName: 'Basic Plan',
         amount: '30000.00',
-        description: 'プロダクト月額プラン - ベーシック（基本機能のみ）',
+        description: 'Monthly Product Plan - Basic (Essential features only)',
       },
       {
         paymentType: 'subscription',
-        templateName: 'スタンダードプラン',
+        templateName: 'Standard Plan',
         amount: '50000.00',
-        description: 'プロダクト月額プラン - スタンダード（標準機能）',
+        description: 'Monthly Product Plan - Standard (Standard features)',
       },
       {
         paymentType: 'subscription',
-        templateName: 'プロフェッショナルプラン',
+        templateName: 'Professional Plan',
         amount: '80000.00',
-        description: 'プロダクト月額プラン - プロフェッショナル（高機能）',
+        description: 'Monthly Product Plan - Professional (Advanced features)',
       },
       {
         paymentType: 'subscription',
-        templateName: 'エンタープライズプラン',
+        templateName: 'Enterprise Plan',
         amount: '100000.00',
-        description: 'プロダクト月額プラン - エンタープライズ（全機能）',
+        description: 'Monthly Product Plan - Enterprise (All features)',
       },
 
       // Onetime templates
       {
         paymentType: 'onetime',
-        templateName: '導入サポート',
+        templateName: 'Implementation Support',
         amount: '200000.00',
-        description: 'プロダクト導入時の初期設定・サポート',
+        description: 'Initial setup and support for product deployment',
       },
       {
         paymentType: 'onetime',
-        templateName: 'カスタマイズ開発',
+        templateName: 'Custom Development',
         amount: '500000.00',
-        description: 'プロダクトの特別カスタマイズ開発',
+        description: 'Special customization development for the product',
       },
       {
         paymentType: 'onetime',
-        templateName: 'ウェブサイト制作',
+        templateName: 'Website Development',
         amount: '300000.00',
-        description: 'コーポレートサイト・LP制作',
+        description: 'Corporate website and landing page development',
       },
       {
         paymentType: 'onetime',
-        templateName: 'システム開発（小規模）',
+        templateName: 'System Development (Small)',
         amount: '500000.00',
-        description: '小規模なシステム開発・改修',
+        description: 'Small-scale system development and modifications',
       },
       {
         paymentType: 'onetime',
-        templateName: 'システム開発（中規模）',
+        templateName: 'System Development (Medium)',
         amount: '800000.00',
-        description: '中規模なシステム開発・新機能追加',
+        description: 'Medium-scale system development and new feature additions',
       },
       {
         paymentType: 'onetime',
-        templateName: 'システム開発（大規模）',
+        templateName: 'System Development (Large)',
         amount: '1200000.00',
-        description: '大規模なシステム開発・プラットフォーム構築',
+        description: 'Large-scale system development and platform construction',
       },
       {
         paymentType: 'onetime',
-        templateName: 'コンサルティング',
+        templateName: 'IT Consulting',
         amount: '600000.00',
-        description: 'IT戦略・システム設計コンサルティング',
+        description: 'IT strategy and system design consulting services',
       },
     ]);
 
@@ -254,13 +245,13 @@ async function seed() {
     console.log(`📋 Created ${11} order templates`);
     console.log('');
     console.log('📊 Sales Summary:');
-    console.log('- Onetime orders: 5件 (¥3,400,000)');
+    console.log('- Onetime orders: 5 orders (¥3,400,000)');
     console.log('- Subscription revenue (July): ¥340,000');
     console.log('- Total current month revenue: ¥3,740,000');
     console.log('');
     console.log('📋 Template Summary:');
-    console.log('- Subscription templates: 4件');
-    console.log('- Onetime templates: 7件');
+    console.log('- Subscription templates: 4 items');
+    console.log('- Onetime templates: 7 items');
 
   } catch (error) {
     console.error('❌ Error seeding database:', error);

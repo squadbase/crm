@@ -21,7 +21,7 @@ export function CustomSelect({
   options, 
   value, 
   onChange, 
-  placeholder = "選択してください",
+  placeholder = "Please select",
   required = false,
   disabled = false
 }: CustomSelectProps) {
@@ -30,11 +30,11 @@ export function CustomSelect({
   const selectRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  // 選択された値のラベルを取得
+  // Get label of selected value
   const selectedOption = options.find(option => option.value === value);
   const selectedLabel = selectedOption ? selectedOption.label : placeholder;
 
-  // 外部クリックでドロップダウンを閉じる
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
@@ -47,7 +47,7 @@ export function CustomSelect({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // キーボード操作
+  // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (disabled) return;
 
@@ -85,14 +85,14 @@ export function CustomSelect({
     }
   };
 
-  // オプション選択
+  // Select option
   const handleOptionClick = (optionValue: string) => {
     onChange(optionValue);
     setIsOpen(false);
     setFocusedIndex(-1);
   };
 
-  // ドロップダウンの位置計算
+  // Calculate dropdown position
   const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
   
   useEffect(() => {
@@ -101,11 +101,11 @@ export function CustomSelect({
       const spaceBelow = window.innerHeight - rect.bottom;
       const spaceAbove = rect.top;
       
-      // ドロップダウンの推定高さ（オプション数 * 40px + padding）
+      // Estimated dropdown height (option count * 40px + padding)
       const estimatedHeight = Math.min(options.length * 40 + 16, 200);
       
       if (spaceBelow >= estimatedHeight || spaceBelow >= spaceAbove) {
-        // 下に表示
+        // Display below
         setDropdownStyle({
           position: 'absolute',
           top: '100%',
@@ -115,7 +115,7 @@ export function CustomSelect({
           zIndex: 1000
         });
       } else {
-        // 上に表示
+        // Display above
         setDropdownStyle({
           position: 'absolute',
           bottom: '100%',
@@ -133,7 +133,7 @@ export function CustomSelect({
       ref={selectRef}
       style={{ position: 'relative', width: '100%' }}
     >
-      {/* セレクトボタン */}
+      {/* Select button */}
       <div
         role="combobox"
         aria-expanded={isOpen}
@@ -191,7 +191,7 @@ export function CustomSelect({
         />
       </div>
 
-      {/* ドロップダウンリスト */}
+      {/* Dropdown list */}
       {isOpen && (
         <div
           ref={listRef}

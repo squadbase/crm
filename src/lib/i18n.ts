@@ -1,11 +1,11 @@
 /**
- * 国際化ユーティリティ
+ * Internationalization utilities
  */
 
 type Language = 'ja' | 'en';
 type Currency = 'JPY' | 'USD';
 
-// サーバーサイド専用の設定取得（APIルートでのみ使用）
+// Server-side only configuration retrieval (use only in API routes)
 export const getServerLanguage = (): Language => {
   const lang = process.env.LANGUAGE || 'en';
   return lang.toLowerCase() === 'ja' ? 'ja' : 'en';
@@ -16,7 +16,7 @@ export const getServerCurrency = (): Currency => {
   return currency.toLowerCase() === 'jpy' ? 'JPY' : 'USD';
 };
 
-// 非推奨：直接使用せず、useClientI18nフックを使用してください
+// Deprecated: Do not use directly, use useClientI18n() hook instead
 export const getLanguage = (): Language => {
   throw new Error(
     'getLanguage() should not be used directly. Use useClientI18n() hook instead.',
@@ -29,7 +29,7 @@ export const getCurrency = (): Currency => {
   );
 };
 
-// テキスト翻訳
+// Text translations
 export const translations = {
   // Dashboard
   dashboard: {
@@ -1155,6 +1155,10 @@ export const translations = {
     ja: 'テンプレート編集',
     en: 'Edit Template',
   },
+  createAsActive: {
+    ja: 'アクティブ状態で作成',
+    en: 'Create as Active',
+  },
   templateDetails: {
     ja: 'テンプレート詳細',
     en: 'Template Details',
@@ -1190,6 +1194,22 @@ export const translations = {
   createOrderPageRedirect: {
     ja: '注文作成ページへ',
     en: 'Go to Order Creation',
+  },
+  goToOrderPage: {
+    ja: 'ページに移動',
+    en: 'Go to page',
+  },
+  selectCustomerStep: {
+    ja: 'を選択',
+    en: 'Select',
+  },
+  adjustFieldsStep: {
+    ja: '必要に応じて金額や説明を調整',
+    en: 'Adjust amount and description as needed',
+  },
+  createOrderStep: {
+    ja: '注文を作成',
+    en: 'Create order',
   },
   templateNotFound: {
     ja: 'テンプレートが見つかりませんでした',
@@ -1610,12 +1630,21 @@ export const translations = {
     ja: '分後',
     en: ' minutes later',
   },
+  // Error messages
+  unknownError: {
+    ja: '不明なエラー',
+    en: 'Unknown error',
+  },
+  apiCallFailed: {
+    ja: 'API呼び出しに失敗しました',
+    en: 'API call failed',
+  },
 };
 
 export type TranslationKey = keyof typeof translations;
 
 /**
- * 翻訳テキストを取得
+ * Get translated text
  */
 export const t = (key: TranslationKey): string => {
   const language = getLanguage();
@@ -1623,7 +1652,7 @@ export const t = (key: TranslationKey): string => {
 };
 
 /**
- * 通貨フォーマット
+ * Currency formatting
  */
 export const formatCurrency = (amount: number): string => {
   const currency = getCurrency();
@@ -1639,7 +1668,7 @@ export const formatCurrency = (amount: number): string => {
 };
 
 /**
- * 数値フォーマット（カンマ区切り）
+ * Number formatting (comma-separated)
  */
 export const formatNumber = (value: number): string => {
   const language = getLanguage();
@@ -1649,7 +1678,7 @@ export const formatNumber = (value: number): string => {
 };
 
 /**
- * 日付フォーマット - yyyy/MM/dd形式
+ * Date formatting - yyyy/MM/dd format
  */
 export const formatDate = (date: string | Date): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date;

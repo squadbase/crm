@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     
-    // パラメータ取得
+    // Get parameters
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '50');
     const isPaid = searchParams.get('isPaid');
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const endDate = searchParams.get('endDate');
     const search = searchParams.get('search');
 
-    // フィルターオブジェクトを構築
+    // Build filter object
     const filters: OrderFilters = {};
     const offset = (page - 1) * limit;
     
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       filters.search = search;
     }
 
-    // データ取得
+    // Fetch data
     const [orders, totalCount] = await Promise.all([
       getOrders({
         filters,
@@ -44,8 +44,7 @@ export async function GET(request: NextRequest) {
       getOrderCount(filters)
     ]);
     
-    console.log('Orders fetched:', orders.length);
-    console.log('Total count:', totalCount);
+    // Orders fetched successfully
 
     return NextResponse.json({
       orders,
@@ -57,7 +56,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Orders API error:', error);
+    // Orders API error
     return NextResponse.json(
       { error: 'Failed to fetch orders', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
@@ -69,7 +68,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
-    // 基本的なバリデーション
+    // Basic validation
     if (!body.customerId || !body.amount || !body.salesAt) {
       return NextResponse.json(
         { error: 'customerId, amount, and salesAt are required' },
@@ -77,7 +76,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 金額の数値チェック
+    // Validate amount is a number
     const amount = parseFloat(body.amount);
     if (isNaN(amount) || amount <= 0) {
       return NextResponse.json(
@@ -86,7 +85,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 日付の有効性チェック
+    // Validate date
     const salesDate = new Date(body.salesAt);
     if (isNaN(salesDate.getTime())) {
       return NextResponse.json(
@@ -104,8 +103,8 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(newOrder, { status: 201 });
-  } catch (error) {
-    console.error('Create order error:', error);
+  } catch {
+    // Create order error
     return NextResponse.json(
       { error: 'Failed to create order' },
       { status: 500 }

@@ -95,7 +95,7 @@ export function SidebarNavigation() {
   const pathname = usePathname();
   const { t, isClient, isLoading } = useClientI18n();
 
-  // ハイドレーション中は固定の日本語表示を使用
+  // Use fixed display during hydration
   const getStaticNavigationSections = () => [
     {
       title: '売上管理',

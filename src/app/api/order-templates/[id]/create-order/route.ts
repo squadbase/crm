@@ -8,7 +8,7 @@ export async function POST(
   try {
     const { id: templateId } = await params;
 
-    // テンプレートが存在し、アクティブかどうか確認
+    // Check if template exists and is active
     const template = await getOrderTemplateById(templateId);
 
     if (!template) {
@@ -25,13 +25,13 @@ export async function POST(
       );
     }
 
-    // テンプレートデータを返す（注文作成ページで使用）
+    // Return template data (used by order creation page)
     return NextResponse.json({
       template: template,
       message: 'Template is ready for order creation'
     });
-  } catch (error) {
-    console.error('Failed to prepare template for order creation:', error);
+  } catch {
+    // Failed to prepare template for order creation
     return NextResponse.json(
       { error: 'Failed to prepare template for order creation' },
       { status: 500 }

@@ -8,14 +8,14 @@ export async function GET(
   try {
     const { subscriptionId } = await params;
 
-    // サブスクリプション料金履歴を取得
+    // Get subscription pricing history
     const amounts = await getSubscriptionAmounts(subscriptionId);
 
     return NextResponse.json({
       amounts
     });
-  } catch (error) {
-    console.error('Subscription amounts API error:', error);
+  } catch {
+    // Subscription amounts API error
     return NextResponse.json(
       { error: 'Failed to fetch subscription amounts' },
       { status: 500 }

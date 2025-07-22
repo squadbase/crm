@@ -48,8 +48,8 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
 
       const data = await response.json();
       setOrder(data.order);
-    } catch (error) {
-      console.error('Failed to fetch order detail:', error);
+    } catch {
+      // Failed to fetch order detail
       setError('Failed to fetch data');
     } finally {
       setLoading(false);
@@ -70,7 +70,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
     }
   }, [orderId, fetchOrderDetail]);
 
-  // ページタイトル設定
+  // Set page title
   useEffect(() => {
     if (order?.customerName) {
       document.title = `${order.customerName} - ${t('onetimeOrders')} ${t('details')}`;
@@ -96,18 +96,18 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
       });
 
       if (response.ok) {
-        // 削除成功後、注文一覧に戻る
+        // After successful deletion, return to order list
         router.push('/orders');
       } else {
-        console.error('Failed to delete order');
+        // Failed to delete order
       }
-    } catch (error) {
-      console.error('Delete error:', error);
+    } catch {
+      // Delete error - handled silently
     }
   };
 
   const handleFormSuccess = () => {
-    // フォーム送信成功後、データを再取得
+    // Refetch data after successful form submission
     fetchOrderDetail();
   };
 
@@ -265,7 +265,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
         padding: '24px',
         boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
       }}>
-        {/* 基本情報 */}
+        {/* Basic Information */}
         <div style={{ marginBottom: '32px' }}>
           <h3 style={{
             fontSize: '18px',
@@ -281,7 +281,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
             gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
             gap: '20px'
           }}>
-            {/* 顧客情報 */}
+            {/* Customer Information */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -320,7 +320,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
               </div>
             </div>
 
-            {/* 金額 */}
+            {/* Amount */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -349,7 +349,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
               </div>
             </div>
 
-            {/* 販売日 */}
+            {/* Sales Date */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -378,7 +378,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
               </div>
             </div>
 
-            {/* 支払い状況 */}
+            {/* Payment Status */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -410,7 +410,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
         </div>
 
 
-        {/* 説明 */}
+        {/* Description */}
         {order.description && (
           <div style={{ marginBottom: '32px' }}>
             <h3 style={{
@@ -440,7 +440,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
           </div>
         )}
 
-        {/* 履歴情報 */}
+        {/* History Information */}
         <div>
           <h3 style={{
             fontSize: '18px',
@@ -513,7 +513,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderId:
         </div>
       </div>
 
-      {/* モーダル */}
+      {/* Modals */}
       <OrderForm
         isOpen={isEditDialogOpen}
         onClose={() => setIsEditDialogOpen(false)}

@@ -1,18 +1,18 @@
 ---
 name: project:db:define
-description: データベースのテーブルを作成する
+description: Create database tables
 ---
 
-## タスクの概要
+## Task Overview
 
-このコマンドを使うと、データベースの定義を作成します。
+This command creates the database schema definitions.
 
-使用例: `claude project:db:define`
+Example usage: `claude project:db:define`
 
-`docs/database.md`にデータベースの定義を参考にテーブル定義、シードデータを作成してください。
-テーブル定義の差分を確認して、`docs/database.md`を正としてテーブル定義、シードデータを更新してください。
+Refer to the database specification in `docs/database.md` to create table definitions and seed data.
+Check for differences between the current table definitions and `docs/database.md`, and update the table definitions and seed data to match `docs/database.md` as the source of truth.
 
-## 操作対象
+## Target Files
 
-- `src/lib/db/schema.ts`にテーブル定義を作成してください。
-- `src/lib/db/seed.ts`にシードデータを作成してください。
+- Create table definitions in `src/lib/db/schema.ts`.
+- Create seed data in `src/lib/db/seed.ts`.

@@ -40,7 +40,7 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  // 顧客一覧を取得
+  // Fetch customer list
   useEffect(() => {
     if (isOpen) {
       fetchCustomers();
@@ -48,7 +48,7 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
     }
   }, [isOpen]);
 
-  // 新規作成時にフォームをリセット
+  // Reset form when creating new subscription
   useEffect(() => {
     if (isOpen) {
       setFormData({
@@ -67,19 +67,19 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
       const response = await fetch('/api/customers?limit=1000');
       const data = await response.json();
       setCustomers(data.customers || []);
-    } catch (error) {
-      console.error('Failed to fetch customers:', error);
+    } catch {
+      // Failed to fetch customer data
     }
   };
 
   const fetchTemplates = async () => {
     try {
-      // subscriptionテンプレートのみを取得
+      // Fetch only subscription templates
       const response = await fetch('/api/order-templates?paymentType=subscription');
       const data = await response.json();
       setTemplates(data.templates || []);
-    } catch (error) {
-      console.error('Failed to fetch templates:', error);
+    } catch {
+      // Failed to fetch subscription templates
       setTemplates([]);
     }
   };
@@ -123,7 +123,7 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
     setError('');
 
     try {
-      // サブスクリプション作成
+      // Create subscription
       const subscriptionResponse = await fetch('/api/subscriptions', {
         method: 'POST',
         headers: {
@@ -144,7 +144,7 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
       const subscriptionData = await subscriptionResponse.json();
       const subscriptionId = subscriptionData.subscription.subscriptionId;
 
-      // サブスクリプション料金設定
+      // Set subscription pricing
       const amountResponse = await fetch('/api/subscription-amounts', {
         method: 'POST',
         headers: {
@@ -154,7 +154,7 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
           subscriptionId: subscriptionId,
           amount: Number(formData.amount),
           startDate: formData.startDate,
-          endDate: null // 継続中
+          endDate: null // Ongoing
         }),
       });
 

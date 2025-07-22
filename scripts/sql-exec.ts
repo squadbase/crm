@@ -18,7 +18,6 @@ async function executeSql(sql: string) {
 
   try {
     await client.connect();
-    console.log('🔗 Connected to PostgreSQL database');
     
     const result = await client.query(sql);
     

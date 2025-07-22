@@ -1,165 +1,165 @@
-# CRM データベース仕様書
+# CRM Database Specification
 
-## 概要
-売上管理に特化したCRMシステムのデータベース設計。顧客管理と売上管理を中心とした構成。
-onetimeとsubscriptionの注文を分離して管理し、詳細な売上分析とKPI管理を実現する。
+## Overview
+Database design for a CRM system specialized in revenue management. Focused on customer management and revenue management architecture.
+Separates onetime and subscription orders for detailed revenue analysis and KPI management.
 
-## テーブル構成
+## Table Structure
 
-### 1. customers（顧客管理）
-顧客情報を管理するメインテーブル
+### 1. customers (Customer Management)
+Main table for managing customer information
 
-| カラム名 | 型 | 制約 | 説明 |
+| Column Name | Type | Constraints | Description |
 |---------|-----|------|-----|
-| customer_id | UUID | PRIMARY KEY | 顧客ID |
-| customer_name | VARCHAR(255) | NOT NULL | 顧客企業名 |
-| created_at | TIMESTAMP | DEFAULT NOW() | 作成日時 |
-| updated_at | TIMESTAMP | DEFAULT NOW() | 更新日時 |
+| customer_id | UUID | PRIMARY KEY | Customer ID |
+| customer_name | VARCHAR(255) | NOT NULL | Customer company name |
+| created_at | TIMESTAMP | DEFAULT NOW() | Creation timestamp |
+| updated_at | TIMESTAMP | DEFAULT NOW() | Update timestamp |
 
-### 2. orders（一回払い注文管理）
-一回払い (onetime) の注文のみを管理するテーブル
+### 2. orders (One-time Order Management)
+Table managing only one-time payment orders
 
-| カラム名 | 型 | 制約 | 説明 |
+| Column Name | Type | Constraints | Description |
 |---------|-----|------|-----|
-| order_id | UUID | PRIMARY KEY | 注文ID |
-| customer_id | UUID | FOREIGN KEY | 顧客ID (customers.customer_id) |
-| amount | DECIMAL(15,2) | NOT NULL | 金額 |
-| sales_at | DATE | NOT NULL | 売り上げ日 |
-| is_paid | BOOLEAN | DEFAULT FALSE | 支払い済みフラグ |
-| description | TEXT | | 説明・備考 |
-| created_at | TIMESTAMP | DEFAULT NOW() | 作成日時 |
-| updated_at | TIMESTAMP | DEFAULT NOW() | 更新日時 |
+| order_id | UUID | PRIMARY KEY | Order ID |
+| customer_id | UUID | FOREIGN KEY | Customer ID (customers.customer_id) |
+| amount | DECIMAL(15,2) | NOT NULL | Amount |
+| sales_at | DATE | NOT NULL | Sales date |
+| is_paid | BOOLEAN | DEFAULT FALSE | Payment completed flag |
+| description | TEXT | | Description/Notes |
+| created_at | TIMESTAMP | DEFAULT NOW() | Creation timestamp |
+| updated_at | TIMESTAMP | DEFAULT NOW() | Update timestamp |
 
-### 3. subscriptions（サブスクリプション管理）
-継続課金 (subscription) の契約を管理するテーブル
+### 3. subscriptions (Subscription Management)
+Table managing subscription contracts for recurring billing
 
-| カラム名 | 型 | 制約 | 説明 |
+| Column Name | Type | Constraints | Description |
 |---------|-----|------|-----|
-| subscription_id | UUID | PRIMARY KEY | サブスクリプションID |
-| customer_id | UUID | FOREIGN KEY | 顧客ID (customers.customer_id) |
-| description | TEXT | | 説明・備考 |
-| created_at | TIMESTAMP | DEFAULT NOW() | 作成日時 |
-| updated_at | TIMESTAMP | DEFAULT NOW() | 更新日時 |
+| subscription_id | UUID | PRIMARY KEY | Subscription ID |
+| customer_id | UUID | FOREIGN KEY | Customer ID (customers.customer_id) |
+| description | TEXT | | Description/Notes |
+| created_at | TIMESTAMP | DEFAULT NOW() | Creation timestamp |
+| updated_at | TIMESTAMP | DEFAULT NOW() | Update timestamp |
 
-### 4. subscription_amounts（サブスクリプション料金管理）
-サブスクリプションの料金変更履歴を管理するテーブル（アップセル・ダウンセル・解約の追跡）
+### 4. subscription_amounts (Subscription Pricing Management)
+Table managing subscription pricing change history (tracking upsells, downsells, cancellations)
 
-| カラム名 | 型 | 制約 | 説明 |
+| Column Name | Type | Constraints | Description |
 |---------|-----|------|-----|
-| amount_id | UUID | PRIMARY KEY | 料金設定ID |
-| subscription_id | UUID | FOREIGN KEY | サブスクリプションID (subscriptions.subscription_id) |
-| amount | DECIMAL(15,2) | NOT NULL | 月額料金 |
-| start_date | DATE | NOT NULL | 料金適用開始日 |
-| end_date | DATE | | 料金適用終了日 (NULL = 継続中) |
-| created_at | TIMESTAMP | DEFAULT NOW() | 作成日時 |
-| updated_at | TIMESTAMP | DEFAULT NOW() | 更新日時 |
+| amount_id | UUID | PRIMARY KEY | Pricing configuration ID |
+| subscription_id | UUID | FOREIGN KEY | Subscription ID (subscriptions.subscription_id) |
+| amount | DECIMAL(15,2) | NOT NULL | Monthly fee |
+| start_date | DATE | NOT NULL | Pricing application start date |
+| end_date | DATE | | Pricing application end date (NULL = ongoing) |
+| created_at | TIMESTAMP | DEFAULT NOW() | Creation timestamp |
+| updated_at | TIMESTAMP | DEFAULT NOW() | Update timestamp |
 
-### 5. subscription_paid（サブスクリプション支払い管理）
-サブスクリプションの月次支払い状況を管理するテーブル
+### 5. subscription_paid (Subscription Payment Management)
+Table managing monthly payment status for subscriptions
 
-| カラム名 | 型 | 制約 | 説明 |
+| Column Name | Type | Constraints | Description |
 |---------|-----|------|-----|
-| paid_id | UUID | PRIMARY KEY | 支払い記録ID |
-| subscription_id | UUID | FOREIGN KEY | サブスクリプションID (subscriptions.subscription_id) |
-| year | INTEGER | NOT NULL | 支払い年 |
-| month | INTEGER | NOT NULL | 支払い月 (1-12) |
-| amount | DECIMAL(15,2) | NOT NULL | 支払い金額 |
-| is_paid | BOOLEAN | DEFAULT FALSE | 支払い済みフラグ |
-| created_at | TIMESTAMP | DEFAULT NOW() | 作成日時 |
-| updated_at | TIMESTAMP | DEFAULT NOW() | 更新日時 |
+| paid_id | UUID | PRIMARY KEY | Payment record ID |
+| subscription_id | UUID | FOREIGN KEY | Subscription ID (subscriptions.subscription_id) |
+| year | INTEGER | NOT NULL | Payment year |
+| month | INTEGER | NOT NULL | Payment month (1-12) |
+| amount | DECIMAL(15,2) | NOT NULL | Payment amount |
+| is_paid | BOOLEAN | DEFAULT FALSE | Payment completed flag |
+| created_at | TIMESTAMP | DEFAULT NOW() | Creation timestamp |
+| updated_at | TIMESTAMP | DEFAULT NOW() | Update timestamp |
 
-### 6. order_templates（注文テンプレート）
-payment_typeとservice_typeの組み合わせごとの入力テンプレートを管理するテーブル（入力補助用）
+### 6. order_templates (Order Templates)
+Table managing input templates for each payment_type and service_type combination (for input assistance)
 
-| カラム名 | 型 | 制約 | 説明 |
+| Column Name | Type | Constraints | Description |
 |---------|-----|------|-----|
-| template_id | UUID | PRIMARY KEY | テンプレートID |
-| payment_type | ENUM | NOT NULL | 支払い形態 (onetime, subscription) |
-| template_name | VARCHAR(255) | NOT NULL | テンプレート名 |
-| amount | DECIMAL(15,2) | NOT NULL | デフォルト金額 |
-| description | TEXT | | デフォルト説明・備考 |
-| is_active | BOOLEAN | DEFAULT TRUE | アクティブフラグ |
-| created_at | TIMESTAMP | DEFAULT NOW() | 作成日時 |
-| updated_at | TIMESTAMP | DEFAULT NOW() | 更新日時 |
+| template_id | UUID | PRIMARY KEY | Template ID |
+| payment_type | ENUM | NOT NULL | Payment type (onetime, subscription) |
+| template_name | VARCHAR(255) | NOT NULL | Template name |
+| amount | DECIMAL(15,2) | NOT NULL | Default amount |
+| description | TEXT | | Default description/notes |
+| is_active | BOOLEAN | DEFAULT TRUE | Active flag |
+| created_at | TIMESTAMP | DEFAULT NOW() | Creation timestamp |
+| updated_at | TIMESTAMP | DEFAULT NOW() | Update timestamp |
 
-## ENUM定義
+## ENUM Definitions
 
 ### payment_type
-- `onetime`: 一回払い
-- `subscription`: 継続課金
+- `onetime`: One-time payment
+- `subscription`: Recurring billing
 
 ### service_type
-- `product`: プロダクトサービス
-- `project`: プロジェクト案件
+- `product`: Product service
+- `project`: Project case
 
-## インデックス設計
+## Index Design
 
-### customers テーブル
+### customers Table
 - PRIMARY KEY: customer_id
 - UNIQUE INDEX: email
-- INDEX: customer_name (部分一致検索用)
+- INDEX: customer_name (for partial match searches)
 
-### orders テーブル（onetime注文専用）
+### orders Table (onetime orders only)
 - PRIMARY KEY: order_id
 - FOREIGN KEY INDEX: customer_id
-- INDEX: sales_at（売上日での範囲検索用）
+- INDEX: sales_at (for sales date range searches)
 
-### subscriptions テーブル（サブスクリプション契約管理）
+### subscriptions Table (subscription contract management)
 - PRIMARY KEY: subscription_id
 - FOREIGN KEY INDEX: customer_id
 
-### subscription_amounts テーブル（サブスクリプション金額履歴）
+### subscription_amounts Table (subscription amount history)
 - PRIMARY KEY: amount_id
 - FOREIGN KEY INDEX: subscription_id
-- INDEX: start_date, end_date（期間検索用）
+- INDEX: start_date, end_date (for period searches)
 
-### subscription_paid テーブル（サブスクリプション月次支払い管理）
+### subscription_paid Table (subscription monthly payment management)
 - PRIMARY KEY: paid_id
 - FOREIGN KEY INDEX: subscription_id
-- INDEX: year, month（年月での検索用）
+- INDEX: year, month (for year-month searches)
 
-### order_templates テーブル
+### order_templates Table
 - PRIMARY KEY: template_id
-- UNIQUE INDEX: payment_type, template_name (同一条件での重複防止)
-- INDEX: payment_type (検索用)
-- INDEX: is_active (アクティブテンプレート抽出用)
+- UNIQUE INDEX: payment_type, template_name (prevent duplication under same conditions)
+- INDEX: payment_type (for searches)
+- INDEX: is_active (for active template extraction)
 
-## ビジネスルール
+## Business Rules
 
-### 売上管理ルール
+### Revenue Management Rules
 
-1. **一回払い (onetime)**
-   - `orders`テーブルで管理する
-   - 売上日は `sales_at` カラムで管理
-   - 支払い完了時は `is_paid = TRUE` とする
+1. **One-time Payment (onetime)**
+   - Managed in the `orders` table
+   - Sales date managed by the `sales_at` column
+   - Set `is_paid = TRUE` when payment is completed
 
-2. **継続課金 (subscription)**
-   - `subscriptions` テーブルで契約情報を管理
-   - 金額履歴は `subscription_amounts` テーブルで管理し、期間は `start_date` ～ `end_date`（NULLは継続中）で表す
-   - 月次の支払い状況は `subscription_paid` テーブルで `year`, `month`, `is_paid` で管理
-   - 毎月の支払いごとに `subscription_paid` レコードを作成し、支払い完了時は `is_paid = TRUE` とする
+2. **Recurring Billing (subscription)**
+   - Contract information managed in the `subscriptions` table
+   - Amount history managed in the `subscription_amounts` table with period represented by `start_date` ~ `end_date` (NULL = ongoing)
+   - Monthly payment status managed in the `subscription_paid` table by `year`, `month`, `is_paid`
+   - Create a `subscription_paid` record for each monthly payment, set `is_paid = TRUE` when payment is completed
 
-3. **金額管理**
-   - すべての金額は税込み価格で管理
-   - 通貨はデフォルトで JPY（日本円）とするが、多通貨対応も可能
+3. **Amount Management**
+   - All amounts managed as tax-inclusive prices
+   - Currency defaults to JPY (Japanese Yen) but multi-currency support is possible
 
-### テンプレート管理ルール
-1. **テンプレート設計**
-   - payment_type と service_type の組み合わせごとに複数のテンプレートを作成可能
-   - 同一条件（payment_type, service_type, template_name）での重複は禁止
-   - is_active フラグでテンプレートの有効/無効を管理
+### Template Management Rules
+1. **Template Design**
+   - Multiple templates can be created for each payment_type and service_type combination
+   - Duplication under same conditions (payment_type, service_type, template_name) is prohibited
+   - Template activation/deactivation managed by is_active flag
 
-2. **入力補助機能**
-   - 注文作成時に payment_type と service_type を選択すると対応するテンプレートを提示
-   - テンプレート選択時に amount と description がデフォルト値として入力される
-   - ユーザーはテンプレート値を自由に変更可能
+2. **Input Assistance Features**
+   - When payment_type and service_type are selected during order creation, corresponding templates are presented
+   - When template is selected, amount and description are entered as default values
+   - Users can freely modify template values
 
-3. **テンプレート利用**
-   - テンプレートと注文データは独立して管理（リレーションなし）
-   - テンプレート削除/変更は既存の注文データに影響しない
+3. **Template Usage**
+   - Templates and order data are managed independently (no relations)
+   - Template deletion/modification does not affect existing order data
 
-### データ整合性
-1. 顧客削除時は関連する注文データも論理削除
-2. 売上データは原則として物理削除禁止
-3. 金額データは監査ログとして保持
-4. テンプレートの論理削除は is_active フラグで管理
+### Data Integrity
+1. When customer is deleted, related order data is also logically deleted
+2. Revenue data is prohibited from physical deletion in principle
+3. Amount data is retained as audit logs
+4. Template logical deletion is managed by is_active flag

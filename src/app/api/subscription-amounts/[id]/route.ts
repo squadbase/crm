@@ -26,7 +26,7 @@ export async function PUT(
       updateData.endDate = endDate;
     }
 
-    // サブスクリプション料金を更新
+    // Update subscription pricing
     const updatedAmount = await updateSubscriptionAmount(amountId, updateData);
 
     if (!updatedAmount) {
@@ -39,8 +39,8 @@ export async function PUT(
     return NextResponse.json({
       subscriptionAmount: updatedAmount
     });
-  } catch (error) {
-    console.error('Subscription amount update error:', error);
+  } catch {
+    // Subscription amount update error
     return NextResponse.json(
       { error: 'Failed to update subscription amount' },
       { status: 500 }
@@ -55,7 +55,7 @@ export async function DELETE(
   try {
     const { id: amountId } = await params;
 
-    // サブスクリプション料金を削除
+    // Delete subscription pricing
     const deletedAmount = await deleteSubscriptionAmount(amountId);
 
     if (!deletedAmount) {
@@ -69,8 +69,8 @@ export async function DELETE(
       message: 'Subscription amount deleted successfully',
       deletedAmount
     });
-  } catch (error) {
-    console.error('Subscription amount deletion error:', error);
+  } catch {
+    // Subscription amount deletion error
     return NextResponse.json(
       { error: 'Failed to delete subscription amount' },
       { status: 500 }

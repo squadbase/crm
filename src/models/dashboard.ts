@@ -1,11 +1,16 @@
 import { db } from '@/lib/db';
-import { orders, subscriptionPaid, subscriptions, subscriptionAmounts } from '@/lib/db/schema';
+import {
+  orders,
+  subscriptionPaid,
+  subscriptions,
+  subscriptionAmounts,
+} from '@/lib/db/schema';
 import { sql } from 'drizzle-orm';
-import { 
-  getCurrentMonthMetricsQuery, 
+import {
+  getCurrentMonthMetricsQuery,
   getKPIMetricsQuery,
   getDateRangeMetricsQuery,
-  getDateRangeKPIMetricsQuery
+  getDateRangeKPIMetricsQuery,
 } from './aggregates/dashboard-metrics';
 
 export interface MetricGrowth {
@@ -53,23 +58,24 @@ function calculateGrowth(current: number, previous: number): MetricGrowth {
 /**
  * Get dashboard metrics with growth comparison to last month or previous period
  */
-export async function getDashboardMetrics(startDate?: string, endDate?: string): Promise<{
+export async function getDashboardMetrics(
+  startDate?: string,
+  endDate?: string,
+): Promise<{
   metrics: DashboardMetrics;
 }> {
   const now = new Date();
-  
+
   if (startDate && endDate) {
     // Use date range queries for period aggregation
     return await getDashboardMetricsForPeriod(startDate, endDate);
   }
-  
+
   // Traditional single month metrics for backward compatibility
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth() + 1;
   const lastMonth = currentMonth === 1 ? 12 : currentMonth - 1;
   const lastMonthYear = currentMonth === 1 ? currentYear - 1 : currentYear;
-
-  console.log('Querying metrics for:', { currentYear, currentMonth, lastMonthYear, lastMonth });
 
   // Get current month metrics
   const currentMetrics = await db
@@ -95,86 +101,108 @@ export async function getDashboardMetrics(startDate?: string, endDate?: string):
   const currentKPI = currentKPIMetrics[0];
   const lastMonthKPI = lastMonthKPIMetrics[0];
 
-  console.log('Dashboard metrics debug:', {
-    current,
-    lastMonthData,
-    currentKPI,
-    lastMonthKPI
-  });
-
   // Parse values with safe access
   const currentOnetimeRevenue = parseFloat(current?.onetimeRevenue || '0');
-  const currentSubscriptionRevenue = parseFloat(current?.subscriptionRevenue || '0');
-  const currentTotalRevenue = currentOnetimeRevenue + currentSubscriptionRevenue;
-  
-  const lastMonthOnetimeRevenue = parseFloat(lastMonthData?.onetimeRevenue || '0');
-  const lastMonthSubscriptionRevenue = parseFloat(lastMonthData?.subscriptionRevenue || '0');
-  const lastMonthTotalRevenue = lastMonthOnetimeRevenue + lastMonthSubscriptionRevenue;
+  const currentSubscriptionRevenue = parseFloat(
+    current?.subscriptionRevenue || '0',
+  );
+  const currentTotalRevenue =
+    currentOnetimeRevenue + currentSubscriptionRevenue;
+
+  const lastMonthOnetimeRevenue = parseFloat(
+    lastMonthData?.onetimeRevenue || '0',
+  );
+  const lastMonthSubscriptionRevenue = parseFloat(
+    lastMonthData?.subscriptionRevenue || '0',
+  );
+  const lastMonthTotalRevenue =
+    lastMonthOnetimeRevenue + lastMonthSubscriptionRevenue;
 
   const currentOnetimeAvg = parseFloat(currentKPI?.onetimeAvgOrderValue || '0');
-  const currentSubscriptionAvg = parseFloat(currentKPI?.subscriptionAvgValue || '0');
-  const lastMonthOnetimeAvg = parseFloat(lastMonthKPI?.onetimeAvgOrderValue || '0');
-  const lastMonthSubscriptionAvg = parseFloat(lastMonthKPI?.subscriptionAvgValue || '0');
+  const currentSubscriptionAvg = parseFloat(
+    currentKPI?.subscriptionAvgValue || '0',
+  );
+  const lastMonthOnetimeAvg = parseFloat(
+    lastMonthKPI?.onetimeAvgOrderValue || '0',
+  );
+  const lastMonthSubscriptionAvg = parseFloat(
+    lastMonthKPI?.subscriptionAvgValue || '0',
+  );
 
   return {
     metrics: {
       currentMonthRevenue: {
         value: currentTotalRevenue,
-        growth: calculateGrowth(currentTotalRevenue, lastMonthTotalRevenue)
+        growth: calculateGrowth(currentTotalRevenue, lastMonthTotalRevenue),
       },
       onetimeRevenue: {
         value: currentOnetimeRevenue,
-        growth: calculateGrowth(currentOnetimeRevenue, lastMonthOnetimeRevenue)
+        growth: calculateGrowth(currentOnetimeRevenue, lastMonthOnetimeRevenue),
       },
       subscriptionRevenue: {
         value: currentSubscriptionRevenue,
-        growth: calculateGrowth(currentSubscriptionRevenue, lastMonthSubscriptionRevenue)
+        growth: calculateGrowth(
+          currentSubscriptionRevenue,
+          lastMonthSubscriptionRevenue,
+        ),
       },
       onetimeOrderCount: {
         value: Number(current?.onetimeOrderCount || 0),
-        growth: calculateGrowth(Number(current?.onetimeOrderCount || 0), Number(lastMonthData?.onetimeOrderCount || 0))
+        growth: calculateGrowth(
+          Number(current?.onetimeOrderCount || 0),
+          Number(lastMonthData?.onetimeOrderCount || 0),
+        ),
       },
       subscriptionOrderCount: {
         value: Number(current?.subscriptionOrderCount || 0),
-        growth: calculateGrowth(Number(current?.subscriptionOrderCount || 0), Number(lastMonthData?.subscriptionOrderCount || 0))
+        growth: calculateGrowth(
+          Number(current?.subscriptionOrderCount || 0),
+          Number(lastMonthData?.subscriptionOrderCount || 0),
+        ),
       },
       totalCustomers: {
         value: Number(current?.totalCustomers || 0),
-        growth: calculateGrowth(Number(current?.totalCustomers || 0), Number(lastMonthData?.totalCustomers || 0))
+        growth: calculateGrowth(
+          Number(current?.totalCustomers || 0),
+          Number(lastMonthData?.totalCustomers || 0),
+        ),
       },
       onetimeAvgOrderValue: {
         value: currentOnetimeAvg,
-        growth: calculateGrowth(currentOnetimeAvg, lastMonthOnetimeAvg)
+        growth: calculateGrowth(currentOnetimeAvg, lastMonthOnetimeAvg),
       },
       subscriptionAvgValue: {
         value: currentSubscriptionAvg,
-        growth: calculateGrowth(currentSubscriptionAvg, lastMonthSubscriptionAvg)
-      }
-    }
+        growth: calculateGrowth(
+          currentSubscriptionAvg,
+          lastMonthSubscriptionAvg,
+        ),
+      },
+    },
   };
 }
 
 /**
  * Get dashboard metrics for a specific period with proper date range aggregation
  */
-async function getDashboardMetricsForPeriod(startDate: string, endDate: string): Promise<{
+async function getDashboardMetricsForPeriod(
+  startDate: string,
+  endDate: string,
+): Promise<{
   metrics: DashboardMetrics;
 }> {
   // Calculate the same period from the previous timeframe for comparison
   const startDateObj = new Date(startDate);
   const endDateObj = new Date(endDate);
   const periodLength = endDateObj.getTime() - startDateObj.getTime();
-  
+
   const prevEndDate = new Date(startDateObj.getTime() - 24 * 60 * 60 * 1000); // Day before start
   const prevStartDate = new Date(prevEndDate.getTime() - periodLength);
 
   const prevStartDateStr = prevStartDate.toISOString().split('T')[0];
   const prevEndDateStr = prevEndDate.toISOString().split('T')[0];
 
-  console.log('Querying period metrics:', {
-    currentPeriod: { startDate, endDate },
-    previousPeriod: { start: prevStartDateStr, end: prevEndDateStr }
-  });
+  // Querying metrics for current and previous periods
 
   // Get current period metrics
   const currentMetrics = await db
@@ -200,75 +228,100 @@ async function getDashboardMetricsForPeriod(startDate: string, endDate: string):
   const currentKPI = currentKPIMetrics[0];
   const previousKPI = previousKPIMetrics[0];
 
-  console.log('Period metrics debug:', {
-    current,
-    previous,
-    currentKPI,
-    previousKPI
-  });
+  // Debug: Period metrics calculated
 
   // Parse values with safe access
   const currentOnetimeRevenue = parseFloat(current?.onetimeRevenue || '0');
-  const currentSubscriptionRevenue = parseFloat(current?.subscriptionRevenue || '0');
-  const currentTotalRevenue = currentOnetimeRevenue + currentSubscriptionRevenue;
-  
+  const currentSubscriptionRevenue = parseFloat(
+    current?.subscriptionRevenue || '0',
+  );
+  const currentTotalRevenue =
+    currentOnetimeRevenue + currentSubscriptionRevenue;
+
   const previousOnetimeRevenue = parseFloat(previous?.onetimeRevenue || '0');
-  const previousSubscriptionRevenue = parseFloat(previous?.subscriptionRevenue || '0');
-  const previousTotalRevenue = previousOnetimeRevenue + previousSubscriptionRevenue;
+  const previousSubscriptionRevenue = parseFloat(
+    previous?.subscriptionRevenue || '0',
+  );
+  const previousTotalRevenue =
+    previousOnetimeRevenue + previousSubscriptionRevenue;
 
   const currentOnetimeAvg = parseFloat(currentKPI?.onetimeAvgOrderValue || '0');
-  const currentSubscriptionAvg = parseFloat(currentKPI?.subscriptionAvgValue || '0');
-  const previousOnetimeAvg = parseFloat(previousKPI?.onetimeAvgOrderValue || '0');
-  const previousSubscriptionAvg = parseFloat(previousKPI?.subscriptionAvgValue || '0');
+  const currentSubscriptionAvg = parseFloat(
+    currentKPI?.subscriptionAvgValue || '0',
+  );
+  const previousOnetimeAvg = parseFloat(
+    previousKPI?.onetimeAvgOrderValue || '0',
+  );
+  const previousSubscriptionAvg = parseFloat(
+    previousKPI?.subscriptionAvgValue || '0',
+  );
 
   return {
     metrics: {
       currentMonthRevenue: {
         value: currentTotalRevenue,
-        growth: calculateGrowth(currentTotalRevenue, previousTotalRevenue)
+        growth: calculateGrowth(currentTotalRevenue, previousTotalRevenue),
       },
       onetimeRevenue: {
         value: currentOnetimeRevenue,
-        growth: calculateGrowth(currentOnetimeRevenue, previousOnetimeRevenue)
+        growth: calculateGrowth(currentOnetimeRevenue, previousOnetimeRevenue),
       },
       subscriptionRevenue: {
         value: currentSubscriptionRevenue,
-        growth: calculateGrowth(currentSubscriptionRevenue, previousSubscriptionRevenue)
+        growth: calculateGrowth(
+          currentSubscriptionRevenue,
+          previousSubscriptionRevenue,
+        ),
       },
       onetimeOrderCount: {
         value: Number(current?.onetimeOrderCount || 0),
-        growth: calculateGrowth(Number(current?.onetimeOrderCount || 0), Number(previous?.onetimeOrderCount || 0))
+        growth: calculateGrowth(
+          Number(current?.onetimeOrderCount || 0),
+          Number(previous?.onetimeOrderCount || 0),
+        ),
       },
       subscriptionOrderCount: {
         value: Number(current?.subscriptionOrderCount || 0),
-        growth: calculateGrowth(Number(current?.subscriptionOrderCount || 0), Number(previous?.subscriptionOrderCount || 0))
+        growth: calculateGrowth(
+          Number(current?.subscriptionOrderCount || 0),
+          Number(previous?.subscriptionOrderCount || 0),
+        ),
       },
       totalCustomers: {
         value: Number(current?.totalCustomers || 0),
-        growth: calculateGrowth(Number(current?.totalCustomers || 0), Number(previous?.totalCustomers || 0))
+        growth: calculateGrowth(
+          Number(current?.totalCustomers || 0),
+          Number(previous?.totalCustomers || 0),
+        ),
       },
       onetimeAvgOrderValue: {
         value: currentOnetimeAvg,
-        growth: calculateGrowth(currentOnetimeAvg, previousOnetimeAvg)
+        growth: calculateGrowth(currentOnetimeAvg, previousOnetimeAvg),
       },
       subscriptionAvgValue: {
         value: currentSubscriptionAvg,
-        growth: calculateGrowth(currentSubscriptionAvg, previousSubscriptionAvg)
-      }
-    }
+        growth: calculateGrowth(
+          currentSubscriptionAvg,
+          previousSubscriptionAvg,
+        ),
+      },
+    },
   };
 }
 
 /**
  * Get monthly sales data for charts with onetime/subscription breakdown
  */
-export async function getMonthlySalesData(startDate?: string | null, endDate?: string | null): Promise<MonthlySalesData[]> {
+export async function getMonthlySalesData(
+  startDate?: string | null,
+  endDate?: string | null,
+): Promise<MonthlySalesData[]> {
   try {
     // Calculate date range based on provided parameters or default to 13 months
     const now = new Date();
     let start: Date;
     let end: Date;
-    
+
     if (startDate && endDate) {
       start = new Date(startDate);
       end = new Date(endDate);
@@ -277,42 +330,50 @@ export async function getMonthlySalesData(startDate?: string | null, endDate?: s
       start = new Date(now.getFullYear(), now.getMonth() - 6, 1);
       end = new Date(now.getFullYear(), now.getMonth() + 6, 1);
     }
-    
+
     // Generate all months in the range
     const months: { year: number; month: number }[] = [];
     const current = new Date(start.getFullYear(), start.getMonth(), 1);
-    
+
     while (current <= end) {
-      months.push({ 
-        year: current.getFullYear(), 
-        month: current.getMonth() + 1 
+      months.push({
+        year: current.getFullYear(),
+        month: current.getMonth() + 1,
       });
       current.setMonth(current.getMonth() + 1);
     }
 
     // Get onetime sales data
     const onetimeResult = await db.execute(sql`
-      SELECT 
+      SELECT
         EXTRACT(YEAR FROM ${orders.salesAt}) as year,
         EXTRACT(MONTH FROM ${orders.salesAt}) as month,
         COALESCE(SUM(${orders.amount}), 0) as amount
       FROM ${orders}
       WHERE ${orders.salesAt} >= ${start.toISOString().split('T')[0]}
       AND ${orders.salesAt} <= ${end.toISOString().split('T')[0]}
-      GROUP BY EXTRACT(YEAR FROM ${orders.salesAt}), EXTRACT(MONTH FROM ${orders.salesAt})
+      GROUP BY EXTRACT(YEAR FROM ${orders.salesAt}), EXTRACT(MONTH FROM ${
+      orders.salesAt
+    })
     `);
 
     // Get subscription sales data (past)
     const subscriptionResult = await db.execute(sql`
-      SELECT 
+      SELECT
         ${subscriptionPaid.year} as year,
         ${subscriptionPaid.month} as month,
-        COALESCE(SUM(CASE WHEN ${subscriptionPaid.isPaid} = true THEN ${subscriptionPaid.amount} ELSE 0 END), 0) as amount
+        COALESCE(SUM(CASE WHEN ${subscriptionPaid.isPaid} = true THEN ${
+      subscriptionPaid.amount
+    } ELSE 0 END), 0) as amount
       FROM ${subscriptionPaid}
       WHERE ${subscriptionPaid.year} >= ${start.getFullYear()}
       AND ${subscriptionPaid.year} <= ${end.getFullYear()}
-      AND (${subscriptionPaid.year} > ${start.getFullYear()} OR ${subscriptionPaid.month} >= ${start.getMonth() + 1})
-      AND (${subscriptionPaid.year} < ${end.getFullYear()} OR ${subscriptionPaid.month} <= ${end.getMonth() + 1})
+      AND (${subscriptionPaid.year} > ${start.getFullYear()} OR ${
+      subscriptionPaid.month
+    } >= ${start.getMonth() + 1})
+      AND (${subscriptionPaid.year} < ${end.getFullYear()} OR ${
+      subscriptionPaid.month
+    } <= ${end.getMonth() + 1})
       GROUP BY ${subscriptionPaid.year}, ${subscriptionPaid.month}
     `);
 
@@ -322,8 +383,12 @@ export async function getMonthlySalesData(startDate?: string | null, endDate?: s
         ${subscriptions.subscriptionId},
         ${subscriptionAmounts.amount}
       FROM ${subscriptions}
-      JOIN ${subscriptionAmounts} ON ${subscriptions.subscriptionId} = ${subscriptionAmounts.subscriptionId}
-      WHERE (${subscriptionAmounts.endDate} IS NULL OR ${subscriptionAmounts.endDate} >= ${end.toISOString().split('T')[0]})
+      JOIN ${subscriptionAmounts} ON ${subscriptions.subscriptionId} = ${
+      subscriptionAmounts.subscriptionId
+    }
+      WHERE (${subscriptionAmounts.endDate} IS NULL OR ${
+      subscriptionAmounts.endDate
+    } >= ${end.toISOString().split('T')[0]})
       AND ${subscriptionAmounts.startDate} <= ${end.toISOString().split('T')[0]}
     `);
 
@@ -331,30 +396,41 @@ export async function getMonthlySalesData(startDate?: string | null, endDate?: s
     const onetimeMap = new Map<string, number>();
     const subscriptionMap = new Map<string, number>();
 
-    (onetimeResult.rows as { year: string; month: string; amount: string }[]).forEach(row => {
+    (
+      onetimeResult.rows as { year: string; month: string; amount: string }[]
+    ).forEach((row) => {
       const key = `${row.year}-${row.month}`;
       onetimeMap.set(key, Number(row.amount));
     });
 
-    (subscriptionResult.rows as { year: string; month: string; amount: string }[]).forEach(row => {
+    (
+      subscriptionResult.rows as {
+        year: string;
+        month: string;
+        amount: string;
+      }[]
+    ).forEach((row) => {
       const key = `${row.year}-${row.month}`;
       subscriptionMap.set(key, Number(row.amount));
     });
 
     // Calculate total active subscription amount for future months
-    const totalActiveSubscriptionAmount = (activeSubscriptionsResult.rows as { amount: string }[])
-      .reduce((sum, row) => sum + Number(row.amount), 0);
+    const totalActiveSubscriptionAmount = (
+      activeSubscriptionsResult.rows as { amount: string }[]
+    ).reduce((sum, row) => sum + Number(row.amount), 0);
 
     // Generate result data
     const result: MonthlySalesData[] = months.map(({ year, month }) => {
       const key = `${year}-${month}`;
       const monthDate = new Date(year, month - 1, 1);
       const isCurrentOrPast = monthDate <= now;
-      
+
       const onetimeSales = onetimeMap.get(key) || 0;
-      const subscriptionSales = isCurrentOrPast 
-        ? (subscriptionMap.get(key) || 0)
-        : (monthDate > now ? totalActiveSubscriptionAmount : 0); // Project active subscriptions only into future
+      const subscriptionSales = isCurrentOrPast
+        ? subscriptionMap.get(key) || 0
+        : monthDate > now
+        ? totalActiveSubscriptionAmount
+        : 0; // Project active subscriptions only into future
 
       return {
         month: `${year}-${String(month).padStart(2, '0')}`,
@@ -362,44 +438,54 @@ export async function getMonthlySalesData(startDate?: string | null, endDate?: s
         monthNum: month,
         onetimeSales,
         subscriptionSales,
-        totalSales: onetimeSales + subscriptionSales
+        totalSales: onetimeSales + subscriptionSales,
       };
     });
 
     return result;
-  } catch (error) {
-    console.error('Error in getMonthlySalesData:', error);
+  } catch {
+    // Error occurred while fetching monthly sales data
     // Return sample data with proper future subscription projections
     const now = new Date();
     const currentYear = now.getFullYear();
     const currentMonth = now.getMonth() + 1;
-    
+
     const sampleData: MonthlySalesData[] = [];
     const baseSubscriptionAmount = 340000; // Base subscription amount
-    
+
     for (let i = -6; i <= 6; i++) {
       const targetMonth = currentMonth + i;
-      const targetYear = targetMonth <= 0 ? currentYear - 1 : 
-                         targetMonth > 12 ? currentYear + 1 : currentYear;
-      const normalizedMonth = targetMonth <= 0 ? targetMonth + 12 :
-                              targetMonth > 12 ? targetMonth - 12 : targetMonth;
-      
+      const targetYear =
+        targetMonth <= 0
+          ? currentYear - 1
+          : targetMonth > 12
+          ? currentYear + 1
+          : currentYear;
+      const normalizedMonth =
+        targetMonth <= 0
+          ? targetMonth + 12
+          : targetMonth > 12
+          ? targetMonth - 12
+          : targetMonth;
+
       const isCurrentOrPast = i <= 0;
-      
+
       sampleData.push({
         month: `${targetYear}-${String(normalizedMonth).padStart(2, '0')}`,
         year: targetYear,
         monthNum: normalizedMonth,
-        onetimeSales: isCurrentOrPast ? Math.floor(Math.random() * 1000000) + 500000 : 0,
+        onetimeSales: isCurrentOrPast
+          ? Math.floor(Math.random() * 1000000) + 500000
+          : 0,
         subscriptionSales: baseSubscriptionAmount, // Subscriptions continue into the future
-        totalSales: 0
+        totalSales: 0,
       });
     }
-    
-    sampleData.forEach(item => {
+
+    sampleData.forEach((item) => {
       item.totalSales = item.onetimeSales + item.subscriptionSales;
     });
-    
+
     return sampleData;
   }
 }

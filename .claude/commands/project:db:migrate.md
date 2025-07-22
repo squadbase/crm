@@ -1,17 +1,17 @@
 ---
 name: project:db:migrate
-description: データベースのテーブルを作成する
+description: Create database tables
 ---
 
-## タスクの概要
+## Task Overview
 
-このコマンドを使うと、データベースのテーブルを作成します。
+This command creates the database tables.
 
-使用例: `claude project:db:migrate`
+Example usage: `claude project:db:migrate`
 
-`src/lib/db/schema.ts`, `src/lib/db/seed.ts`に定義されているテーブルをマイグレーションしてください。
-テーブルのマイグレーションには必ずpackage.jsonに定義されているDB関連のコマンドを使用してください。
+Migrate the tables defined in `src/lib/db/schema.ts` and `src/lib/db/seed.ts`.
+Always use the DB-related commands defined in `package.json` for table migrations.
 
-## 操作対象
+## Target
 
-dockerでデータベースを立ち上げて、マイグレーションを行ってください。
+Start the database using Docker and perform the migration.

@@ -17,7 +17,7 @@ export async function PUT(
       );
     }
 
-    // サブスクリプション支払い状況を更新
+    // Update subscription payment status
     const updatedPayment = await updateSubscriptionPayment(paidId, {
       isPaid
     });
@@ -32,8 +32,8 @@ export async function PUT(
     return NextResponse.json({
       subscriptionPayment: updatedPayment
     });
-  } catch (error) {
-    console.error('Subscription payment update error:', error);
+  } catch {
+    // Subscription payment update error
     return NextResponse.json(
       { error: 'Failed to update subscription payment' },
       { status: 500 }

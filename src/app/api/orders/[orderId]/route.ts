@@ -38,11 +38,7 @@ export async function GET(
       }
     });
   } catch (error) {
-    console.error('Error fetching order details:', error);
-    console.error('Error details:', {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined
-    });
+    // Error fetching order details
     return NextResponse.json(
       { error: 'Failed to fetch order details', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
@@ -73,8 +69,8 @@ export async function PUT(
     }
 
     return NextResponse.json(updatedOrder);
-  } catch (error) {
-    console.error('Update order error:', error);
+  } catch {
+    // Update order error
     return NextResponse.json(
       { error: 'Failed to update order' },
       { status: 500 }
@@ -99,8 +95,8 @@ export async function DELETE(
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Delete order error:', error);
+  } catch {
+    // Delete order error
     return NextResponse.json(
       { error: 'Failed to delete order' },
       { status: 500 }
@@ -135,8 +131,8 @@ export async function PATCH(
       { error: 'Invalid action' },
       { status: 400 }
     );
-  } catch (error) {
-    console.error('Patch order error:', error);
+  } catch {
+    // Patch order error
     return NextResponse.json(
       { error: 'Failed to update order' },
       { status: 500 }

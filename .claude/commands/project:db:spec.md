@@ -1,18 +1,18 @@
 ---
 name: project:db:spec
-description: データベースの仕様を作成する
+description: Create the database specification
 ---
 
-## タスクの概要
+## Task Overview
 
-このコマンドを使うと、データベースの仕様を作成します。
+This command is used to create the database specification.
 
-使用例: `claude project:db:spec {ASK}`
+Example usage: `claude project:db:spec {ASK}`
 
-`{ASK}`には、データベースの仕様を作成するための概要を入力してください。
-※ {ASK}が指定されていない場合は、実行前に必ず確認しなおしてください。
-※ データベースの仕様は、`docs/database.md`に記載してください。
+Please provide an overview for creating the database specification as `{ASK}`.
+* If `{ASK}` is not specified, always confirm before execution.
+* The database specification should be documented in `docs/database.md`.
 
-## 操作対象
+## Target
 
-`docs/database.md`のデータベース仕様をアップデートしてください。
+Update the database specification in `docs/database.md`.

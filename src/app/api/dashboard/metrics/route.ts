@@ -9,8 +9,8 @@ export async function GET(request: NextRequest) {
     
     const result = await getDashboardMetrics(startDate || undefined, endDate || undefined);
     return NextResponse.json(result);
-  } catch (error) {
-    console.error('Dashboard metrics API error:', error);
+  } catch {
+    // Dashboard metrics API error
     return NextResponse.json(
       { error: 'Failed to fetch dashboard metrics' },
       { status: 500 }

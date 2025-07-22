@@ -12,8 +12,8 @@ export async function GET() {
       currentMonthStart: result.currentMonthStart,
     });
 
-  } catch (error) {
-    console.error('Unpaid payments API error:', error);
+  } catch {
+    // Unpaid payments API error
     return NextResponse.json(
       { error: 'Failed to fetch unpaid payments' },
       { status: 500 }

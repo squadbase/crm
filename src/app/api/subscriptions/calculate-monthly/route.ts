@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    console.error('Error calculating monthly payments:', error);
+    // Error calculating monthly payments
     return NextResponse.json(
       { 
         success: false,

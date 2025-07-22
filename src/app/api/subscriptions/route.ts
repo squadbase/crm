@@ -8,12 +8,12 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     
-    // パラメータ取得
+    // Get parameters
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '50');
     const search = searchParams.get('search');
 
-    // フィルターオブジェクトを構築
+    // Build filter object
     const filters: SubscriptionFilters = {};
     const offset = (page - 1) * limit;
     
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
       filters.search = search;
     }
 
-    // データ取得
+    // Fetch data
     const [subscriptionsData, total] = await Promise.all([
       getSubscriptions({
         filters,
@@ -32,42 +32,42 @@ export async function GET(request: NextRequest) {
       getSubscriptionCount(filters)
     ]);
 
-    // 各サブスクリプションの詳細情報を取得
+    // Get detailed information for each subscription
     const enrichedSubscriptions = await Promise.all(
       subscriptionsData.map(async (sub) => {
         const paymentSummary = await getSubscriptionPaymentSummary(sub.subscriptionId);
         
-        // サブスクリプションの料金履歴を取得して現在の金額と契約終了日を計算
+        // Get subscription pricing history to calculate current amount and contract end date
         const amounts = await db
           .select()
           .from(subscriptionAmounts)
           .where(eq(subscriptionAmounts.subscriptionId, sub.subscriptionId))
           .orderBy(desc(subscriptionAmounts.startDate));
 
-        // 現在の日時を取得
+        // Get current date and time
         const now = new Date();
-        const today = now.toISOString().split('T')[0]; // YYYY-MM-DD形式
+        const today = now.toISOString().split('T')[0]; // YYYY-MM-DD format
         
-        // 現在の日付で有効な料金を取得（開始日 <= 現在日 <= 終了日 または 終了日がnull）
+        // Get pricing valid for current date (start date <= current date <= end date or end date is null)
         const currentAmountRecord = amounts.find(a => {
           const startDate = a.startDate;
           const endDate = a.endDate;
           
-          // 開始日が現在日以前で、かつ（終了日がnullまたは終了日が現在日より後）
+          // Start date is before or equal to current date and (end date is null or end date is after current date)
           return startDate <= today && (!endDate || endDate > today);
         });
         
         const currentAmount = currentAmountRecord ? parseFloat(currentAmountRecord.amount) : 0;
         
-        // 最新設定の料金を取得（開始日が最も新しいレコード）
+        // Get the latest pricing configuration (record with most recent start date)
         const latestAmountRecord = amounts.length > 0 ? amounts[0] : null;
         const latestAmount = latestAmountRecord ? parseFloat(latestAmountRecord.amount) : 0;
         
-        // 最後に終了した契約があればその終了日を取得
+        // Get end date of the last terminated contract if it exists
         const lastEndedAmount = amounts.find(a => a.endDate);
         const endDate = lastEndedAmount ? lastEndedAmount.endDate : null;
 
-        // ステータス判定（現在の日付で有効な料金があれば active、なければ inactive）
+        // Status determination (active if there's valid pricing for current date, inactive otherwise)
         const status = currentAmountRecord ? 'active' : 'inactive';
 
         return {
@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
           endDate: endDate ? endDate.toString() : null,
           totalPaid: paymentSummary.paidAmount,
           totalUnpaid: paymentSummary.unpaidAmount,
-          totalAmount: paymentSummary.totalAmount, // 支払い合計を別途追加
+          totalAmount: paymentSummary.totalAmount, // Add payment total separately
           status
         };
       })
@@ -95,8 +95,8 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil(total / limit),
       },
     });
-  } catch (error) {
-    console.error('Subscriptions API error:', error);
+  } catch {
+    // Subscriptions API error
     return NextResponse.json(
       { error: 'Failed to fetch subscriptions' },
       { status: 500 }
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // サブスクリプションを作成
+    // Create subscription
     const subscription = await createSubscription({
       customerId,
       description: description || null
@@ -131,8 +131,8 @@ export async function POST(request: NextRequest) {
         updatedAt: subscription.updatedAt ? new Date(subscription.updatedAt).toISOString() : null,
       }
     });
-  } catch (error) {
-    console.error('Subscription creation error:', error);
+  } catch {
+    // Subscription creation error
     return NextResponse.json(
       { error: 'Failed to create subscription' },
       { status: 500 }

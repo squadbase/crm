@@ -20,7 +20,7 @@ export function SearchableCustomerSelect({
   customers, 
   value, 
   onChange, 
-  placeholder = '顧客を選択してください',
+  placeholder = 'Select customer',
   required = false 
 }: SearchableCustomerSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,7 +29,7 @@ export function SearchableCustomerSelect({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // 検索条件に基づいて顧客をフィルタリング
+  // Filter customers based on search criteria
   useEffect(() => {
     if (searchTerm.trim() === '') {
       setFilteredCustomers(customers);
@@ -41,7 +41,7 @@ export function SearchableCustomerSelect({
     }
   }, [searchTerm, customers]);
 
-  // 外部クリックでドロップダウンを閉じる
+  // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -54,7 +54,7 @@ export function SearchableCustomerSelect({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // 選択された顧客の名前を取得
+  // Get selected customer name
   const selectedCustomer = customers.find(c => c.customerId === value);
   const displayValue = selectedCustomer ? selectedCustomer.customerName : '';
 
@@ -176,7 +176,7 @@ export function SearchableCustomerSelect({
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="顧客名で検索..."
+                placeholder="Search by customer name..."
                 style={{
                   border: 'none',
                   backgroundColor: 'transparent',
@@ -228,7 +228,7 @@ export function SearchableCustomerSelect({
                 fontSize: '14px',
                 color: '#6b7280'
               }}>
-                該当する顧客が見つかりません
+                No matching customers found
               </div>
             )}
           </div>

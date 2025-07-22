@@ -18,8 +18,8 @@ export async function GET(
     }
 
     return NextResponse.json(template);
-  } catch (error) {
-    console.error('Failed to fetch template:', error);
+  } catch {
+    // Failed to fetch template
     return NextResponse.json(
       { error: 'Failed to fetch template' },
       { status: 500 }
@@ -36,7 +36,7 @@ export async function PUT(
     const body = await request.json();
     const { templateName, paymentType, amount, description, isActive } = body;
 
-    // バリデーション
+    // Validation
     if (!templateName || !paymentType || !amount) {
       return NextResponse.json(
         { error: 'Required fields are missing' },
@@ -51,7 +51,7 @@ export async function PUT(
       );
     }
 
-    // テンプレート更新
+    // Update template
     const updatedTemplate = await updateOrderTemplate(templateId, {
       templateName,
       paymentType,
@@ -68,8 +68,8 @@ export async function PUT(
     }
 
     return NextResponse.json(updatedTemplate);
-  } catch (error) {
-    console.error('Failed to update template:', error);
+  } catch {
+    // Failed to update template
     return NextResponse.json(
       { error: 'Failed to update template' },
       { status: 500 }
@@ -94,8 +94,8 @@ export async function DELETE(
     }
 
     return NextResponse.json({ message: 'Template deleted successfully' });
-  } catch (error) {
-    console.error('Failed to delete template:', error);
+  } catch {
+    // Failed to delete template
     return NextResponse.json(
       { error: 'Failed to delete template' },
       { status: 500 }

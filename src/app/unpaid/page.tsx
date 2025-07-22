@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { useClientI18n } from '@/hooks/useClientI18n';
 import { Receipt, Check, AlertCircle, Calculator, RefreshCw, Info } from 'lucide-react';
-import { 
-  isCalculationExecuting, 
-  getLastExecutionTime, 
-  getRemainingCooldownMinutes 
+import {
+  isCalculationExecuting,
+  getLastExecutionTime,
+  getRemainingCooldownMinutes
 } from '@/lib/calculation-cooldown';
 
 interface UnpaidPayment {
@@ -36,8 +36,8 @@ interface UnpaidPaymentsResponse {
 
 export default function UnpaidPaymentsPage() {
   const { t, formatCurrency } = useClientI18n();
-  
-  // ページタイトル設定
+
+  // Set page title
   useEffect(() => {
     document.title = t('unpaidPaymentsTitle');
   }, [t]);
@@ -57,59 +57,62 @@ export default function UnpaidPaymentsPage() {
   const [isSyncInProgress, setIsSyncInProgress] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
   const [remainingCooldown, setRemainingCooldown] = useState(0);
-  
-  // 現在の年月を取得
+
+  // Get current year and month
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1;
-  
-  // 選択した年月が未来かどうかをチェック
-  const isSelectedDateInFuture = isRangeMode 
+
+  // Check if selected year/month is in the future
+  const isSelectedDateInFuture = isRangeMode
     ? endYear > currentYear || (endYear === currentYear && endMonth > currentMonth)
     : calculationYear > currentYear || (calculationYear === currentYear && calculationMonth > currentMonth);
 
-  // 月名を取得する関数
+  // Function to get month name
   const getMonthName = (monthNumber: number): string => {
-    const monthKeys = ['january', 'february', 'march', 'april', 'may', 'june', 
-                     'july', 'august', 'september', 'october', 'november', 'december'];
+    const monthKeys: Array<'january' | 'february' | 'march' | 'april' | 'may' | 'june' | 
+                          'july' | 'august' | 'september' | 'october' | 'november' | 'december'> = [
+      'january', 'february', 'march', 'april', 'may', 'june',
+      'july', 'august', 'september', 'october', 'november', 'december'
+    ];
     return t(monthKeys[monthNumber - 1]);
   };
 
-  // 未払い取引を取得
+  // Fetch unpaid transactions
   const fetchUnpaidPayments = async () => {
     setLoading(true);
     try {
       const response = await fetch('/api/unpaid');
       const data: UnpaidPaymentsResponse = await response.json();
-      
+
       setUnpaidPayments(data.unpaidPayments);
       setTotalAmount(data.totalAmount);
-    } catch (error) {
-      console.error('Failed to fetch unpaid payments:', error);
+    } catch {
+      // Error handled silently - failed to fetch unpaid payments
     } finally {
       setLoading(false);
     }
   };
 
-  // 同期状態を更新する関数
+  // Function to update sync status
   const updateSyncStatus = () => {
     setIsSyncInProgress(isCalculationExecuting());
     setLastSyncTime(getLastExecutionTime());
     setRemainingCooldown(getRemainingCooldownMinutes());
   };
 
-  // 初期データ取得
+  // Initial data fetch
   useEffect(() => {
     fetchUnpaidPayments();
     updateSyncStatus();
   }, []);
 
-  // 5秒ごとに同期状態を更新
+  // Update sync status every 5 seconds
   useEffect(() => {
     const interval = setInterval(updateSyncStatus, 5000);
     return () => clearInterval(interval);
   }, []);
 
-  // 個別選択のトグル
+  // Toggle individual selection
   const toggleSelection = (id: string) => {
     const newSelected = new Set(selectedItems);
     if (newSelected.has(id)) {
@@ -120,10 +123,10 @@ export default function UnpaidPaymentsPage() {
     setSelectedItems(newSelected);
   };
 
-  // 全選択・全解除のトグル
+  // Toggle select all / deselect all
   const toggleSelectAll = () => {
     if (!unpaidPayments) return;
-    
+
     if (selectedItems.size === unpaidPayments.length) {
       setSelectedItems(new Set());
     } else {
@@ -131,7 +134,7 @@ export default function UnpaidPaymentsPage() {
     }
   };
 
-  // 月次支払い計算
+  // Calculate monthly payments
   const calculateMonthlyPayments = async () => {
     setCalculating(true);
     try {
@@ -160,25 +163,25 @@ export default function UnpaidPaymentsPage() {
       }
 
       const result = await response.json();
-      
+
       if (result.success) {
-        // 計算成功時：未払いリストを再取得
+        // On successful calculation: refetch unpaid list
         await fetchUnpaidPayments();
         setShowCalculationModal(false);
-        console.log('Monthly calculation completed:', result.data);
+        // Monthly calculation completed successfully
       } else {
-        console.error('Monthly calculation failed:', result);
-        alert(`計算に失敗しました: ${result.error || '不明なエラー'}`);
+        // Monthly calculation failed
+        alert(`${t('calculationFailed')}: ${result.error || t('unknownError')}`);
       }
     } catch (error) {
-      console.error('Failed to calculate monthly payments:', error);
-      alert(`API呼び出しに失敗しました: ${error.message}`);
+      // Failed to calculate monthly payments
+      alert(`${t('apiCallFailed')}: ${error instanceof Error ? error.message : t('unknownError')}`)
     } finally {
       setCalculating(false);
     }
   };
 
-  // 支払い済みにマーク
+  // Mark as paid
   const markAsPaid = async () => {
     if (selectedItems.size === 0) return;
 
@@ -206,24 +209,24 @@ export default function UnpaidPaymentsPage() {
       });
 
       const result = await response.json();
-      
+
       if (result.success) {
-        // 成功時：データを再取得して選択をクリア
+        // On success: refetch data and clear selection
         await fetchUnpaidPayments();
         setSelectedItems(new Set());
-        // サイレント更新（アラート削除）
+        // Silent update (alert removed)
       } else {
-        console.error('Payment update failed:', result);
+        // Payment update failed - handled silently
       }
-    } catch (error) {
-      console.error('Failed to update payment status:', error);
-      // エラーもサイレント処理（アラート削除）
+    } catch {
+      // Failed to update payment status - handled silently
+      // Error also handled silently (alert removed)
     } finally {
       setUpdating(false);
     }
   };
 
-  // 期限経過日数を計算
+  // Calculate days past due
   const getDaysPastDue = (dueDateStr: string) => {
     const dueDate = new Date(dueDateStr);
     const today = new Date();
@@ -232,7 +235,7 @@ export default function UnpaidPaymentsPage() {
     return Math.max(0, diffDays);
   };
 
-  // 日付フォーマット - yyyy/MM/dd形式
+  // Date format - yyyy/MM/dd format
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     const year = date.getFullYear();
@@ -249,10 +252,10 @@ export default function UnpaidPaymentsPage() {
           color: '#6b7280',
           fontWeight: '500'
         }}>
-          {selectedItems.size}{t('selectedItemsCount')}
+          {selectedItems.size} {t('selectedItemsCount')}
         </span>
       )}
-      
+
       <button
         onClick={() => setShowCalculationModal(true)}
         style={{
@@ -272,7 +275,7 @@ export default function UnpaidPaymentsPage() {
         <Calculator size={16} />
         {t('calculateMonthly')}
       </button>
-      
+
       <button
         onClick={toggleSelectAll}
         disabled={!unpaidPayments || unpaidPayments.length === 0}
@@ -330,8 +333,8 @@ export default function UnpaidPaymentsPage() {
           }
         }
       `}</style>
-      
-      {/* 月次計算モーダル */}
+
+      {/* Monthly calculation modal */}
       {showCalculationModal && (
         <div style={{
           position: 'fixed',
@@ -356,7 +359,7 @@ export default function UnpaidPaymentsPage() {
             <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', margin: '0 0 16px 0' }}>
               {t('calculateMonthlyPayments')}
             </h3>
-            
+
             {/* Range mode toggle */}
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#374151' }}>
@@ -369,7 +372,7 @@ export default function UnpaidPaymentsPage() {
                 {t('dateRange')}
               </label>
             </div>
-            
+
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
                 {isRangeMode ? t('startYear') : t('year')}
@@ -380,7 +383,7 @@ export default function UnpaidPaymentsPage() {
                 onChange={(e) => {
                   const newYear = parseInt(e.target.value);
                   setCalculationYear(newYear);
-                  // 現在年より未来の年が選択された場合、当月に戻す
+                  // If year selected is in the future, reset to current month
                   if (newYear > currentYear || (newYear === currentYear && calculationMonth > currentMonth)) {
                     setCalculationMonth(newYear === currentYear ? currentMonth : 12);
                   }
@@ -397,7 +400,7 @@ export default function UnpaidPaymentsPage() {
                 }}
               />
             </div>
-            
+
             <div style={{ marginBottom: isRangeMode ? '16px' : '24px' }}>
               <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
                 {isRangeMode ? t('startMonth') : t('month')}
@@ -421,7 +424,7 @@ export default function UnpaidPaymentsPage() {
                 ))}
               </select>
             </div>
-            
+
             {/* End date inputs (only shown in range mode) */}
             {isRangeMode && (
               <>
@@ -456,7 +459,7 @@ export default function UnpaidPaymentsPage() {
                     }}
                   />
                 </div>
-                
+
                 <div style={{ marginBottom: '24px' }}>
                   <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
                     {t('endMonth')}
@@ -482,7 +485,7 @@ export default function UnpaidPaymentsPage() {
                 </div>
               </>
             )}
-            
+
             {isSelectedDateInFuture && (
               <div style={{
                 padding: '12px',
@@ -493,7 +496,7 @@ export default function UnpaidPaymentsPage() {
                 fontSize: '14px',
                 color: '#92400e'
               }}>
-{isRangeMode 
+{isRangeMode
                   ? t('futureMonthWarningRange')
                       .replace('{currentYear}', currentYear.toString())
                       .replace('{currentMonth}', currentMonth.toString())
@@ -502,7 +505,7 @@ export default function UnpaidPaymentsPage() {
                       .replace('{currentMonth}', currentMonth.toString())}
               </div>
             )}
-            
+
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
               <button
                 onClick={() => setShowCalculationModal(false)}
@@ -545,7 +548,7 @@ export default function UnpaidPaymentsPage() {
           </div>
         </div>
       )}
-      
+
       <div style={{ minHeight: '100vh', backgroundColor: 'white' }}>
       <PageHeader
         title={t('unpaidPayments')}
@@ -553,7 +556,7 @@ export default function UnpaidPaymentsPage() {
         actions={headerActions}
       />
 
-      {/* 同期状態インジケータ */}
+      {/* Sync status indicator */}
       <div style={{
         margin: '0 24px 16px 24px',
         backgroundColor: isSyncInProgress ? '#fef3c7' : '#f0f9ff',
@@ -569,12 +572,12 @@ export default function UnpaidPaymentsPage() {
         }}>
           {isSyncInProgress ? (
             <>
-              <RefreshCw 
-                size={16} 
-                style={{ 
+              <RefreshCw
+                size={16}
+                style={{
                   color: '#f59e0b',
                   animation: 'spin 1s linear infinite'
-                }} 
+                }}
               />
               <span style={{ color: '#92400e', fontWeight: '500' }}>
                 {t('syncInProgress')}
@@ -604,7 +607,7 @@ export default function UnpaidPaymentsPage() {
       </div>
 
       <div style={{ padding: '24px' }}>
-        {/* サマリーカード */}
+        {/* Summary card */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -628,12 +631,12 @@ export default function UnpaidPaymentsPage() {
               {formatCurrency(totalAmount)}
             </div>
             <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-              {unpaidPayments ? unpaidPayments.length : 0} 件
+              {unpaidPayments ? unpaidPayments.length : 0} items
             </div>
           </div>
         </div>
 
-        {/* テーブル */}
+        {/* Table */}
         <div style={{
           backgroundColor: 'white',
           border: '1px solid #e2e8f0',
@@ -841,7 +844,7 @@ export default function UnpaidPaymentsPage() {
                               fontWeight: '600',
                               color: daysPastDue > 0 ? '#ef4444' : '#6b7280'
                             }}>
-                              {daysPastDue}日
+                              {daysPastDue} days
                             </span>
                           </div>
                         </td>

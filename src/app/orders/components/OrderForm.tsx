@@ -52,7 +52,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  // 顧客一覧を取得
+  // Fetch customer list
   useEffect(() => {
     if (isOpen) {
       fetchCustomers();
@@ -60,14 +60,14 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
     }
   }, [isOpen]);
 
-  // 初回読み込み時に全テンプレートを取得
+  // Fetch all templates on initial load
   useEffect(() => {
     if (isOpen && !editingOrder) {
       fetchTemplates();
     }
   }, [isOpen, editingOrder]);
 
-  // 編集時にフォームデータを設定
+  // Set form data when editing
   useEffect(() => {
     if (editingOrder) {
       setFormData({
@@ -78,7 +78,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
         description: editingOrder.description || ''
       });
     } else {
-      // 新規作成時はフォームをリセット
+      // Reset form for new creation
       setFormData({
         customerId: '',
         salesAt: '',
@@ -88,7 +88,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
       });
     }
     setError('');
-    setSelectedTemplate(''); // テンプレート選択をリセット
+    setSelectedTemplate(''); // Reset template selection
   }, [editingOrder, isOpen]);
 
   const fetchCustomers = async () => {
@@ -96,19 +96,19 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
       const response = await fetch('/api/customers?limit=1000');
       const data = await response.json();
       setCustomers(data.customers || []);
-    } catch (error) {
-      console.error('Failed to fetch customers:', error);
+    } catch {
+      // Failed to fetch customer data
     }
   };
 
   const fetchTemplates = async () => {
     try {
-      // onetimeテンプレートのみを取得
+      // Fetch only onetime templates
       const response = await fetch('/api/order-templates?paymentType=onetime');
       const data = await response.json();
       setTemplates(data.templates || []);
-    } catch (error) {
-      console.error('Failed to fetch templates:', error);
+    } catch {
+      // Failed to fetch order templates
       setTemplates([]);
     }
   };
@@ -220,7 +220,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
         overflowY: 'auto',
         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
       }}>
-        {/* ヘッダー */}
+        {/* Header */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -255,7 +255,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
           </button>
         </div>
 
-        {/* エラーメッセージ */}
+        {/* Error message */}
         {error && (
           <div style={{
             backgroundColor: '#fef2f2',
@@ -274,13 +274,13 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
           </div>
         )}
 
-        {/* フォーム */}
+        {/* Form */}
         <form onSubmit={handleSubmit}>
           <div style={{
             display: 'grid',
             gap: '20px'
           }}>
-            {/* テンプレート選択 */}
+            {/* Template selection */}
             {!editingOrder && templates.length > 0 && (
               <div>
                 <label style={{
@@ -306,7 +306,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
               </div>
             )}
 
-            {/* 顧客選択 */}
+            {/* Customer selection */}
             <div>
               <label style={{
                 display: 'block',
@@ -327,7 +327,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
             </div>
 
 
-            {/* 売上日 */}
+            {/* Sales date */}
             <div>
               <label style={{
                 display: 'block',
@@ -336,13 +336,13 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
                 color: '#374151',
                 marginBottom: '6px'
               }}>
-                売上日 <span style={{ color: '#dc2626' }}>*</span>
+                Sales date <span style={{ color: '#dc2626' }}>*</span>
               </label>
               <input
                 type="date"
                 value={formData.salesAt}
                 onChange={(e) => handleInputChange('salesAt', e.target.value)}
-                placeholder="売上日を選択"
+                placeholder="Select sales date"
                 lang={getLanguage() === 'ja' ? 'ja' : 'en'}
                 required
                 style={{
@@ -356,7 +356,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
               />
             </div>
 
-            {/* 金額 */}
+            {/* Amount */}
             <div>
               <label style={{
                 display: 'block',
@@ -376,7 +376,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
 
             </div>
 
-            {/* 説明 */}
+            {/* Description */}
             <div>
               <label style={{
                 display: 'block',
@@ -405,7 +405,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
             </div>
           </div>
 
-          {/* 支払い状況 */}
+          {/* Payment status */}
           <div>
               <label style={{
                 display: 'flex',
@@ -427,7 +427,7 @@ export function OrderForm({ isOpen, onClose, onSuccess, editingOrder }: OrderFor
               </label>
             </div>
 
-          {/* ボタン */}
+          {/* Buttons */}
           <div style={{
             display: 'flex',
             justifyContent: 'flex-end',

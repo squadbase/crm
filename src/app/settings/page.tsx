@@ -8,7 +8,7 @@ import { Settings, Globe, DollarSign } from 'lucide-react';
 export default function SettingsPage() {
   const { t, settings, isLoading } = useClientI18n();
   
-  // ページタイトル設定
+  // Page title setup
   useEffect(() => {
     document.title = t('settingsTitle');
   }, [t]);
@@ -62,7 +62,7 @@ export default function SettingsPage() {
           maxWidth: '800px'
         }}>
 
-          {/* 言語設定 */}
+          {/* Language Settings */}
           <div style={{
             backgroundColor: 'white',
             border: '1px solid #e2e8f0',
@@ -142,7 +142,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* 通貨設定 */}
+          {/* Currency Settings */}
           <div style={{
             backgroundColor: 'white',
             border: '1px solid #e2e8f0',
@@ -224,7 +224,7 @@ export default function SettingsPage() {
 
         </div>
 
-        {/* 設定変更の説明 */}
+        {/* Settings Change Instructions */}
         <div style={{
           marginTop: '32px',
           padding: '20px',

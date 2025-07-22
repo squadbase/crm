@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { DollarSign, ShoppingCart, TrendingUp, TrendingDown } from 'lucide-react';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
@@ -41,15 +41,11 @@ export function MetricsCards({ period }: MetricsCardsProps) {
   const [data, setData] = useState<MetricsResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchData();
-  }, [period]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       
-      // 期間パラメータを含めてAPIを呼び出し
+      // Call API with period parameters
       let url = '/api/dashboard/metrics';
       if (period.startDate && period.endDate) {
         url += `?startDate=${period.startDate}&endDate=${period.endDate}`;
@@ -57,13 +53,16 @@ export function MetricsCards({ period }: MetricsCardsProps) {
       const response = await fetch(url);
       const result = await response.json();
       setData(result);
-    } catch (error) {
-      console.error('Failed to fetch metrics data:', error);
+    } catch {
+      // Failed to fetch metrics data
     } finally {
       setLoading(false);
     }
-  };
+  }, [period]);
 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const formatGrowth = (growth: MetricGrowth, isRevenue: boolean = false, isRate: boolean = false, isUnpaid: boolean = false) => {
     if (!growth || typeof growth.rate !== 'number' || typeof growth.count !== 'number') {
@@ -88,7 +87,7 @@ export function MetricsCards({ period }: MetricsCardsProps) {
     const { rate, count } = growth;
     const isPositive = rate >= 0;
     
-    // 未払い系の場合は良し悪しの色を逆転
+    // Reverse color logic for unpaid metrics (less is better)
     const actuallyPositive = isUnpaid ? !isPositive : isPositive;
     const icon = isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />;
     const color = actuallyPositive ? '#059669' : '#ef4444';
@@ -234,16 +233,7 @@ export function MetricsCards({ period }: MetricsCardsProps) {
     );
   }
 
-  // 期間表示の生成
-  const getPeriodDisplay = () => {
-    if (period.startDate && period.endDate) {
-      const startDate = new Date(period.startDate);
-      const endDate = new Date(period.endDate);
-      const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
-      return `${startDate.toLocaleDateString('ja-JP', options)} - ${endDate.toLocaleDateString('ja-JP', options)}`;
-    }
-    return t('currentMonth');
-  };
+  // getPeriodDisplay function removed as it was unused
 
   return (
     <div style={{

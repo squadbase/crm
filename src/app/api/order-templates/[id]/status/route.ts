@@ -17,7 +17,7 @@ export async function PATCH(
       );
     }
 
-    // テンプレートのアクティブ状態を更新
+    // Update template active status
     const updatedTemplate = await updateOrderTemplate(templateId, {
       isActive,
     });
@@ -30,8 +30,8 @@ export async function PATCH(
     }
 
     return NextResponse.json(updatedTemplate);
-  } catch (error) {
-    console.error('Failed to update template status:', error);
+  } catch {
+    // Failed to update template status
     return NextResponse.json(
       { error: 'Failed to update template status' },
       { status: 500 }

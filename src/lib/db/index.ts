@@ -2,27 +2,27 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import * as schema from './schema';
 
-// SSL設定を判定
+// Determine SSL configuration
 const getSSLConfig = () => {
   const host = process.env.POSTGRES_HOST || 'localhost';
   const sslMode = process.env.POSTGRES_SSL;
   
-  // 明示的にSSLを無効にした場合
+  // When SSL is explicitly disabled
   if (sslMode === 'false') {
     return false;
   }
   
-  // 明示的にSSLを有効にした場合
+  // When SSL is explicitly enabled
   if (sslMode === 'true' || sslMode === 'require') {
     return { rejectUnauthorized: false };
   }
   
-  // ローカル環境ではSSLを無効、本番環境では有効
+  // Disable SSL for local environment, enable for production
   if (host === 'localhost' || host === '127.0.0.1') {
     return false;
   }
   
-  // 本番環境のデフォルト
+  // Production environment default
   return { rejectUnauthorized: false };
 };
 
@@ -35,7 +35,7 @@ const config = {
   ssl: getSSLConfig(),
 };
 
-// デバッグ用：接続設定をログ出力（パスワードは除く）
+// Debug: Log connection settings (password excluded)
 if (process.env.NODE_ENV !== 'production') {
   console.log('Database config:', {
     ...config,

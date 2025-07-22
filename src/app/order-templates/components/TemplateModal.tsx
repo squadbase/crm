@@ -78,7 +78,7 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
     if (!formData.templateName.trim()) {
       newErrors.templateName = t('requiredFieldError');
     } else if (formData.templateName.length > 255) {
-      newErrors.templateName = 'テンプレート名は255文字以内で入力してください';
+      newErrors.templateName = 'Template name must be within 255 characters';
     }
     
     if (!formData.amount) {
@@ -118,11 +118,11 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
         onSuccess();
         onClose();
       } else {
-        const errorData = await response.json();
-        console.error('Failed to save template:', errorData);
+        // Template save operation failed
+        await response.json();
       }
-    } catch (error) {
-      console.error('Error saving template:', error);
+    } catch {
+      // Template save request failed
     } finally {
       setLoading(false);
     }
@@ -336,7 +336,7 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
                     cursor: 'pointer'
                   }}
                 />
-                {editingTemplate ? t('active') : 'アクティブ状態で作成'}
+                {editingTemplate ? t('active') : t('createAsActive')}
               </label>
             </div>
           </div>

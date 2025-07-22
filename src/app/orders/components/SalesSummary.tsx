@@ -50,8 +50,8 @@ export function SalesSummary({ period }: SalesSummaryProps) {
       const response = await fetch(url);
       const result = await response.json();
       setData(result);
-    } catch (error) {
-      console.error('Failed to fetch summary:', error);
+    } catch {
+      // Failed to fetch sales summary data
     } finally {
       setLoading(false);
     }
@@ -115,7 +115,7 @@ export function SalesSummary({ period }: SalesSummaryProps) {
 
   return (
     <div style={{ marginBottom: '20px' }}>
-      {/* 基本サマリー */}
+      {/* Basic summary */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',

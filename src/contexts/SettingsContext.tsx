@@ -37,9 +37,8 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
         language: data.language === 'ja' ? 'ja' : 'en',
         currency: data.currency === 'jpy' ? 'jpy' : 'usd'
       });
-    } catch (error) {
-      console.error('Failed to fetch settings:', error);
-      // フォールバック値を使用
+    } catch {
+      // Use fallback values
       setSettings({ language: 'en', currency: 'usd' });
     } finally {
       setIsLoading(false);

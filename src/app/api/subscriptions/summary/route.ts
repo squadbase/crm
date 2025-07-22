@@ -6,8 +6,8 @@ export async function GET() {
     const summary = await getSubscriptionSummaryMetrics();
 
     return NextResponse.json(summary);
-  } catch (error) {
-    console.error('Subscriptions summary API error:', error);
+  } catch {
+    // Subscriptions summary API error
     return NextResponse.json(
       { error: 'Failed to fetch subscriptions summary' },
       { status: 500 }

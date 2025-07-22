@@ -7,7 +7,7 @@ export async function GET(
 ) {
   try {
     const { subscriptionId } = await params;
-    console.log('Fetching subscription detail for ID:', subscriptionId);
+    // Fetching subscription detail for ID
 
     if (!subscriptionId) {
       return NextResponse.json(
@@ -27,7 +27,7 @@ export async function GET(
 
     return NextResponse.json(subscriptionDetails);
   } catch (error) {
-    console.error('Subscription detail API error:', error);
+    // Subscription detail API error
     return NextResponse.json(
       { error: 'Failed to fetch subscription details', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }

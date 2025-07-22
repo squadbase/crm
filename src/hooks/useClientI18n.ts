@@ -4,25 +4,25 @@ import { translations, TranslationKey } from '@/lib/i18n';
 import { useSettings } from '@/contexts/SettingsContext';
 
 /**
- * クライアント専用の国際化フック
- * SettingsContextから共有された設定を使用
+ * Client-only internationalization hook
+ * Uses shared settings from SettingsContext
  */
 export function useClientI18n() {
   const { settings, isLoading, isClient } = useSettings();
 
-  // 翻訳関数
+  // Translation function
   const t = (key: TranslationKey): string => {
     if (!isClient || isLoading) {
-      // SSR中やロード中は設定されたデフォルト言語を返す（プレースホルダー回避）
+      // Return configured default language during SSR or loading (avoiding placeholders)
       return translations[key][settings.language] || translations[key]['en'] || key;
     }
     return translations[key][settings.language] || translations[key]['en'] || key;
   };
 
-  // 通貨フォーマット
+  // Currency formatting
   const formatCurrency = (amount: number): string => {
     if (!isClient || isLoading) {
-      // SSR中はシンプルなフォーマットを返す
+      // Return simple format during SSR
       return `¥${amount.toLocaleString()}`;
     }
 
@@ -36,16 +36,16 @@ export function useClientI18n() {
     }).format(amount);
   };
 
-  // 日付フォーマット - yyyy/MM/dd形式
+  // Date formatting - yyyy/MM/dd format
   const formatDate = (date: string | Date | null | undefined): string => {
-    // 日付が未定義またはnullの場合は「-」を返す
+    // Return "-" if date is undefined or null
     if (!date) {
       return '-';
     }
 
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     
-    // 無効な日付の場合は「-」を返す
+    // Return "-" if date is invalid
     if (isNaN(dateObj.getTime())) {
       return '-';
     }

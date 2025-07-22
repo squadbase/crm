@@ -96,7 +96,7 @@ export function DeleteConfirmDialog({ isOpen, onClose, onConfirm, templateName }
               margin: 0,
               lineHeight: '1.5'
             }}>
-              <strong>{t('warning')}:</strong> この操作は取り消すことができません。
+              <strong>{t('warning')}:</strong> This action cannot be undone.
             </p>
           </div>
 

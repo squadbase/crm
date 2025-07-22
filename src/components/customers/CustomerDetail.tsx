@@ -70,7 +70,7 @@ export function CustomerDetail({ customerId }: CustomerDetailProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customerId]);
 
-  // ページタイトル設定
+  // Set page title
   useEffect(() => {
     if (data?.customer?.customerName) {
       document.title = `${data.customer.customerName} - ${t('customerDetail')}`;

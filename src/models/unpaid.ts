@@ -29,16 +29,12 @@ export async function getUnpaidPayments(): Promise<{
   currentMonthStart: string;
 }> {
   try {
-    console.log('API called - step 1');
-    
     // Get current date for filtering
     const today = new Date();
     today.setHours(23, 59, 59, 999); // Set to end of today for comparison
     
     // Current month start for reference
     const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    
-    console.log('Getting unpaid onetime orders...');
     
     // 1. Get unpaid onetime orders
     const unpaidOnetimeOrders = await db
@@ -58,8 +54,6 @@ export async function getUnpaidPayments(): Promise<{
       .where(eq(orders.isPaid, false))
       .orderBy(desc(orders.salesAt));
 
-    console.log('Unpaid onetime orders count:', unpaidOnetimeOrders.length);
-
     // Format onetime orders with due date = sales_at date
     const formattedOnetimeOrders: UnpaidPayment[] = unpaidOnetimeOrders.map((order) => ({
       id: order.orderId,
@@ -74,8 +68,6 @@ export async function getUnpaidPayments(): Promise<{
       paymentType: 'onetime',
       createdAt: order.createdAt instanceof Date ? order.createdAt.toISOString() : order.createdAt,
     }));
-
-    console.log('Getting unpaid subscription payments...');
 
     // 2. Get unpaid subscription payments
     const unpaidSubscriptionPayments = await db
@@ -96,8 +88,6 @@ export async function getUnpaidPayments(): Promise<{
       .leftJoin(customers, eq(subscriptions.customerId, customers.customerId))
       .where(eq(subscriptionPaid.isPaid, false))
       .orderBy(desc(subscriptionPaid.year), desc(subscriptionPaid.month));
-
-    console.log('Unpaid subscription payments count:', unpaidSubscriptionPayments.length);
 
     // Format subscription payments with due date = end of month
     const formattedSubscriptionPayments: UnpaidPayment[] = unpaidSubscriptionPayments.map((payment) => {
@@ -123,8 +113,6 @@ export async function getUnpaidPayments(): Promise<{
       };
     });
 
-    console.log('Formatted subscription payments count:', formattedSubscriptionPayments.length);
-
     // Combine both arrays and sort by due date (ascending)
     // Show all unpaid payments regardless of due date
     const allUnpaidPayments = [
@@ -133,14 +121,10 @@ export async function getUnpaidPayments(): Promise<{
     ]
     .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
-    console.log('Filtered and sorted payments count:', allUnpaidPayments.length);
-
     // Calculate total amount
     const totalAmount = allUnpaidPayments.reduce((sum, payment) => {
       return sum + parseFloat(payment.amount);
     }, 0);
-
-    console.log('Total unpaid amount:', totalAmount);
 
     return {
       unpaidPayments: allUnpaidPayments,
@@ -149,7 +133,7 @@ export async function getUnpaidPayments(): Promise<{
       currentMonthStart: currentMonthStart.toISOString().split('T')[0],
     };
   } catch (error) {
-    console.error('Error in getUnpaidPayments:', error);
+    // Error occurred while fetching unpaid payments
     throw error;
   }
 }
@@ -195,7 +179,7 @@ export async function updatePaymentStatus(items: Array<{
     
     return results;
   } catch (error) {
-    console.error('Error in updatePaymentStatus:', error);
+    // Error occurred while updating payment status
     throw error;
   }
 }

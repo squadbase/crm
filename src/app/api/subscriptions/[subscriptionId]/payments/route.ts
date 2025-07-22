@@ -8,14 +8,14 @@ export async function GET(
   try {
     const { subscriptionId } = await params;
 
-    // サブスクリプション支払い履歴を取得
+    // Get subscription payment history
     const payments = await getSubscriptionPayments(subscriptionId);
 
     return NextResponse.json({
       payments
     });
-  } catch (error) {
-    console.error('Subscription payments API error:', error);
+  } catch {
+    // Subscription payments API error
     return NextResponse.json(
       { error: 'Failed to fetch subscription payments' },
       { status: 500 }

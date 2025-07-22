@@ -14,10 +14,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       summary,
-      serviceTypes: [], // 不要になったので空配列
+      serviceTypes: [], // Empty array as service types are no longer needed
     });
-  } catch (error) {
-    console.error('Orders summary API error:', error);
+  } catch {
+    // Orders summary API error
     return NextResponse.json(
       { error: 'Failed to fetch orders summary' },
       { status: 500 }
