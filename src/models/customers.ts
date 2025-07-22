@@ -287,6 +287,26 @@ export async function updateCustomer(customerId: string, customerData: { custome
 }
 
 /**
+ * Create a new customer
+ */
+export async function createCustomer(customerData: { customerName: string }) {
+  try {
+    const newCustomer = await db
+      .insert(customers)
+      .values({
+        customerName: customerData.customerName.trim(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+
+    return newCustomer.length > 0 ? newCustomer[0] : null;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
  * Delete a customer (only if no orders exist)
  */
 export async function deleteCustomer(customerId: string) {

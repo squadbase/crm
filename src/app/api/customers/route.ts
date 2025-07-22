@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCustomers, getCustomerCount } from '@/models/customers';
+import { getCustomers, getCustomerCount, createCustomer } from '@/models/customers';
 import { z } from 'zod';
 
 const createCustomerSchema = z.object({
@@ -94,15 +94,28 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    createCustomerSchema.parse(body);
+    const validatedData = createCustomerSchema.parse(body);
 
-    // Note: In the refactored version, customer creation should be handled
-    // through the orders model since customers are derived from orders
-    // For now, returning a placeholder response
-    return NextResponse.json(
-      { error: 'Customer creation not implemented in refactored model' },
-      { status: 501 }
-    );
+    // Create the customer
+    const newCustomer = await createCustomer({
+      customerName: validatedData.customer_name
+    });
+
+    if (!newCustomer) {
+      return NextResponse.json(
+        { error: 'Failed to create customer' },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      customer: {
+        customerId: newCustomer.customerId,
+        customerName: newCustomer.customerName,
+        createdAt: newCustomer.createdAt,
+        updatedAt: newCustomer.updatedAt
+      }
+    }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

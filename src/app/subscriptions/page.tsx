@@ -16,6 +16,7 @@ interface Subscription {
   customerName: string;
   description: string;
   currentAmount: number;
+  latestAmount: number;
   startDate: string | null;
   endDate: string | null;
   totalPaid: number;

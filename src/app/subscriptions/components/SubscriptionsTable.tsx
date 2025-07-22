@@ -9,6 +9,7 @@ interface Subscription {
   customerName: string;
   description: string;
   currentAmount: number;
+  latestAmount: number;
   startDate: string | null;
   endDate: string | null;
   totalPaid: number;
@@ -151,9 +152,19 @@ export function SubscriptionsTable({
                 fontSize: '13px',
                 fontWeight: '600',
                 color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
+                borderBottom: '1px solid #e5e7eb',
+                position: 'relative'
               }}>
-                {t('monthlyFee')}
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                  title={t('currentAndLatestFeeTooltip')}
+                >
+                  {t('currentAndLatestFee')}
+                </div>
               </th>
               <th style={{
                 padding: '12px 16px',
@@ -252,7 +263,32 @@ export function SubscriptionsTable({
                   fontWeight: '500',
                   color: '#111827'
                 }}>
-                  {formatAmount(subscription.currentAmount)}
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    gap: '2px'
+                  }}>
+                    <div style={{
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: subscription.currentAmount > 0 ? '#111827' : '#6b7280'
+                    }}
+                    title={t('currentFeeTooltip')}>
+                      {formatAmount(subscription.currentAmount)}
+                    </div>
+                    <div style={{
+                      fontSize: '12px',
+                      color: '#6b7280',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '2px'
+                    }}
+                    title={t('latestFeeTooltip')}>
+                      <span style={{ fontSize: '10px' }}>{t('latestLabel')}</span>
+                      {formatAmount(subscription.latestAmount)}
+                    </div>
+                  </div>
                 </td>
                 <td style={{
                   padding: '12px 16px',

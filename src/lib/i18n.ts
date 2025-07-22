@@ -1151,7 +1151,7 @@ export const translations = {
     ja: 'Squadbase CRM',
     en: 'Squadbase CRM',
   },
-  // Empty State Messages  
+  // Empty State Messages
   noOrdersFound: {
     ja: '注文データがありません',
     en: 'No orders found',
@@ -1227,8 +1227,8 @@ export const translations = {
     en: 'Active',
   },
   monthlyRevenueExpected: {
-    ja: '月間売上予定',
-    en: 'Monthly Revenue Expected',
+    ja: '今月の月間売上予定',
+    en: 'Current Monthly Revenue Expected',
   },
   thisMonthPaid: {
     ja: '今月支払済',
@@ -1339,7 +1339,7 @@ export const translations = {
     ja: '作成中...',
     en: 'Creating...',
   },
-  
+
   // Additional subscription detail translations
   loadingSubscriptionDetails: {
     ja: 'サブスクリプション詳細を読み込み中...',
@@ -1445,6 +1445,36 @@ export const translations = {
     ja: 'この操作は取り消せません。',
     en: 'This action cannot be undone.',
   },
+
+  // Monthly Fee column with tooltip
+  currentMonthlyFeeLatest: {
+    ja: '現在の月額料金（最新の料金）',
+    en: 'Current Monthly Fee (Latest Fee)',
+  },
+  monthlyFeeTooltip: {
+    ja: '現在有効な月額料金です。契約期間内の最新の料金設定が表示されます。',
+    en: 'The currently active monthly fee. Shows the latest fee setting within the contract period.',
+  },
+  currentAndLatestFee: {
+    ja: '現在料金/最新設定',
+    en: 'Current/Latest Fee',
+  },
+  currentAndLatestFeeTooltip: {
+    ja: '左側：現在時点で有効な月額料金（契約期間内） / 右側：最新に設定された月額料金',
+    en: 'Left: Currently active monthly fee (within contract period) / Right: Latest set monthly fee',
+  },
+  currentFeeTooltip: {
+    ja: '現在有効な月額料金',
+    en: 'Currently active monthly fee',
+  },
+  latestFeeTooltip: {
+    ja: '最新に設定された月額料金',
+    en: 'Latest set monthly fee',
+  },
+  latestLabel: {
+    ja: '最新:',
+    en: 'Latest:',
+  },
 };
 
 export type TranslationKey = keyof typeof translations;
@@ -1488,10 +1518,10 @@ export const formatNumber = (value: number): string => {
  */
 export const formatDate = (date: string | Date): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
-  
+
   const year = dateObj.getFullYear();
   const month = String(dateObj.getMonth() + 1).padStart(2, '0');
   const day = String(dateObj.getDate()).padStart(2, '0');
-  
+
   return `${year}/${month}/${day}`;
 };

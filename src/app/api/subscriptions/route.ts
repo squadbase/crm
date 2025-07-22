@@ -59,6 +59,10 @@ export async function GET(request: NextRequest) {
         
         const currentAmount = currentAmountRecord ? parseFloat(currentAmountRecord.amount) : 0;
         
+        // 最新設定の料金を取得（開始日が最も新しいレコード）
+        const latestAmountRecord = amounts.length > 0 ? amounts[0] : null;
+        const latestAmount = latestAmountRecord ? parseFloat(latestAmountRecord.amount) : 0;
+        
         // 最後に終了した契約があればその終了日を取得
         const lastEndedAmount = amounts.find(a => a.endDate);
         const endDate = lastEndedAmount ? lastEndedAmount.endDate : null;
@@ -69,6 +73,7 @@ export async function GET(request: NextRequest) {
         return {
           ...sub,
           currentAmount: currentAmount,
+          latestAmount: latestAmount,
           startDate: sub.startDate ? sub.startDate.toString() : null,
           endDate: endDate ? endDate.toString() : null,
           totalPaid: paymentSummary.paidAmount,
