@@ -69,7 +69,7 @@ export default function SubscriptionDetailPage({
   const [cancelDate, setCancelDate] = useState('');
   const [restartDate, setRestartDate] = useState('');
   const [restartAmountDisplay, setRestartAmountDisplay] = useState('');
-  
+
   // Edit amount form states
   const [editAmount, setEditAmount] = useState('');
   const [editAmountDisplay, setEditAmountDisplay] = useState('');
@@ -87,10 +87,10 @@ export default function SubscriptionDetailPage({
         const errorData = await subscriptionResponse.json();
         throw new Error(errorData.error || 'Failed to fetch subscription');
       }
-      
+
       const data = await subscriptionResponse.json();
       // Subscription data received successfully
-      
+
       setSubscription(data.subscription);
       setAmounts(data.amounts || []);
       setPayments(data.payments || []);
@@ -358,7 +358,7 @@ export default function SubscriptionDetailPage({
     const today = now.toISOString().split('T')[0]; // YYYY-MM-DD format
     const startDate = a.startDate;
     const endDate = a.endDate;
-    
+
     // Start date <= current date AND (no end date OR end date >= current date)
     return startDate <= today && (!endDate || endDate >= today);
   });
@@ -394,7 +394,7 @@ export default function SubscriptionDetailPage({
         <ArrowLeft size={16} />
         {t('back')}
       </button>
-      
+
       {isCurrentlyActive ? (
         <>
           <button
@@ -609,7 +609,7 @@ export default function SubscriptionDetailPage({
           }}>
             {t('basicInformation')}
           </h3>
-          
+
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
@@ -1119,7 +1119,7 @@ export default function SubscriptionDetailPage({
 
           {/* Payment statistics */}
           {payments.length > 0 && (
-            <div style={{ 
+            <div style={{
               marginTop: '16px',
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -1221,9 +1221,9 @@ export default function SubscriptionDetailPage({
             margin: '16px'
           }}>
             <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>{t('changeFee')}</h3>
-            
+
             {/* Current amount display */}
-            <div style={{ 
+            <div style={{
               marginBottom: '16px',
               padding: '12px',
               backgroundColor: '#f9fafb',
@@ -1246,7 +1246,7 @@ export default function SubscriptionDetailPage({
                 {formatAmount(subscription?.currentAmount || 0)}
               </div>
             </div>
-            
+
             <div style={{ marginBottom: '16px' }}>
               <label style={{
                 display: 'block',
@@ -1396,7 +1396,7 @@ export default function SubscriptionDetailPage({
                 {t('cancelModal')}
               </h3>
             </div>
-            
+
             <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '16px' }}>
               {t('cancelWarning')}
             </p>
@@ -1506,13 +1506,13 @@ export default function SubscriptionDetailPage({
                 {t('restartModal')}
               </h3>
             </div>
-            
+
             <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '16px' }}>
               {t('restartWarning')}
             </p>
 
             {/* Last amount display */}
-            <div style={{ 
+            <div style={{
               marginBottom: '16px',
               padding: '12px',
               backgroundColor: '#f0fdf4',
@@ -1633,7 +1633,7 @@ export default function SubscriptionDetailPage({
             <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>
               {t('edit')} {t('priceHistory')}
             </h3>
-            
+
             <div style={{ marginBottom: '16px' }}>
               <label style={{
                 display: 'block',
@@ -1781,7 +1781,7 @@ export default function SubscriptionDetailPage({
                 {t('delete')} {t('priceHistory')}
               </h3>
             </div>
-            
+
             <div style={{
               padding: '16px',
               backgroundColor: '#f9fafb',
@@ -1795,7 +1795,7 @@ export default function SubscriptionDetailPage({
                 {formatAmount(editingAmount.amount)} ({editingAmount.startDate} - {editingAmount.endDate || t('ongoing')})
               </div>
             </div>
-            
+
             <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '24px' }}>
               {t('deleteWarning')} {t('thisActionCannotBeUndone')}
             </p>

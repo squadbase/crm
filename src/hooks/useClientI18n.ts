@@ -12,27 +12,50 @@ export function useClientI18n() {
 
   // Translation function
   const t = (key: TranslationKey): string => {
+    const translation = translations[key] as Record<string, string>;
     if (!isClient || isLoading) {
       // Return configured default language during SSR or loading (avoiding placeholders)
-      return translations[key][settings.language] || translations[key]['en'] || key;
+      return translation[settings.language] || translation['en'] || key;
     }
-    return translations[key][settings.language] || translations[key]['en'] || key;
+    return translation[settings.language] || translation['en'] || key;
   };
 
   // Currency formatting
   const formatCurrency = (amount: number): string => {
     if (!isClient || isLoading) {
       // Return simple format during SSR
-      return `¥${amount.toLocaleString()}`;
+      return `$${amount.toLocaleString()}`;
     }
 
-    const currency = settings.currency === 'jpy' ? 'JPY' : 'USD';
-    const locale = settings.language === 'ja' ? 'ja-JP' : 'en-US';
-    
+    // Map currency codes
+    const currencyMap: Record<string, string> = {
+      usd: 'USD',
+      jpy: 'JPY',
+      eur: 'EUR',
+      cny: 'CNY',
+      krw: 'KRW',
+    };
+
+    // Map languages to locales
+    const localeMap: Record<string, string> = {
+      en: 'en-US',
+      ja: 'ja-JP',
+      es: 'es-ES',
+      fr: 'fr-FR',
+      zh: 'zh-CN',
+      ko: 'ko-KR',
+    };
+
+    const currency = currencyMap[settings.currency] || 'USD';
+    const locale = localeMap[settings.language] || 'en-US';
+
+    // Currencies that don't use decimal places
+    const noDecimalCurrencies = ['JPY', 'KRW', 'CNY'];
+
     return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: currency,
-      minimumFractionDigits: currency === 'JPY' ? 0 : 2
+      minimumFractionDigits: noDecimalCurrencies.includes(currency) ? 0 : 2,
     }).format(amount);
   };
 
@@ -44,7 +67,7 @@ export function useClientI18n() {
     }
 
     const dateObj = typeof date === 'string' ? new Date(date) : date;
-    
+
     // Return "-" if date is invalid
     if (isNaN(dateObj.getTime())) {
       return '-';
@@ -53,13 +76,31 @@ export function useClientI18n() {
     const year = dateObj.getFullYear();
     const month = String(dateObj.getMonth() + 1).padStart(2, '0');
     const day = String(dateObj.getDate()).padStart(2, '0');
-    
+
     return `${year}/${month}/${day}`;
   };
 
   const getLanguage = () => settings.language;
-  const getCurrency = () => settings.currency === 'jpy' ? 'JPY' : 'USD';
-  const getCurrencySymbol = () => settings.currency === 'jpy' ? '¥' : '$';
+  const getCurrency = () => {
+    const currencyMap: Record<string, string> = {
+      jpy: 'JPY',
+      usd: 'USD',
+      eur: 'EUR',
+      cny: 'CNY',
+      krw: 'KRW',
+    };
+    return currencyMap[settings.currency] || 'USD';
+  };
+  const getCurrencySymbol = () => {
+    const symbolMap: Record<string, string> = {
+      jpy: '¥',
+      usd: '$',
+      eur: '€',
+      cny: '¥',
+      krw: '₩',
+    };
+    return symbolMap[settings.currency] || '$';
+  };
 
   return {
     t,
@@ -70,6 +111,6 @@ export function useClientI18n() {
     getCurrencySymbol,
     isClient,
     isLoading,
-    settings
+    settings,
   };
 }

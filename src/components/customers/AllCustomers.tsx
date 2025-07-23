@@ -65,7 +65,7 @@ export function AllCustomers({ customers: customerStats, onEdit, onDelete }: All
                   fontSize: '13px', 
                   fontWeight: '500', 
                   color: '#6b7280' 
-                }}>One-time収益</th>
+                }}>{t('onetimeRevenue')}</th>
               )}
               {typeof customerStats[0]?.subscriptionRevenue !== 'undefined' && (
                 <th style={{ 
@@ -74,7 +74,7 @@ export function AllCustomers({ customers: customerStats, onEdit, onDelete }: All
                   fontSize: '13px', 
                   fontWeight: '500', 
                   color: '#6b7280' 
-                }}>サブスク収益</th>
+                }}>{t('subscriptionRevenue')}</th>
               )}
               {typeof customerStats[0]?.totalRevenue !== 'undefined' && (
                 <th style={{ 
@@ -83,7 +83,7 @@ export function AllCustomers({ customers: customerStats, onEdit, onDelete }: All
                   fontSize: '13px', 
                   fontWeight: '500', 
                   color: '#6b7280' 
-                }}>総収益</th>
+                }}>{t('totalRevenue')}</th>
               )}
               {typeof customerStats[0]?.lastOrderDate !== 'undefined' && (
                 <th style={{ 

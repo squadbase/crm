@@ -19,7 +19,7 @@ export function OrdersFilter({ onFilterChange }: OrdersFilterProps) {
     isPaid: '',
     search: ''
   });
-  
+
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleFilterChange = (key: keyof FilterValues, value: string) => {
@@ -96,17 +96,14 @@ export function OrdersFilter({ onFilterChange }: OrdersFilterProps) {
         )}
       </div>
 
-      {/* フィルター内容（折りたたみ式） */}
       {isExpanded && (
         <>
-          {/* フィルター */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(1, 1fr)',
             gap: '16px',
             marginBottom: '16px'
           }}>
-        {/* 支払い状況 */}
         <div style={{ minWidth: 0 }}>
           <label style={{
             display: 'block',
@@ -137,7 +134,6 @@ export function OrdersFilter({ onFilterChange }: OrdersFilterProps) {
         </div>
           </div>
 
-          {/* 検索 */}
           <div>
             <label style={{
               display: 'block',

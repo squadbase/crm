@@ -39,7 +39,7 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
     description: '',
     isActive: true
   });
-  
+
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -74,38 +74,38 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.templateName.trim()) {
       newErrors.templateName = t('requiredFieldError');
     } else if (formData.templateName.length > 255) {
       newErrors.templateName = 'Template name must be within 255 characters';
     }
-    
+
     if (!formData.amount) {
       newErrors.amount = t('requiredFieldError');
     } else if (parseFloat(formData.amount) <= 0) {
       newErrors.amount = t('amountValidationErrorTemplate');
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
-      const url = editingTemplate 
+      const url = editingTemplate
         ? `/api/order-templates/${editingTemplate.templateId}`
         : '/api/order-templates';
       const method = editingTemplate ? 'PUT' : 'POST';
-      
+
       const response = await fetch(url, {
         method,
         headers: {
@@ -113,7 +113,7 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
         },
         body: JSON.stringify(formData),
       });
-      
+
       if (response.ok) {
         onSuccess();
         onClose();
@@ -131,7 +131,7 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       onClick={onClose}
       style={{
         position: 'fixed',
@@ -143,7 +143,7 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
         zIndex: 50,
         padding: '16px'
       }}>
-      <div 
+      <div
         onClick={(e) => e.stopPropagation()}
         style={{
           backgroundColor: 'white',
@@ -188,7 +188,6 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
         {/* Form */}
         <form onSubmit={handleSubmit} style={{ padding: '24px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {/* テンプレート名 */}
             <div>
               <label style={{
                 display: 'block',
@@ -221,7 +220,6 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
               )}
             </div>
 
-            {/* 支払い形態 */}
             <div>
               <label style={{
                 display: 'block',
@@ -251,7 +249,6 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
               </select>
             </div>
 
-            {/* 金額 */}
             <div>
               <label style={{
                 display: 'block',
@@ -260,7 +257,7 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
                 color: '#374151',
                 marginBottom: '6px'
               }}>
-                {t('amountTemplate')} (円) <span style={{ color: '#dc2626' }}>*</span>
+                {t('amountTemplate')} <span style={{ color: '#dc2626' }}>*</span>
               </label>
               <input
                 type="number"
@@ -286,7 +283,6 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
               )}
             </div>
 
-            {/* 説明 */}
             <div>
               <label style={{
                 display: 'block',
@@ -315,7 +311,6 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
               />
             </div>
 
-            {/* アクティブ状態 */}
             <div>
               <label style={{
                 display: 'flex',
@@ -341,7 +336,6 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
             </div>
           </div>
 
-          {/* Actions */}
           <div style={{
             display: 'flex',
             justifyContent: 'flex-end',

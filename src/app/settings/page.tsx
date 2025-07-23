@@ -15,12 +15,19 @@ export default function SettingsPage() {
 
   const languageDisplay = {
     ja: t('japanese'),
-    en: t('english')
+    en: t('english'),
+    es: t('spanish'),
+    fr: t('french'),
+    zh: t('chinese'),
+    ko: t('korean')
   };
 
   const currencyDisplay = {
     jpy: t('yen'),
-    usd: t('dollar')
+    usd: t('dollar'),
+    eur: t('euro'),
+    cny: t('yuan'),
+    krw: t('won')
   };
 
   if (isLoading) {

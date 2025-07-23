@@ -6,6 +6,7 @@ import { Button } from './button';
 import { Input } from './input';
 import { X, Search, Filter, SortAsc, SortDesc } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useClientI18n } from '@/hooks/useClientI18n';
 
 interface FilterItem {
   id: string;
@@ -33,7 +34,7 @@ interface FilterBarProps {
 }
 
 export function FilterBar({
-  placeholder = "検索...",
+  placeholder,
   searchValue = "",
   onSearchChange,
   filters = [],
@@ -45,7 +46,11 @@ export function FilterBar({
   children,
   className = ""
 }: FilterBarProps) {
+  const { t } = useClientI18n();
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // Use translation key as default placeholder
+  const displayPlaceholder = placeholder || t('searchPlaceholderDefault');
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onSearchChange?.(e.target.value);
@@ -59,7 +64,7 @@ export function FilterBar({
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder={placeholder}
+            placeholder={displayPlaceholder}
             value={searchValue}
             onChange={handleSearchChange}
             className="pl-10"
@@ -75,7 +80,7 @@ export function FilterBar({
             className="gap-2"
           >
             <Filter className="h-4 w-4" />
-            フィルター
+            {t('filterButton')}
           </Button>
 
           {/* Sort Options */}
@@ -107,7 +112,7 @@ export function FilterBar({
       {/* Active Filters */}
       {filters.length > 0 && (
         <div className="flex items-center gap-2 px-4">
-          <span className="text-small text-muted-foreground">適用中のフィルター:</span>
+          <span className="text-small text-muted-foreground">{t('activeFilters')}</span>
           <div className="flex items-center gap-2 flex-wrap">
             {filters.map((filter) => (
               <Badge
@@ -131,7 +136,7 @@ export function FilterBar({
                 onClick={onFiltersClear}
                 className="text-muted-foreground hover:text-foreground"
               >
-                すべてクリア
+                {t('clearAllFilters')}
               </Button>
             )}
           </div>
@@ -142,11 +147,11 @@ export function FilterBar({
       {isExpanded && (
         <div className="p-4 bg-muted/50 border border-line rounded-lg">
           <div className="space-y-4">
-            <h4 className="text-subheading font-medium">詳細フィルター</h4>
+            <h4 className="text-subheading font-medium">{t('detailedFilters')}</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* This would be populated with specific filter controls */}
               <div className="text-small text-muted-foreground">
-                フィルターオプションをここに追加
+                {t('addFilterOptions')}
               </div>
             </div>
           </div>

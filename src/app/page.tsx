@@ -11,7 +11,7 @@ import { MetricsCards } from '@/components/dashboard/MetricsCards';
 
 export default function HomePage() {
   const { t } = useClientI18n();
-  
+
   // Page title setup
   useEffect(() => {
     document.title = t('dashboardTitle');
@@ -37,7 +37,7 @@ export default function HomePage() {
     try {
       const response = await fetch('/api/orders?limit=5&sort=created&direction=desc');
       const data = await response.json();
-      
+
       if (data.orders && data.orders.length > 0) {
         const formattedOrders = data.orders.map((order: {
           orderId: string;
@@ -76,7 +76,7 @@ export default function HomePage() {
     try {
       const response = await fetch('/api/customers?limit=5&sort=revenue&direction=desc');
       const data = await response.json();
-      
+
       if (data.customers && data.customers.length > 0) {
         const formattedCustomers = data.customers.map((customer: {
           customerId: string;

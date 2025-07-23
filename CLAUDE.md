@@ -31,7 +31,6 @@ POSTGRES_PORT=5432
 POSTGRES_USER=your_username
 POSTGRES_PASSWORD=your_password
 POSTGRES_DATABASE=crm_db
-POSTGRES_SSL=auto
 ```
 
 ### SSL Configuration
@@ -117,11 +116,11 @@ This project has known issues with custom TailwindCSS classes (`text-heading`, `
 // ❌ Don't use TailwindCSS classes
 <div className="bg-primary-100 text-heading p-4">
 
-// ✅ Use inline styles instead  
-<div style={{ 
-  backgroundColor: '#f1f5f9', 
-  color: '#0f172a', 
-  padding: '16px' 
+// ✅ Use inline styles instead
+<div style={{
+  backgroundColor: '#f1f5f9',
+  color: '#0f172a',
+  padding: '16px'
 }}>
 ```
 
@@ -142,7 +141,7 @@ This project has known issues with custom TailwindCSS classes (`text-heading`, `
 
 /* Gray Scale */
 --gray-50: #f9fafb
---gray-200: #e5e7eb  
+--gray-200: #e5e7eb
 --gray-400: #9ca3af
 --gray-600: #4b5563
 --gray-800: #1f2937
@@ -246,7 +245,7 @@ const headerActions = (
 ```css
 background-color: white
 border: 1px solid #e2e8f0
-border-radius: 12px  
+border-radius: 12px
 box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1)
 ```
 
@@ -270,7 +269,7 @@ import { useClientI18n } from '@/hooks/useClientI18n';
 
 function Component() {
   const { t } = useClientI18n();
-  
+
   return <h1>{t('pageTitle')}</h1>;
 }
 ```

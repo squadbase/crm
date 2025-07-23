@@ -41,7 +41,7 @@ interface PaginationInfo {
 export default function SubscriptionsPage() {
   const { t } = useClientI18n();
   const router = useRouter();
-  
+
   // Set page title
   useEffect(() => {
     document.title = t('subscriptionsTitle');
@@ -53,7 +53,7 @@ export default function SubscriptionsPage() {
   const [filters, setFilters] = useState<FilterValues>({
     search: ''
   });
-  
+
   const [pagination, setPagination] = useState<PaginationInfo>({
     page: 1,
     limit: 50,
@@ -79,7 +79,7 @@ export default function SubscriptionsPage() {
 
       const response = await fetch(`/api/subscriptions?${params}`);
       const data = await response.json();
-      
+
       setSubscriptions(data.subscriptions || []);
       setPagination(prev => ({
         ...prev,
@@ -133,10 +133,10 @@ export default function SubscriptionsPage() {
   );
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      backgroundColor: 'white' 
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      backgroundColor: 'white'
     }}>
       <PageHeader
         title={t('subscriptions')}
@@ -177,7 +177,7 @@ export default function SubscriptionsPage() {
             >
               {t('previous')}
             </button>
-            
+
             <span style={{
               padding: '8px 16px',
               fontSize: '14px',
@@ -185,7 +185,7 @@ export default function SubscriptionsPage() {
             }}>
               {pagination.page} / {pagination.totalPages}
             </span>
-            
+
             <button
               onClick={() => setPagination(prev => ({ ...prev, page: Math.min(prev.totalPages, prev.page + 1) }))}
               disabled={pagination.page === pagination.totalPages}

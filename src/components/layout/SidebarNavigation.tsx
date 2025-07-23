@@ -98,17 +98,17 @@ export function SidebarNavigation() {
   // Use fixed display during hydration
   const getStaticNavigationSections = () => [
     {
-      title: '売上管理',
+      title: 'Sales Management',
       items: [
         { name: 'Dashboard', href: '/', icon: Clock },
         { name: 'Onetime Orders', href: '/orders', icon: CreditCard },
         { name: 'Subscriptions', href: '/subscriptions', icon: RefreshCw },
-        { name: 'Customer Management', href: '/customers', icon: Users },
+        { name: 'Customers', href: '/customers', icon: Users },
         { name: 'Unpaid Payments', href: '/unpaid', icon: Receipt },
       ]
     },
     {
-      title: '設定',
+      title: 'Settings',
       items: [
         { name: 'Order Templates', href: '/order-templates', icon: FileText },
         { name: 'Settings', href: '/settings', icon: Settings },

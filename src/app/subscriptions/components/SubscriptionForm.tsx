@@ -93,7 +93,7 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
 
   const handleTemplateSelect = (templateId: string) => {
     setSelectedTemplate(templateId);
-    
+
     if (templateId) {
       const template = templates.find(t => t.templateId === templateId);
       if (template) {
@@ -208,7 +208,6 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
         overflowY: 'auto',
         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
       }}>
-        {/* ヘッダー */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -243,7 +242,6 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
           </button>
         </div>
 
-        {/* エラーメッセージ */}
         {error && (
           <div style={{
             backgroundColor: '#fef2f2',
@@ -262,13 +260,11 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
           </div>
         )}
 
-        {/* フォーム */}
         <form onSubmit={handleSubmit}>
           <div style={{
             display: 'grid',
             gap: '20px'
           }}>
-            {/* テンプレート選択 */}
             {templates.length > 0 && (
               <div>
                 <label style={{
@@ -294,7 +290,6 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
               </div>
             )}
 
-            {/* 顧客選択 */}
             <div>
               <label style={{
                 display: 'block',
@@ -314,7 +309,6 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
               />
             </div>
 
-            {/* 月額料金 */}
             <div>
               <label style={{
                 display: 'block',
@@ -333,7 +327,6 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
               />
             </div>
 
-            {/* 開始日 */}
             <div>
               <label style={{
                 display: 'block',
@@ -362,7 +355,6 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
               />
             </div>
 
-            {/* 説明 */}
             <div>
               <label style={{
                 display: 'block',
@@ -391,7 +383,6 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
             </div>
           </div>
 
-          {/* ボタン */}
           <div style={{
             display: 'flex',
             justifyContent: 'flex-end',

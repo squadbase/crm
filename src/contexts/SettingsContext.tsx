@@ -3,8 +3,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface Settings {
-  language: 'ja' | 'en';
-  currency: 'jpy' | 'usd';
+  language: 'ja' | 'en' | 'es' | 'fr' | 'zh' | 'ko';
+  currency: 'jpy' | 'usd' | 'eur' | 'cny' | 'krw';
 }
 
 interface SettingsContextType {
@@ -33,9 +33,12 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
     try {
       const response = await fetch('/api/settings');
       const data = await response.json();
+      const validLanguages = ['ja', 'en', 'es', 'fr', 'zh', 'ko'];
+      const validCurrencies = ['jpy', 'usd', 'eur', 'cny', 'krw'];
+      
       setSettings({
-        language: data.language === 'ja' ? 'ja' : 'en',
-        currency: data.currency === 'jpy' ? 'jpy' : 'usd'
+        language: validLanguages.includes(data.language) ? data.language : 'en',
+        currency: validCurrencies.includes(data.currency) ? data.currency : 'usd'
       });
     } catch {
       // Use fallback values

@@ -60,11 +60,11 @@ function PaymentTypeBadge({ paymentType }: { paymentType: 'onetime' | 'subscript
 
 export function TemplateDetailModal({ isOpen, onClose, template }: TemplateDetailModalProps) {
   const { t, formatCurrency, formatDate } = useClientI18n();
-  
+
   if (!isOpen || !template) return null;
 
   return (
-    <div 
+    <div
       onClick={onClose}
       style={{
         position: 'fixed',
@@ -76,7 +76,7 @@ export function TemplateDetailModal({ isOpen, onClose, template }: TemplateDetai
         zIndex: 50,
         padding: '16px'
       }}>
-      <div 
+      <div
         onClick={(e) => e.stopPropagation()}
         style={{
           backgroundColor: 'white',
@@ -125,7 +125,6 @@ export function TemplateDetailModal({ isOpen, onClose, template }: TemplateDetai
         {/* Content */}
         <div style={{ padding: '24px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {/* 基本情報 */}
             <div>
               <h3 style={{
                 fontSize: '16px',
@@ -140,7 +139,7 @@ export function TemplateDetailModal({ isOpen, onClose, template }: TemplateDetai
                 <Tag size={18} />
                 {t('basicInformation')}
               </h3>
-              
+
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -166,7 +165,6 @@ export function TemplateDetailModal({ isOpen, onClose, template }: TemplateDetai
               </div>
             </div>
 
-            {/* 金額情報 */}
             <div>
               <h3 style={{
                 fontSize: '16px',
@@ -179,9 +177,9 @@ export function TemplateDetailModal({ isOpen, onClose, template }: TemplateDetai
                 gap: '8px'
               }}>
                 <DollarSign size={18} />
-                {t('amountTemplate')}情報
+                {t('amountTemplate')}
               </h3>
-              
+
               <div style={{
                 padding: '20px',
                 backgroundColor: '#f9fafb',
@@ -201,12 +199,11 @@ export function TemplateDetailModal({ isOpen, onClose, template }: TemplateDetai
                   fontSize: '14px',
                   color: '#6b7280'
                 }}>
-                  {template.paymentType === 'subscription' ? '月額料金' : t('onetimeTemplate')}
+                  {template.paymentType === 'subscription' ? t('subscriptionPaymentTemplate') : t('onetimeTemplate')}
                 </div>
               </div>
             </div>
 
-            {/* 説明 */}
             {template.description && (
               <div>
                 <h3 style={{
@@ -222,7 +219,7 @@ export function TemplateDetailModal({ isOpen, onClose, template }: TemplateDetai
                   <FileText size={18} />
                   {t('descriptionTemplate')}
                 </h3>
-                
+
                 <div style={{
                   padding: '16px',
                   backgroundColor: '#f9fafb',
@@ -242,7 +239,6 @@ export function TemplateDetailModal({ isOpen, onClose, template }: TemplateDetai
               </div>
             )}
 
-            {/* 作成・更新情報 */}
             <div>
               <h3 style={{
                 fontSize: '16px',
@@ -257,7 +253,7 @@ export function TemplateDetailModal({ isOpen, onClose, template }: TemplateDetai
                 <Calendar size={18} />
                 {t('history')}
               </h3>
-              
+
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -319,13 +315,12 @@ export function TemplateDetailModal({ isOpen, onClose, template }: TemplateDetai
                 fontSize: '12px',
                 color: '#92400e'
               }}>
-                テンプレートID: {template.templateId}
+                {t('templateIdTemplate')}: {template.templateId}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Footer */}
         <div style={{
           display: 'flex',
           justifyContent: 'flex-end',

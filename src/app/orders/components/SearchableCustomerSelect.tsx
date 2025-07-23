@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Search, X } from 'lucide-react';
+import { useClientI18n } from '@/hooks/useClientI18n';
 
 interface Customer {
   customerId: string;
@@ -16,18 +17,22 @@ interface SearchableCustomerSelectProps {
   required?: boolean;
 }
 
-export function SearchableCustomerSelect({ 
-  customers, 
-  value, 
-  onChange, 
-  placeholder = 'Select customer',
-  required = false 
+export function SearchableCustomerSelect({
+  customers,
+  value,
+  onChange,
+  placeholder,
+  required = false
 }: SearchableCustomerSelectProps) {
+  const { t } = useClientI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>(customers);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Use translation key as default placeholder
+  const displayPlaceholder = placeholder || t('selectCustomerPlaceholder');
 
   // Filter customers based on search criteria
   useEffect(() => {
@@ -78,7 +83,6 @@ export function SearchableCustomerSelect({
 
   return (
     <div ref={dropdownRef} style={{ position: 'relative', width: '100%' }}>
-      {/* メインの選択ボタン */}
       <div
         onClick={handleToggle}
         style={{
@@ -96,16 +100,16 @@ export function SearchableCustomerSelect({
           borderColor: isOpen ? '#2563eb' : '#d1d5db'
         }}
       >
-        <span style={{ 
+        <span style={{
           color: displayValue ? '#0f172a' : '#9ca3af',
           flex: 1,
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap'
         }}>
-          {displayValue || placeholder}
+          {displayValue || displayPlaceholder}
         </span>
-        
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
           {displayValue && (
             <button
@@ -129,18 +133,17 @@ export function SearchableCustomerSelect({
               <X size={14} color="#6b7280" />
             </button>
           )}
-          <ChevronDown 
-            size={16} 
-            color="#6b7280" 
-            style={{ 
+          <ChevronDown
+            size={16}
+            color="#6b7280"
+            style={{
               transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
               transition: 'transform 0.2s'
-            }} 
+            }}
           />
         </div>
       </div>
 
-      {/* ドロップダウンメニュー */}
       {isOpen && (
         <div style={{
           position: 'absolute',
@@ -156,7 +159,6 @@ export function SearchableCustomerSelect({
           maxHeight: '200px',
           overflow: 'hidden'
         }}>
-          {/* 検索入力 */}
           <div style={{
             padding: '8px',
             borderBottom: '1px solid #e5e7eb'
@@ -176,7 +178,7 @@ export function SearchableCustomerSelect({
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by customer name..."
+                placeholder={t('searchByCustomerName')}
                 style={{
                   border: 'none',
                   backgroundColor: 'transparent',
@@ -189,9 +191,8 @@ export function SearchableCustomerSelect({
             </div>
           </div>
 
-          {/* 顧客リスト */}
-          <div style={{ 
-            maxHeight: '150px', 
+          <div style={{
+            maxHeight: '150px',
             overflowY: 'auto'
           }}>
             {filteredCustomers.length > 0 ? (
@@ -228,7 +229,7 @@ export function SearchableCustomerSelect({
                 fontSize: '14px',
                 color: '#6b7280'
               }}>
-                No matching customers found
+                {t('noMatchingCustomers')}
               </div>
             )}
           </div>
