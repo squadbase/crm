@@ -27,39 +27,14 @@ export function SearchInput({ value, onChange, placeholder = "Search customers..
   }, [value]);
 
   return (
-    <div style={{ position: 'relative', width: '100%', maxWidth: '320px' }}>
-      <Search style={{ 
-        position: 'absolute', 
-        left: '10px', 
-        top: '50%', 
-        transform: 'translateY(-50%)', 
-        height: '14px', 
-        width: '14px', 
-        color: '#6b7280' 
-      }} />
+    <div className="relative w-full max-w-80">
+      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500" />
       <input
         type="text"
         value={localValue}
         onChange={(e) => setLocalValue(e.target.value)}
         placeholder={placeholder}
-        style={{
-          width: '100%',
-          paddingLeft: '32px',
-          paddingRight: '10px',
-          paddingTop: '6px',
-          paddingBottom: '6px',
-          border: '1px solid #d1d5db',
-          borderRadius: '6px',
-          fontSize: '13px',
-          outline: 'none',
-          transition: 'border-color 0.2s'
-        }}
-        onFocus={(e) => {
-          e.currentTarget.style.borderColor = '#2563eb';
-        }}
-        onBlur={(e) => {
-          e.currentTarget.style.borderColor = '#d1d5db';
-        }}
+        className="w-full pl-8 pr-2.5 py-1.5 border border-gray-300 rounded-md text-xs outline-none transition-colors focus:border-blue-600"
       />
     </div>
   );

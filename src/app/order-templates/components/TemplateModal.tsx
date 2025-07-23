@@ -133,116 +133,54 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
   return (
     <div
       onClick={onClose}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 50,
-        padding: '16px'
-      }}>
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{
-          backgroundColor: 'white',
-          borderRadius: '12px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-          width: '100%',
-          maxWidth: '500px',
-          maxHeight: '90vh',
-          overflow: 'auto'
-        }}>
+        className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-auto">
         {/* Header */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '20px 24px',
-          borderBottom: '1px solid #e5e7eb'
-        }}>
-          <h2 style={{
-            fontSize: '18px',
-            fontWeight: '600',
-            color: '#111827',
-            margin: 0
-          }}>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900 m-0">
             {editingTemplate ? t('editTemplateTitle') : t('createTemplate')}
           </h2>
           <button
             onClick={onClose}
-            style={{
-              padding: '4px',
-              backgroundColor: 'transparent',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              color: '#6b7280'
-            }}
+            className="p-1 bg-transparent border-none rounded cursor-pointer text-gray-500"
           >
             <X size={20} />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <form onSubmit={handleSubmit} className="p-6">
+          <div className="flex flex-col gap-4">
             <div>
-              <label style={{
-                display: 'block',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#374151',
-                marginBottom: '6px'
-              }}>
-                {t('templateName')} <span style={{ color: '#dc2626' }}>*</span>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                {t('templateName')} <span className="text-red-600">*</span>
               </label>
               <input
                 type="text"
                 value={formData.templateName}
                 onChange={(e) => handleInputChange('templateName', e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: `1px solid ${errors.templateName ? '#dc2626' : '#d1d5db'}`,
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  outline: 'none',
-                  boxSizing: 'border-box'
-                }}
+                className={`w-full px-3 py-2 text-sm outline-none rounded box-border ${
+                  errors.templateName ? 'border border-red-600' : 'border border-gray-300'
+                }`}
                 placeholder={t('templateNamePlaceholder')}
               />
               {errors.templateName && (
-                <span style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px', display: 'block' }}>
+                <span className="text-xs text-red-600 mt-1 block">
                   {errors.templateName}
                 </span>
               )}
             </div>
 
             <div>
-              <label style={{
-                display: 'block',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#374151',
-                marginBottom: '6px'
-              }}>
-                {t('paymentTypeTemplate')} <span style={{ color: '#dc2626' }}>*</span>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                {t('paymentTypeTemplate')} <span className="text-red-600">*</span>
               </label>
               <select
                 value={formData.paymentType}
                 onChange={(e) => handleInputChange('paymentType', e.target.value as 'onetime' | 'subscription')}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  backgroundColor: 'white',
-                  outline: 'none',
-                  boxSizing: 'border-box'
-                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm bg-white outline-none box-border"
               >
                 <option value="onetime">{t('onetimeTemplate')}</option>
                 <option value="subscription">{t('subscriptionTemplate')}</option>
@@ -250,14 +188,8 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
             </div>
 
             <div>
-              <label style={{
-                display: 'block',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#374151',
-                marginBottom: '6px'
-              }}>
-                {t('amountTemplate')} <span style={{ color: '#dc2626' }}>*</span>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                {t('amountTemplate')} <span className="text-red-600">*</span>
               </label>
               <input
                 type="number"
@@ -265,114 +197,58 @@ export function TemplateModal({ isOpen, onClose, onSuccess, editingTemplate }: T
                 step="1"
                 value={formData.amount}
                 onChange={(e) => handleInputChange('amount', e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: `1px solid ${errors.amount ? '#dc2626' : '#d1d5db'}`,
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  outline: 'none',
-                  boxSizing: 'border-box'
-                }}
+                className={`w-full px-3 py-2 text-sm outline-none rounded box-border ${
+                  errors.amount ? 'border border-red-600' : 'border border-gray-300'
+                }`}
                 placeholder={t('amountPlaceholder')}
               />
               {errors.amount && (
-                <span style={{ fontSize: '12px', color: '#dc2626', marginTop: '4px', display: 'block' }}>
+                <span className="text-xs text-red-600 mt-1 block">
                   {errors.amount}
                 </span>
               )}
             </div>
 
             <div>
-              <label style={{
-                display: 'block',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#374151',
-                marginBottom: '6px'
-              }}>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
                 {t('descriptionTemplate')}
               </label>
               <textarea
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 rows={3}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  outline: 'none',
-                  resize: 'vertical',
-                  boxSizing: 'border-box'
-                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded text-sm outline-none resize-y box-border"
                 placeholder={t('templateDescriptionPlaceholder')}
               />
             </div>
 
             <div>
-              <label style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#374151',
-                cursor: 'pointer'
-              }}>
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={formData.isActive}
                   onChange={(e) => handleInputChange('isActive', e.target.checked)}
-                  style={{
-                    width: '16px',
-                    height: '16px',
-                    cursor: 'pointer'
-                  }}
+                  className="w-4 h-4 cursor-pointer"
                 />
                 {editingTemplate ? t('active') : t('createAsActive')}
               </label>
             </div>
           </div>
 
-          <div style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            gap: '12px',
-            marginTop: '24px',
-            paddingTop: '20px',
-            borderTop: '1px solid #e5e7eb'
-          }}>
+          <div className="flex justify-end gap-3 mt-6 pt-5 border-t border-gray-200">
             <button
               type="button"
               onClick={onClose}
-              style={{
-                padding: '8px 16px',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#374151',
-                backgroundColor: 'white',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                cursor: 'pointer'
-              }}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded cursor-pointer"
             >
               {t('cancel')}
             </button>
             <button
               type="submit"
               disabled={loading}
-              style={{
-                padding: '8px 16px',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: 'white',
-                backgroundColor: loading ? '#9ca3af' : '#2563eb',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: loading ? 'not-allowed' : 'pointer'
-              }}
+              className={`px-4 py-2 text-sm font-medium text-white border-none rounded ${
+                loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 cursor-pointer'
+              }`}
             >
               {loading ? t('saving') : (editingTemplate ? t('update') : t('create'))}
             </button>

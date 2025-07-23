@@ -110,27 +110,6 @@ tmux send-keys -t crm-dev 'npm run dev' C-m
 
 This project has known issues with custom TailwindCSS classes (`text-heading`, `bg-primary-100`, etc.) due to TailwindCSS v4 and Next.js 15 compatibility problems.
 
-#### Solution: Use Inline Styles Only
-
-```tsx
-// ❌ Don't use TailwindCSS classes
-<div className="bg-primary-100 text-heading p-4">
-
-// ✅ Use inline styles instead
-<div style={{
-  backgroundColor: '#f1f5f9',
-  color: '#0f172a',
-  padding: '16px'
-}}>
-```
-
-### Styling Requirements
-
-1. **All Components** - Use inline styles exclusively
-2. **Hover Effects** - Implement with `onMouseEnter`/`onMouseLeave` handlers
-3. **Client Components** - Add `'use client'` directive when needed
-4. **Consistency** - Use standardized colors and sizes
-
 ### Recommended Color Palette
 
 ```css
@@ -183,40 +162,6 @@ const headerActions = (
 3. **Actions** - Primary operation buttons positioned at the right
 4. **Responsive** - Elements stack vertically on smaller screens
 
-#### Button Styling Standards
-
-**Secondary Button:**
-```tsx
-<button style={{
-  display: 'flex',
-  alignItems: 'center',
-  padding: '6px 12px',
-  fontSize: '14px',
-  fontWeight: '500',
-  color: '#374151',
-  backgroundColor: 'white',
-  border: '1px solid #d1d5db',
-  borderRadius: '6px',
-  cursor: 'pointer'
-}}>
-```
-
-**Primary Button:**
-```tsx
-<button style={{
-  display: 'flex',
-  alignItems: 'center',
-  padding: '6px 12px',
-  fontSize: '14px',
-  fontWeight: '500',
-  color: 'white',
-  backgroundColor: '#2563eb',
-  border: 'none',
-  borderRadius: '6px',
-  cursor: 'pointer'
-}}>
-```
-
 ### Responsive Design
 
 #### Breakpoints
@@ -234,20 +179,6 @@ const headerActions = (
 - **Header:** 16px font, 20px padding
 - **Navigation Items:** 14px font, 10px padding, 18px icons
 - **Item Spacing:** 4px between items
-
-### Content Area Standards
-
-#### Padding
-- **Desktop:** `24px`
-- **Mobile:** `16px`
-
-#### Cards and Tables
-```css
-background-color: white
-border: 1px solid #e2e8f0
-border-radius: 12px
-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1)
-```
 
 ---
 

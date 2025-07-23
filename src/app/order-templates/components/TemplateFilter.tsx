@@ -37,79 +37,31 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
   };
 
   return (
-    <div style={{
-      padding: '16px',
-      backgroundColor: 'white',
-      border: '1px solid #e2e8f0',
-      borderRadius: '8px',
-      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-      marginBottom: '16px'
-    }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        marginBottom: '16px'
-      }}>
-        <Filter size={18} style={{ color: '#6b7280' }} />
-        <h3 style={{
-          fontSize: '14px',
-          fontWeight: '500',
-          color: '#374151',
-          margin: 0
-        }}>
+    <div className="p-4 bg-white border border-slate-200 rounded-lg shadow-sm mb-4">
+      <div className="flex items-center gap-2 mb-4">
+        <Filter size={18} className="text-gray-500" />
+        <h3 className="text-sm font-medium text-gray-700 m-0">
           Filter & Search
         </h3>
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '12px',
-        alignItems: 'end'
-      }}>
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 items-end">
         {/* Multilingual search box */}
         <div>
-          <label style={{
-            display: 'block',
-            fontSize: '12px',
-            fontWeight: '500',
-            color: '#374151',
-            marginBottom: '4px'
-          }}>
+          <label className="block text-xs font-medium text-gray-700 mb-1">
             Template Search
           </label>
-          <div style={{ position: 'relative' }}>
+          <div className="relative">
             <Search 
               size={16} 
-              style={{
-                position: 'absolute',
-                left: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: '#9ca3af'
-              }}
+              className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400"
             />
             <input
               type="text"
               placeholder="Search by template name or description (Japanese・English)"
               value={filters.search}
               onChange={(e) => handleFilterUpdate('search', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '8px 8px 8px 32px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-                outline: 'none',
-                transition: 'border-color 0.2s'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#2563eb';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#d1d5db';
-              }}
+              className="w-full py-2 pr-2 pl-8 border border-gray-300 rounded text-sm outline-none transition-colors duration-200 focus:border-blue-600"
             />
           </div>
         </div>
@@ -117,28 +69,13 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
 
         {/* Payment type filter */}
         <div>
-          <label style={{
-            display: 'block',
-            fontSize: '12px',
-            fontWeight: '500',
-            color: '#374151',
-            marginBottom: '4px'
-          }}>
+          <label className="block text-xs font-medium text-gray-700 mb-1">
             Payment Type
           </label>
           <select
             value={filters.paymentType}
             onChange={(e) => handleFilterUpdate('paymentType', e.target.value)}
-            style={{
-              width: '100%',
-              padding: '8px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '14px',
-              backgroundColor: 'white',
-              outline: 'none',
-              cursor: 'pointer'
-            }}
+            className="w-full p-2 border border-gray-300 rounded text-sm bg-white outline-none cursor-pointer"
           >
             <option value="">All</option>
             <option value="onetime">One-time Payment</option>
@@ -148,28 +85,13 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
 
         {/* Active status filter */}
         <div>
-          <label style={{
-            display: 'block',
-            fontSize: '12px',
-            fontWeight: '500',
-            color: '#374151',
-            marginBottom: '4px'
-          }}>
+          <label className="block text-xs font-medium text-gray-700 mb-1">
             Status
           </label>
           <select
             value={filters.isActive}
             onChange={(e) => handleFilterUpdate('isActive', e.target.value)}
-            style={{
-              width: '100%',
-              padding: '8px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '14px',
-              backgroundColor: 'white',
-              outline: 'none',
-              cursor: 'pointer'
-            }}
+            className="w-full p-2 border border-gray-300 rounded text-sm bg-white outline-none cursor-pointer"
           >
             <option value="">All</option>
             <option value="true">Active</option>
@@ -181,23 +103,7 @@ export function TemplateFilter({ onFilterChange }: TemplateFilterProps) {
         <div>
           <button
             onClick={clearFilters}
-            style={{
-              padding: '8px 16px',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#374151',
-              backgroundColor: 'white',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f9fafb';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'white';
-            }}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded cursor-pointer transition-colors duration-200 hover:bg-gray-50"
           >
             Clear
           </button>

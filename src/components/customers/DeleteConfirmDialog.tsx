@@ -28,139 +28,55 @@ export function DeleteConfirmDialog({ isOpen, onClose, onConfirm, customerName }
 
   return (
     <div 
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 50
-      }}
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       onClick={onClose}
     >
       <div 
-        style={{
-          backgroundColor: 'white',
-          borderRadius: '12px',
-          width: '100%',
-          maxWidth: '400px',
-          margin: '16px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-        }}
+        className="bg-white rounded-xl w-full max-w-sm m-4 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '24px 24px 0 24px'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '32px',
-              height: '32px',
-              backgroundColor: '#fef2f2',
-              borderRadius: '50%'
-            }}>
-              <AlertTriangle style={{ height: '18px', width: '18px', color: '#dc2626' }} />
+        <div className="flex items-center justify-between px-6 pt-6">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-8 h-8 bg-red-50 rounded-full">
+              <AlertTriangle className="h-4.5 w-4.5 text-red-600" />
             </div>
-            <h2 style={{
-              fontSize: '15px',
-              fontWeight: '600',
-              color: '#0f172a'
-            }}>
+            <h2 className="text-sm font-semibold text-slate-900">
               Delete Customer
             </h2>
           </div>
           <button
             onClick={onClose}
-            style={{
-              padding: '4px',
-              backgroundColor: 'transparent',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f3f4f6';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
+            className="p-1 bg-transparent border-none rounded-md cursor-pointer transition-colors hover:bg-gray-100"
           >
-            <X style={{ height: '20px', width: '20px', color: '#6b7280' }} />
+            <X className="h-5 w-5 text-gray-500" />
           </button>
         </div>
 
         {/* Content */}
-        <div style={{ padding: '24px' }}>
-          <p style={{
-            fontSize: '14px',
-            color: '#6b7280',
-            marginBottom: '16px',
-            lineHeight: '1.5'
-          }}>
+        <div className="p-6">
+          <p className="text-sm text-gray-500 mb-4 leading-relaxed">
             Are you sure you want to delete <strong>{customerName}</strong>? 
             This action cannot be undone.
           </p>
 
-          <div style={{
-            padding: '12px',
-            backgroundColor: '#fef3cd',
-            borderRadius: '6px',
-            marginBottom: '24px'
-          }}>
-            <p style={{
-              fontSize: '12px',
-              color: '#92400e',
-              margin: 0,
-              lineHeight: '1.4'
-            }}>
+          <div className="p-3 bg-yellow-50 rounded-md mb-6">
+            <p className="text-xs text-yellow-800 m-0 leading-tight">
               <strong>Note:</strong> If this customer has related orders, the deletion will be prevented.
             </p>
           </div>
 
           {/* Actions */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            gap: '12px'
-          }}>
+          <div className="flex justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
               disabled={isDeleting}
-              style={{
-                padding: '8px 16px',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#374151',
-                backgroundColor: 'white',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                cursor: isDeleting ? 'not-allowed' : 'pointer',
-                opacity: isDeleting ? 0.6 : 1,
-                transition: 'background-color 0.2s'
-              }}
-              onMouseEnter={(e) => {
-                if (!isDeleting) {
-                  e.currentTarget.style.backgroundColor = '#f9fafb';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isDeleting) {
-                  e.currentTarget.style.backgroundColor = 'white';
-                }
-              }}
+              className={`px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md transition-colors ${
+                isDeleting 
+                  ? 'cursor-not-allowed opacity-60' 
+                  : 'cursor-pointer hover:bg-gray-50'
+              }`}
             >
               Cancel
             </button>
@@ -168,31 +84,13 @@ export function DeleteConfirmDialog({ isOpen, onClose, onConfirm, customerName }
               type="button"
               onClick={handleConfirm}
               disabled={isDeleting}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: '8px 16px',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: 'white',
-                backgroundColor: isDeleting ? '#9ca3af' : '#dc2626',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: isDeleting ? 'not-allowed' : 'pointer',
-                transition: 'background-color 0.2s'
-              }}
-              onMouseEnter={(e) => {
-                if (!isDeleting) {
-                  e.currentTarget.style.backgroundColor = '#b91c1c';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isDeleting) {
-                  e.currentTarget.style.backgroundColor = '#dc2626';
-                }
-              }}
+              className={`flex items-center px-4 py-2 text-sm font-medium text-white border-none rounded-md transition-colors ${
+                isDeleting 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-red-600 cursor-pointer hover:bg-red-700'
+              }`}
             >
-              <Trash2 style={{ height: '16px', width: '16px', marginRight: '8px' }} />
+              <Trash2 className="h-4 w-4 mr-2" />
               {isDeleting ? 'Deleting...' : 'Delete Customer'}
             </button>
           </div>

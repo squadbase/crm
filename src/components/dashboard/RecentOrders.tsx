@@ -24,165 +24,78 @@ export function RecentOrders({ orders: recentOrders, loading }: { orders: Order[
   }, []);
 
   return (
-    <div style={{ 
-      backgroundColor: 'white', 
-      border: '1px solid #e2e8f0', 
-      borderRadius: '8px', 
-      padding: '16px',
-      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' 
-    }}>
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between', 
-        marginBottom: '12px' 
-      }}>
-        <h3 style={{ 
-          fontSize: '15px', 
-          fontWeight: '600', 
-          color: '#0f172a' 
-        }}>{t('recentOrders')}</h3>
+    <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-semibold text-slate-900">{t('recentOrders')}</h3>
         <button 
           onClick={() => window.location.href = '/orders'}
-          style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            padding: '6px 10px', 
-            fontSize: '13px', 
-            fontWeight: '500',
-            color: '#374151',
-            backgroundColor: 'transparent',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer'
-          }}
+          className="flex items-center px-2.5 py-1.5 text-xs font-medium text-gray-700 bg-transparent border-none rounded-md cursor-pointer hover:bg-gray-50 transition-colors"
         >
-{t('viewAll')}
-          <ArrowUpRight style={{ height: '14px', width: '14px', marginLeft: '4px' }} />
+          {t('viewAll')}
+          <ArrowUpRight className="h-3.5 w-3.5 ml-1" />
         </button>
       </div>
       
       {loading ? (
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          padding: '40px 0' 
-        }}>
-          <div style={{
-            width: '32px',
-            height: '32px',
-            border: '3px solid #f3f4f6',
-            borderTop: '3px solid #2563eb',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }} />
+        <div className="flex justify-center items-center py-10">
+          <div className="w-8 h-8 border-2 border-gray-100 border-t-blue-600 rounded-full animate-spin" />
         </div>
       ) : recentOrders.length === 0 ? (
-        <div style={{ 
-          textAlign: 'center', 
-          padding: '40px 20px', 
-          color: '#6b7280' 
-        }}>
-          <p style={{ fontSize: '14px', margin: '0' }}>
+        <div className="text-center py-10 px-5 text-gray-500">
+          <p className="text-sm m-0">
             {t('noOrdersFound')}
           </p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="flex flex-col gap-3">
           {recentOrders.map((order) => (
           <div
             key={order.orderId}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '10px',
-              borderRadius: '8px',
-              border: '1px solid #e5e7eb',
-              transition: 'background-color 0.2s',
-              backgroundColor: 'transparent'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f9fafb';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
+            className="flex items-center justify-between p-2.5 rounded-lg border border-gray-200 transition-colors bg-transparent hover:bg-gray-50"
           >
-            <div style={{ flex: '1', minWidth: '0' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <p style={{ 
-                  fontWeight: '500', 
-                  fontSize: '13px', 
-                  color: '#0f172a',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap'
-                }}>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <p className="font-medium text-xs text-slate-900 m-0 overflow-hidden text-ellipsis whitespace-nowrap">
                   {order.customerName}
                 </p>
-                <span style={{
-                  fontSize: '11px',
-                  fontWeight: '500',
-                  padding: '2px 6px',
-                  borderRadius: '4px',
-                  backgroundColor: order.isPaid ? '#16a34a' : '#ef4444',
-                  color: 'white'
+                <span className="text-xs font-medium px-1.5 py-0.5 rounded text-white" style={{
+                  backgroundColor: order.isPaid ? '#059669' : '#ef4444'
                 }}>
-{order.isPaid ? t('paid') : t('unpaid')}
+                  {order.isPaid ? t('paid') : t('unpaid')}
                 </span>
               </div>
-              <p style={{ 
-                fontSize: '11px', 
-                color: '#6b7280', 
-                marginTop: '3px',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
-              }}>
+              <p className="text-xs text-gray-500 mt-0.5 mb-0 overflow-hidden text-ellipsis whitespace-nowrap">
                 {order.description}
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <CreditCard style={{ height: '11px', width: '11px', color: '#6b7280' }} />
-                  <span style={{ fontSize: '11px', color: '#6b7280' }}>
-{order.paymentType === 'subscription' ? t('subscription') : t('oneTime')}
+              <div className="flex items-center gap-1.5 mt-1.5">
+                <div className="flex items-center gap-1">
+                  <CreditCard className="h-3 w-3 text-gray-500" />
+                  <span className="text-xs text-gray-500">
+                    {order.paymentType === 'subscription' ? t('subscription') : t('oneTime')}
                   </span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Calendar style={{ height: '11px', width: '11px', color: '#6b7280' }} />
-                  <span style={{ fontSize: '11px', color: '#6b7280' }}>
-{order.salesStartDt ? (mounted ? formatDate(order.salesStartDt) : (() => {
-                        const date = new Date(order.salesStartDt);
-                        const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const day = String(date.getDate()).padStart(2, '0');
-                        return `${year}/${month}/${day}`;
-                      })()) : 'N/A'}
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3 text-gray-500" />
+                  <span className="text-xs text-gray-500">
+                    {order.salesStartDt ? (mounted ? formatDate(order.salesStartDt) : (() => {
+                      const date = new Date(order.salesStartDt);
+                      const year = date.getFullYear();
+                      const month = String(date.getMonth() + 1).padStart(2, '0');
+                      const day = String(date.getDate()).padStart(2, '0');
+                      return `${year}/${month}/${day}`;
+                    })()) : 'N/A'}
                   </span>
                 </div>
               </div>
             </div>
-            <div style={{ textAlign: 'right' }}>
-              <p style={{ 
-                fontSize: '13px', 
-                fontWeight: '600', 
-                color: '#0f172a' 
-              }}>
+            <div className="text-right">
+              <p className="text-xs font-semibold text-slate-900 m-0">
                 {formatCurrency(Number(order.amount))}
               </p>
-              <span style={{
-                fontSize: '11px',
-                fontWeight: '500',
-                padding: '2px 6px',
-                borderRadius: '4px',
-                backgroundColor: order.serviceType === 'product' ? '#2563eb' : '#64748b',
-                color: 'white',
-                marginTop: '4px',
-                display: 'inline-block'
+              <span className="text-xs font-medium px-1.5 py-0.5 rounded text-white mt-1 inline-block" style={{
+                backgroundColor: order.serviceType === 'product' ? '#2563eb' : '#64748b'
               }}>
-{order.serviceType === 'product' ? t('productService') : t('projectService')}
+                {order.serviceType === 'product' ? t('productService') : t('projectService')}
               </span>
             </div>
           </div>

@@ -150,26 +150,15 @@ export function CustomerManagement() {
   const headerActions = (
     <button 
       onClick={() => setIsCreateDialogOpen(true)}
-      style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        padding: '6px 12px', 
-        fontSize: '13px', 
-        fontWeight: '500',
-        color: 'white',
-        backgroundColor: '#2563eb',
-        border: 'none',
-        borderRadius: '6px',
-        cursor: 'pointer'
-      }}
+      className="flex items-center px-3 py-1.5 text-xs font-medium text-white bg-blue-600 border-none rounded-md cursor-pointer hover:bg-blue-700"
     >
-      <UserPlus style={{ height: '14px', width: '14px', marginRight: '6px' }} />
+      <UserPlus className="h-3.5 w-3.5 mr-1.5" />
       {t('addCustomer')}
     </button>
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div className="flex flex-col min-h-screen">
       <PageHeader
         title={t('customers')}
         description={t('customerManagement')}
@@ -177,9 +166,9 @@ export function CustomerManagement() {
       />
       
       {/* Main Content */}
-      <div style={{ flex: 1, padding: '16px', backgroundColor: 'white' }}>
+      <div className="flex-1 p-4 bg-white">
         {/* Search and Filters */}
-        <div style={{ marginBottom: '12px' }}>
+        <div className="mb-3">
           <SearchInput
             value={searchTerm}
             onChange={handleSearch}
@@ -189,17 +178,8 @@ export function CustomerManagement() {
 
         {/* Error Message */}
         {error && (
-          <div style={{
-            padding: '10px',
-            backgroundColor: '#fef2f2',
-            borderRadius: '6px',
-            marginBottom: '16px'
-          }}>
-            <p style={{
-              fontSize: '13px',
-              color: '#dc2626',
-              margin: 0
-            }}>
+          <div className="p-2.5 bg-red-50 rounded-md mb-4">
+            <p className="text-xs text-red-600 m-0">
               {error}
             </p>
           </div>
@@ -207,51 +187,23 @@ export function CustomerManagement() {
 
         {/* Loading State */}
         {loading ? (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '32px',
-            backgroundColor: 'white',
-            border: '1px solid #e2e8f0',
-            borderRadius: '8px'
-          }}>
-            <p style={{ fontSize: '13px', color: '#6b7280' }}>Loading customers...</p>
+          <div className="flex items-center justify-center p-8 bg-white border border-gray-200 rounded-lg">
+            <p className="text-xs text-gray-500">Loading customers...</p>
           </div>
         ) : customers.length === 0 ? (
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '32px',
-            backgroundColor: 'white',
-            border: '1px solid #e2e8f0',
-            borderRadius: '8px'
-          }}>
-            <p style={{ fontSize: '15px', fontWeight: '500', color: '#0f172a', marginBottom: '6px' }}>
+          <div className="flex flex-col items-center justify-center p-8 bg-white border border-gray-200 rounded-lg">
+            <p className="text-sm font-medium text-slate-900 mb-1.5">
               No customers found
             </p>
-            <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '12px' }}>
+            <p className="text-xs text-gray-500 mb-3">
               {searchTerm ? 'Try adjusting your search criteria.' : 'Get started by adding your first customer.'}
             </p>
             {!searchTerm && (
               <button 
                 onClick={() => setIsCreateDialogOpen(true)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '6px 12px',
-                  fontSize: '13px',
-                  fontWeight: '500',
-                  color: 'white',
-                  backgroundColor: '#2563eb',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer'
-                }}
+                className="flex items-center px-3 py-1.5 text-xs font-medium text-white bg-blue-600 border-none rounded-md cursor-pointer hover:bg-blue-700"
               >
-                <UserPlus style={{ height: '14px', width: '14px', marginRight: '6px' }} />
+                <UserPlus className="h-3.5 w-3.5 mr-1.5" />
                 Add Customer
               </button>
             )}

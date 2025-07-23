@@ -32,28 +32,21 @@ export default function SettingsPage() {
 
   if (isLoading) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: 'white' }}>
+      <div className="min-h-screen bg-white">
         <PageHeader
           title={t('settings')}
           description={t('settingsDescription')}
           actions={null}
         />
-        <div style={{ padding: '16px', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
-          <div style={{
-            width: '40px',
-            height: '40px',
-            border: '4px solid #f3f4f6',
-            borderTop: '4px solid #2563eb',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }} />
+        <div className="p-4 flex justify-center items-center h-[200px]">
+          <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'white' }}>
+    <div className="min-h-screen bg-white">
       <PageHeader
         title={t('settings')}
         description={t('settingsDescription')}
@@ -61,170 +54,67 @@ export default function SettingsPage() {
       />
 
       {/* Content */}
-      <div style={{ padding: '16px' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '20px',
-          maxWidth: '800px'
-        }}>
+      <div className="p-4">
+        <div className="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-5 max-w-[800px]">
 
           {/* Language Settings */}
-          <div style={{
-            backgroundColor: 'white',
-            border: '1px solid #e2e8f0',
-            borderRadius: '12px',
-            padding: '24px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              marginBottom: '16px'
-            }}>
-              <div style={{
-                height: '40px',
-                width: '40px',
-                backgroundColor: '#dbeafe',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <Globe style={{ height: '20px', width: '20px', color: '#2563eb' }} />
+          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                <Globe className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <h3 style={{
-                  fontSize: '15px',
-                  fontWeight: '600',
-                  color: '#0f172a',
-                  margin: '0 0 4px 0'
-                }}>
-{t('languageSettings')}
+                <h3 className="text-base font-semibold text-slate-900 mb-1">
+                  {t('languageSettings')}
                 </h3>
-                <p style={{
-                  fontSize: '14px',
-                  color: '#6b7280',
-                  margin: 0
-                }}>
-{t('systemDisplayLanguage')}
+                <p className="text-sm text-gray-500 m-0">
+                  {t('systemDisplayLanguage')}
                 </p>
               </div>
             </div>
 
-            <div style={{
-              padding: '16px',
-              backgroundColor: '#f8fafc',
-              borderRadius: '8px',
-              border: '1px solid #e2e8f0'
-            }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
-                <span style={{
-                  fontSize: '14px',
-                  color: '#374151',
-                  fontWeight: '500'
-                }}>
-{t('currentSettings')}:
+            <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-700 font-medium">
+                  {t('currentSettings')}:
                 </span>
-                <span style={{
-                  fontSize: '14px',
-                  color: '#0f172a',
-                  fontWeight: '600'
-                }}>
+                <span className="text-sm text-slate-900 font-semibold">
                   {languageDisplay[settings.language]}
                 </span>
               </div>
-              <div style={{
-                marginTop: '8px',
-                fontSize: '12px',
-                color: '#6b7280'
-              }}>
-{t('environmentVariable')}: LANGUAGE={settings.language}
+              <div className="mt-2 text-xs text-gray-500">
+                {t('environmentVariable')}: LANGUAGE={settings.language}
               </div>
             </div>
           </div>
 
           {/* Currency Settings */}
-          <div style={{
-            backgroundColor: 'white',
-            border: '1px solid #e2e8f0',
-            borderRadius: '12px',
-            padding: '24px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              marginBottom: '16px'
-            }}>
-              <div style={{
-                height: '40px',
-                width: '40px',
-                backgroundColor: '#dcfce7',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <DollarSign style={{ height: '20px', width: '20px', color: '#16a34a' }} />
+          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-10 w-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                <DollarSign className="h-5 w-5 text-emerald-600" />
               </div>
               <div>
-                <h3 style={{
-                  fontSize: '15px',
-                  fontWeight: '600',
-                  color: '#0f172a',
-                  margin: '0 0 4px 0'
-                }}>
-{t('currencySettings')}
+                <h3 className="text-base font-semibold text-slate-900 mb-1">
+                  {t('currencySettings')}
                 </h3>
-                <p style={{
-                  fontSize: '14px',
-                  color: '#6b7280',
-                  margin: 0
-                }}>
-{t('currencyDisplayUnit')}
+                <p className="text-sm text-gray-500 m-0">
+                  {t('currencyDisplayUnit')}
                 </p>
               </div>
             </div>
 
-            <div style={{
-              padding: '16px',
-              backgroundColor: '#f8fafc',
-              borderRadius: '8px',
-              border: '1px solid #e2e8f0'
-            }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
-                <span style={{
-                  fontSize: '14px',
-                  color: '#374151',
-                  fontWeight: '500'
-                }}>
-{t('currentSettings')}:
+            <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-700 font-medium">
+                  {t('currentSettings')}:
                 </span>
-                <span style={{
-                  fontSize: '14px',
-                  color: '#0f172a',
-                  fontWeight: '600'
-                }}>
+                <span className="text-sm text-slate-900 font-semibold">
                   {currencyDisplay[settings.currency]}
                 </span>
               </div>
-              <div style={{
-                marginTop: '8px',
-                fontSize: '12px',
-                color: '#6b7280'
-              }}>
-{t('environmentVariable')}: CURRENCY={settings.currency}
+              <div className="mt-2 text-xs text-gray-500">
+                {t('environmentVariable')}: CURRENCY={settings.currency}
               </div>
             </div>
           </div>
@@ -232,55 +122,22 @@ export default function SettingsPage() {
         </div>
 
         {/* Settings Change Instructions */}
-        <div style={{
-          marginTop: '32px',
-          padding: '20px',
-          backgroundColor: '#fef3c7',
-          border: '1px solid #f59e0b',
-          borderRadius: '8px',
-          maxWidth: '800px'
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            marginBottom: '8px'
-          }}>
-            <Settings style={{ height: '16px', width: '16px', color: '#d97706' }} />
-            <span style={{
-              fontSize: '14px',
-              fontWeight: '600',
-              color: '#92400e'
-            }}>
-{t('settingsChangeInfo')}
+        <div className="mt-8 p-5 bg-amber-100 border border-amber-500 rounded-lg max-w-[800px]">
+          <div className="flex items-center gap-2 mb-2">
+            <Settings className="h-4 w-4 text-amber-600" />
+            <span className="text-sm font-semibold text-amber-800">
+              {t('settingsChangeInfo')}
             </span>
           </div>
-          <p style={{
-            fontSize: '13px',
-            color: '#92400e',
-            margin: '0 0 8px 0',
-            lineHeight: '1.5'
-          }}>
-{t('settingsChangeDescription')}
+          <p className="text-sm text-amber-800 mb-2 leading-relaxed">
+            {t('settingsChangeDescription')}
           </p>
-          <div style={{
-            backgroundColor: '#fffbeb',
-            padding: '12px',
-            borderRadius: '4px',
-            fontFamily: 'monospace',
-            fontSize: '12px',
-            color: '#92400e',
-            border: '1px solid #fbbf24'
-          }}>
+          <div className="bg-amber-50 p-3 rounded border border-amber-400 font-mono text-xs text-amber-800">
             LANGUAGE=en # en, ja<br/>
             CURRENCY=usd # usd, jpy
           </div>
-          <p style={{
-            fontSize: '12px',
-            color: '#92400e',
-            margin: '8px 0 0 0'
-          }}>
-{t('restartRequired')}
+          <p className="text-xs text-amber-800 mt-2">
+            {t('restartRequired')}
           </p>
         </div>
       </div>

@@ -30,59 +30,21 @@ export function SubscriptionsFilter({ onFilterChange }: SubscriptionsFilterProps
   }, [searchValue, debouncedFilterChange]);
 
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: '12px',
-      marginBottom: '16px'
-    }}>
-      <div style={{ position: 'relative', width: '100%', maxWidth: '320px' }}>
-        <Search style={{ 
-          position: 'absolute', 
-          left: '10px', 
-          top: '50%', 
-          transform: 'translateY(-50%)', 
-          height: '14px', 
-          width: '14px', 
-          color: '#6b7280' 
-        }} />
+    <div className="flex items-center gap-3 mb-4">
+      <div className="relative w-full max-w-80">
+        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500" />
         <input
           type="text"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           placeholder={t('searchKeywordsPlaceholder')}
-          style={{
-            width: '100%',
-            paddingLeft: '32px',
-            paddingRight: '10px',
-            paddingTop: '6px',
-            paddingBottom: '6px',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            fontSize: '13px',
-            outline: 'none',
-            transition: 'border-color 0.2s'
-          }}
-          onFocus={(e) => {
-            e.currentTarget.style.borderColor = '#2563eb';
-          }}
-          onBlur={(e) => {
-            e.currentTarget.style.borderColor = '#d1d5db';
-          }}
+          className="w-full pl-8 pr-2.5 py-1.5 border border-gray-300 rounded-md text-sm outline-none transition-colors focus:border-blue-600"
         />
       </div>
       {searchValue && (
         <button
           onClick={() => setSearchValue('')}
-          style={{
-            padding: '6px 12px',
-            fontSize: '13px',
-            color: '#6b7280',
-            backgroundColor: 'transparent',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            cursor: 'pointer'
-          }}
+          className="px-3 py-1.5 text-sm text-gray-500 bg-transparent border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50"
         >
           {t('clear')}
         </button>

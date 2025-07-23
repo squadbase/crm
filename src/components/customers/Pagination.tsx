@@ -41,91 +41,42 @@ export function Pagination({ currentPage, totalPages, totalCount, onPageChange }
   const visiblePages = getVisiblePages();
 
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '16px',
-      borderTop: '1px solid #e5e7eb'
-    }}>
-      <p style={{
-        fontSize: '13px',
-        color: '#6b7280',
-        margin: 0
-      }}>
+    <div className="flex items-center justify-between p-4 border-t border-gray-200">
+      <p className="text-xs text-gray-500 m-0">
         Showing {((currentPage - 1) * 10) + 1} to {Math.min(currentPage * 10, totalCount)} of {totalCount} customers
       </p>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+      <div className="flex items-center gap-1">
         {/* Previous button */}
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: '6px 10px',
-            fontSize: '13px',
-            fontWeight: '500',
-            color: currentPage === 1 ? '#9ca3af' : '#374151',
-            backgroundColor: 'white',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-            transition: 'background-color 0.2s'
-          }}
-          onMouseEnter={(e) => {
-            if (currentPage !== 1) {
-              e.currentTarget.style.backgroundColor = '#f9fafb';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (currentPage !== 1) {
-              e.currentTarget.style.backgroundColor = 'white';
-            }
-          }}
+          className={`flex items-center px-2.5 py-1.5 text-xs font-medium bg-white border border-gray-300 rounded-md transition-colors ${
+            currentPage === 1 
+              ? 'text-gray-400 cursor-not-allowed' 
+              : 'text-gray-700 cursor-pointer hover:bg-gray-50'
+          }`}
         >
-          <ChevronLeft style={{ height: '14px', width: '14px', marginRight: '4px' }} />
+          <ChevronLeft className="h-3.5 w-3.5 mr-1" />
           Previous
         </button>
 
         {/* Page numbers */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '0 6px' }}>
+        <div className="flex items-center gap-1 mx-1.5">
           {visiblePages.map((page, index) => (
             page === '...' ? (
-              <span key={index} style={{
-                padding: '6px 10px',
-                fontSize: '13px',
-                color: '#9ca3af'
-              }}>
+              <span key={index} className="px-2.5 py-1.5 text-xs text-gray-400">
                 ...
               </span>
             ) : (
               <button
                 key={index}
                 onClick={() => onPageChange(Number(page))}
-                style={{
-                  padding: '6px 10px',
-                  fontSize: '13px',
-                  fontWeight: '500',
-                  color: currentPage === page ? 'white' : '#374151',
-                  backgroundColor: currentPage === page ? '#2563eb' : 'white',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.2s',
-                  minWidth: '32px'
-                }}
-                onMouseEnter={(e) => {
-                  if (currentPage !== page) {
-                    e.currentTarget.style.backgroundColor = '#f9fafb';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (currentPage !== page) {
-                    e.currentTarget.style.backgroundColor = 'white';
-                  }
-                }}
+                className={`px-2.5 py-1.5 text-xs font-medium border border-gray-300 rounded-md cursor-pointer transition-colors min-w-[32px] ${
+                  currentPage === page 
+                    ? 'text-white bg-blue-600' 
+                    : 'text-gray-700 bg-white hover:bg-gray-50'
+                }`}
               >
                 {page}
               </button>
@@ -137,32 +88,14 @@ export function Pagination({ currentPage, totalPages, totalCount, onPageChange }
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: '6px 10px',
-            fontSize: '13px',
-            fontWeight: '500',
-            color: currentPage === totalPages ? '#9ca3af' : '#374151',
-            backgroundColor: 'white',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-            transition: 'background-color 0.2s'
-          }}
-          onMouseEnter={(e) => {
-            if (currentPage !== totalPages) {
-              e.currentTarget.style.backgroundColor = '#f9fafb';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (currentPage !== totalPages) {
-              e.currentTarget.style.backgroundColor = 'white';
-            }
-          }}
+          className={`flex items-center px-2.5 py-1.5 text-xs font-medium bg-white border border-gray-300 rounded-md transition-colors ${
+            currentPage === totalPages 
+              ? 'text-gray-400 cursor-not-allowed' 
+              : 'text-gray-700 cursor-pointer hover:bg-gray-50'
+          }`}
         >
           Next
-          <ChevronRight style={{ height: '14px', width: '14px', marginLeft: '4px' }} />
+          <ChevronRight className="h-3.5 w-3.5 ml-1" />
         </button>
       </div>
     </div>

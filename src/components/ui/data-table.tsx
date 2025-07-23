@@ -39,29 +39,25 @@ export function DataTable<TData>({
   });
 
   return (
-    <div className={`rounded-card border border-line bg-white overflow-hidden ${className}`}>
+    <div className={`rounded-lg border border-gray-200 bg-white overflow-hidden ${className}`}>
       <div
         ref={parentRef}
-        className="relative overflow-auto"
-        style={{
-          height: '600px',
-        }}
+        className="relative overflow-auto h-[600px]"
       >
         <div
+          className="relative w-full"
           style={{
             height: `${virtualizer.getTotalSize()}px`,
-            width: '100%',
-            position: 'relative',
           }}
         >
-          <table className="w-full caption-bottom text-body">
-            <thead className="sticky top-0 bg-bg border-b border-line">
+          <table className="w-full caption-bottom text-sm">
+            <thead className="sticky top-0 bg-gray-50 border-b border-gray-200">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
-                      className="h-12 px-4 text-left align-middle font-semibold text-foreground text-small [&:has([role=checkbox])]:pr-0"
+                      className="h-12 px-4 text-left align-middle font-semibold text-gray-900 text-xs [&:has([role=checkbox])]:pr-0"
                     >
                       {header.isPlaceholder
                         ? null
@@ -85,13 +81,13 @@ export function DataTable<TData>({
                   transform: `translateY(${virtualRow.start}px)`,
                 }}
               >
-                <table className="w-full caption-bottom text-body">
+                <table className="w-full caption-bottom text-sm">
                   <tbody className="bg-white [&_tr:last-child]:border-0">
-                    <tr className="border-b border-line transition-colors hover:bg-bg/50 data-[state=selected]:bg-primary/5">
+                    <tr className="border-b border-gray-100 transition-colors hover:bg-gray-50/50 data-[state=selected]:bg-blue-50/50">
                       {row.getVisibleCells().map((cell) => (
                         <td
                           key={cell.id}
-                          className="px-4 py-3 align-middle text-foreground [&:has([role=checkbox])]:pr-0"
+                          className="px-4 py-3 align-middle text-gray-900 [&:has([role=checkbox])]:pr-0"
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>

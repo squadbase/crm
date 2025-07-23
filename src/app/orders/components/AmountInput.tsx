@@ -92,19 +92,28 @@ export function AmountInput({
         type="text"
         value={displayValue}
         onChange={handleChange}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
+        onFocus={(e) => {
+          handleFocus();
+          e.currentTarget.style.borderColor = '#2563eb';
+          e.currentTarget.style.boxShadow = '0 0 0 1px #2563eb';
+        }}
+        onBlur={(e) => {
+          handleBlur();
+          e.currentTarget.style.borderColor = '#d1d5db';
+          e.currentTarget.style.boxShadow = 'none';
+        }}
         placeholder={placeholder}
         required={required}
         style={{
           width: '100%',
           padding: '8px 12px',
-          paddingLeft: '30px',
+          paddingLeft: '28px',
           border: '1px solid #d1d5db',
           borderRadius: '6px',
           fontSize: '14px',
           backgroundColor: 'white',
           boxSizing: 'border-box',
+          outline: 'none',
           ...style
         }}
       />

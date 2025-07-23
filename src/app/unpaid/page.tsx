@@ -245,32 +245,16 @@ export default function UnpaidPaymentsPage() {
   };
 
   const headerActions = (
-    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+    <div className="flex gap-3 items-center">
       {selectedItems.size > 0 && (
-        <span style={{
-          fontSize: '14px',
-          color: '#6b7280',
-          fontWeight: '500'
-        }}>
+        <span className="text-sm text-gray-500 font-medium">
           {selectedItems.size} {t('selectedItemsCount')}
         </span>
       )}
 
       <button
         onClick={() => setShowCalculationModal(true)}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          padding: '6px 12px',
-          fontSize: '14px',
-          fontWeight: '500',
-          color: '#374151',
-          backgroundColor: 'white',
-          border: '1px solid #d1d5db',
-          borderRadius: '6px',
-          cursor: 'pointer'
-        }}
+        className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 cursor-pointer"
       >
         <Calculator size={16} />
         {t('calculateMonthly')}
@@ -279,20 +263,11 @@ export default function UnpaidPaymentsPage() {
       <button
         onClick={toggleSelectAll}
         disabled={!unpaidPayments || unpaidPayments.length === 0}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          padding: '6px 12px',
-          fontSize: '14px',
-          fontWeight: '500',
-          color: '#374151',
-          backgroundColor: 'white',
-          border: '1px solid #d1d5db',
-          borderRadius: '6px',
-          cursor: (!unpaidPayments || unpaidPayments.length === 0) ? 'not-allowed' : 'pointer',
-          opacity: (!unpaidPayments || unpaidPayments.length === 0) ? 0.5 : 1
-        }}
+        className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md ${
+          !unpaidPayments || unpaidPayments.length === 0 
+            ? 'cursor-not-allowed opacity-50' 
+            : 'hover:bg-gray-50 cursor-pointer'
+        }`}
       >
         {unpaidPayments && selectedItems.size === unpaidPayments.length ? t('clearSelection') : t('selectAll')}
       </button>
@@ -300,19 +275,11 @@ export default function UnpaidPaymentsPage() {
       <button
         onClick={markAsPaid}
         disabled={selectedItems.size === 0 || updating}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          padding: '6px 12px',
-          fontSize: '14px',
-          fontWeight: '500',
-          color: 'white',
-          backgroundColor: selectedItems.size === 0 || updating ? '#9ca3af' : '#059669',
-          border: 'none',
-          borderRadius: '6px',
-          cursor: selectedItems.size === 0 || updating ? 'not-allowed' : 'pointer'
-        }}
+        className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white rounded-md border-0 ${
+          selectedItems.size === 0 || updating 
+            ? 'bg-gray-400 cursor-not-allowed' 
+            : 'bg-emerald-600 hover:bg-emerald-700 cursor-pointer'
+        }`}
       >
         <Check size={16} />
         {updating ? t('updating') : t('markSelectedAsPaid')}
@@ -336,45 +303,27 @@ export default function UnpaidPaymentsPage() {
 
       {/* Monthly calculation modal */}
       {showCalculationModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '12px',
-            padding: '24px',
-            width: '400px',
-            maxWidth: '90vw',
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
-          }}>
-            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', margin: '0 0 16px 0' }}>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]">
+          <div className="bg-white rounded-xl p-6 w-96 max-w-[90vw] shadow-2xl">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
               {t('calculateMonthlyPayments')}
             </h3>
 
             {/* Range mode toggle */}
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#374151' }}>
+            <div className="mb-4">
+              <label className="flex items-center gap-2 text-sm text-gray-700">
                 <input
                   type="checkbox"
                   checked={isRangeMode}
                   onChange={(e) => setIsRangeMode(e.target.checked)}
-                  style={{ cursor: 'pointer' }}
+                  className="cursor-pointer"
                 />
                 {t('dateRange')}
               </label>
             </div>
 
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 {isRangeMode ? t('startYear') : t('year')}
               </label>
               <input
@@ -390,32 +339,18 @@ export default function UnpaidPaymentsPage() {
                 }}
                 min="2020"
                 max={currentYear}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  boxSizing: 'border-box'
-                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
               />
             </div>
 
-            <div style={{ marginBottom: isRangeMode ? '16px' : '24px' }}>
-              <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+            <div className={isRangeMode ? 'mb-4' : 'mb-6'}>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 {isRangeMode ? t('startMonth') : t('month')}
               </label>
               <select
                 value={calculationMonth}
                 onChange={(e) => setCalculationMonth(parseInt(e.target.value))}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  boxSizing: 'border-box'
-                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
               >
                 {Array.from({ length: calculationYear === currentYear ? currentMonth : 12 }, (_, i) => (
                   <option key={i + 1} value={i + 1}>
@@ -428,8 +363,8 @@ export default function UnpaidPaymentsPage() {
             {/* End date inputs (only shown in range mode) */}
             {isRangeMode && (
               <>
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     {t('endYear')}
                   </label>
                   <input
@@ -449,32 +384,18 @@ export default function UnpaidPaymentsPage() {
                     }}
                     min="2020"
                     max={currentYear}
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      boxSizing: 'border-box'
-                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                   />
                 </div>
 
-                <div style={{ marginBottom: '24px' }}>
-                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     {t('endMonth')}
                   </label>
                   <select
                     value={endMonth}
                     onChange={(e) => setEndMonth(parseInt(e.target.value))}
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      boxSizing: 'border-box'
-                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                   >
                     {Array.from({ length: endYear === currentYear ? currentMonth : 12 }, (_, i) => (
                       <option key={i + 1} value={i + 1}>
@@ -487,16 +408,8 @@ export default function UnpaidPaymentsPage() {
             )}
 
             {isSelectedDateInFuture && (
-              <div style={{
-                padding: '12px',
-                marginBottom: '16px',
-                backgroundColor: '#fef3c7',
-                border: '1px solid #f59e0b',
-                borderRadius: '6px',
-                fontSize: '14px',
-                color: '#92400e'
-              }}>
-{isRangeMode
+              <div className="p-3 mb-4 bg-amber-100 border border-amber-500 rounded-md text-sm text-amber-800">
+                {isRangeMode
                   ? t('futureMonthWarningRange')
                       .replace('{currentYear}', currentYear.toString())
                       .replace('{currentMonth}', currentMonth.toString())
@@ -506,40 +419,24 @@ export default function UnpaidPaymentsPage() {
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setShowCalculationModal(false)}
                 disabled={calculating}
-                style={{
-                  padding: '8px 16px',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  backgroundColor: 'white',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  cursor: calculating ? 'not-allowed' : 'pointer',
-                  opacity: calculating ? 0.5 : 1
-                }}
+                className={`px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md ${
+                  calculating ? 'cursor-not-allowed opacity-50' : 'hover:bg-gray-50 cursor-pointer'
+                }`}
               >
                 {t('cancel')}
               </button>
               <button
                 onClick={calculateMonthlyPayments}
                 disabled={calculating || isSelectedDateInFuture}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '8px 16px',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: 'white',
-                  backgroundColor: (calculating || isSelectedDateInFuture) ? '#9ca3af' : '#2563eb',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: (calculating || isSelectedDateInFuture) ? 'not-allowed' : 'pointer'
-                }}
+                className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white border-0 rounded-md ${
+                  calculating || isSelectedDateInFuture 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
+                }`}
               >
                 <Calculator size={16} />
                 {calculating ? t('calculating') : (isRangeMode ? t('calculateRange') : t('calculate'))}
@@ -549,7 +446,7 @@ export default function UnpaidPaymentsPage() {
         </div>
       )}
 
-      <div style={{ minHeight: '100vh', backgroundColor: 'white' }}>
+      <div className="min-h-screen bg-white">
       <PageHeader
         title={t('unpaidPayments')}
         description={t('unpaidPaymentsDescription')}
@@ -557,48 +454,38 @@ export default function UnpaidPaymentsPage() {
       />
 
       {/* Sync status indicator */}
-      <div style={{
-        margin: '0 24px 16px 24px',
-        backgroundColor: isSyncInProgress ? '#fef3c7' : '#f0f9ff',
-        border: `1px solid ${isSyncInProgress ? '#f59e0b' : '#0ea5e9'}`,
-        borderRadius: '8px',
-        padding: '12px 16px'
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          fontSize: '14px'
-        }}>
+      <div className={`mx-6 mb-4 rounded-lg p-3 ${
+        isSyncInProgress 
+          ? 'bg-amber-100 border border-amber-500' 
+          : 'bg-sky-50 border border-sky-500'
+      }`}>
+        <div className="flex items-center gap-3 text-sm">
           {isSyncInProgress ? (
             <>
               <RefreshCw
                 size={16}
-                style={{
-                  color: '#f59e0b',
-                  animation: 'spin 1s linear infinite'
-                }}
+                className="text-amber-500 animate-spin"
               />
-              <span style={{ color: '#92400e', fontWeight: '500' }}>
+              <span className="text-amber-800 font-medium">
                 {t('syncInProgress')}
               </span>
             </>
           ) : (
             <>
-              <Check size={16} style={{ color: '#0ea5e9' }} />
-              <div style={{ color: '#075985' }}>
-                <span style={{ fontWeight: '500' }}>{t('syncCompleted')}</span>
+              <Check size={16} className="text-sky-500" />
+              <div className="text-sky-800">
+                <span className="font-medium">{t('syncCompleted')}</span>
                 {lastSyncTime && (
-                  <span style={{ marginLeft: '8px', fontSize: '13px', opacity: 0.8 }}>
+                  <span className="ml-2 text-xs opacity-80">
                     {t('lastExecution')}: {lastSyncTime.toLocaleString()}
                   </span>
                 )}
               </div>
             </>
           )}
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Info size={14} style={{ color: '#6b7280' }} />
-            <span style={{ fontSize: '12px', color: '#6b7280' }}>
+          <div className="ml-auto flex items-center gap-2">
+            <Info size={14} className="text-gray-500" />
+            <span className="text-xs text-gray-500">
               {t('manualExecutionInfo')}
               {remainingCooldown > 0 && ` (${remainingCooldown}${t('minutesLater')})`}
             </span>
@@ -606,153 +493,71 @@ export default function UnpaidPaymentsPage() {
         </div>
       </div>
 
-      <div style={{ padding: '24px' }}>
+      <div className="p-6">
         {/* Summary card */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '16px',
-          marginBottom: '24px'
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            border: '1px solid #e2e8f0',
-            borderRadius: '12px',
-            padding: '20px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-              <Receipt size={20} style={{ color: '#ef4444' }} />
-              <span style={{ fontSize: '14px', fontWeight: '500', color: '#6b7280' }}>
+        <div className="grid grid-cols-[repeat(auto-fit,_minmax(200px,_1fr))] gap-4 mb-6">
+          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <Receipt size={20} className="text-red-500" />
+              <span className="text-sm font-medium text-gray-500">
                 {t('totalUnpaid')}
               </span>
             </div>
-            <div style={{ fontSize: '14px', fontWeight: '600', color: '#111827' }}>
+            <div className="text-sm font-semibold text-gray-900">
               {formatCurrency(totalAmount)}
             </div>
-            <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+            <div className="text-xs text-gray-500 mt-1">
               {unpaidPayments ? unpaidPayments.length : 0} items
             </div>
           </div>
         </div>
 
         {/* Table */}
-        <div style={{
-          backgroundColor: 'white',
-          border: '1px solid #e2e8f0',
-          borderRadius: '12px',
-          overflow: 'hidden',
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-        }}>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
           {loading ? (
-            <div style={{
-              padding: '48px',
-              textAlign: 'center',
-              color: '#6b7280'
-            }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                border: '4px solid #f3f4f6',
-                borderTop: '4px solid #2563eb',
-                borderRadius: '50%',
-                animation: 'spin 1s linear infinite',
-                margin: '0 auto 16px'
-              }} />
+            <div className="p-12 text-center text-gray-500">
+              <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4" />
               {t('loadingUnpaidPayments')}
             </div>
           ) : !unpaidPayments || unpaidPayments.length === 0 ? (
-            <div style={{
-              padding: '48px',
-              textAlign: 'center'
-            }}>
-              <Check size={48} style={{ color: '#10b981', margin: '0 auto 16px', display: 'block' }} />
-              <h3 style={{ fontSize: '15px', fontWeight: '600', color: '#111827', margin: '0 0 8px 0' }}>
+            <div className="p-12 text-center">
+              <Check size={48} className="text-emerald-500 mx-auto mb-4" />
+              <h3 className="text-base font-semibold text-gray-900 mb-2">
                 {t('noUnpaidPayments')}
               </h3>
-              <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+              <p className="text-sm text-gray-500">
                 {t('noUnpaidPaymentsDescription')}
               </p>
             </div>
           ) : (
-            <div style={{ overflow: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div className="overflow-auto">
+              <table className="w-full border-collapse">
                 <thead>
-                  <tr style={{ backgroundColor: '#f8fafc' }}>
-                    <th style={{
-                      padding: '12px 16px',
-                      textAlign: 'left',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: '#374151',
-                      borderBottom: '1px solid #e2e8f0',
-                      width: '40px'
-                    }}>
+                  <tr className="bg-slate-50">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 border-b border-slate-200 w-10">
                       <input
                         type="checkbox"
                         checked={unpaidPayments && unpaidPayments.length > 0 && selectedItems.size === unpaidPayments.length}
                         onChange={toggleSelectAll}
-                        style={{ cursor: 'pointer' }}
+                        className="cursor-pointer"
                       />
                     </th>
-                    <th style={{
-                      padding: '12px 16px',
-                      textAlign: 'left',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: '#374151',
-                      borderBottom: '1px solid #e2e8f0'
-                    }}>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 border-b border-slate-200">
                       {t('transactionType')}
                     </th>
-                    <th style={{
-                      padding: '12px 16px',
-                      textAlign: 'left',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: '#374151',
-                      borderBottom: '1px solid #e2e8f0'
-                    }}>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 border-b border-slate-200">
                       {t('customerName')}
                     </th>
-                    <th style={{
-                      padding: '12px 16px',
-                      textAlign: 'left',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: '#374151',
-                      borderBottom: '1px solid #e2e8f0'
-                    }}>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 border-b border-slate-200">
                       {t('description')}
                     </th>
-                    <th style={{
-                      padding: '12px 16px',
-                      textAlign: 'right',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: '#374151',
-                      borderBottom: '1px solid #e2e8f0'
-                    }}>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 border-b border-slate-200">
                       {t('amount')}
                     </th>
-                    <th style={{
-                      padding: '12px 16px',
-                      textAlign: 'left',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: '#374151',
-                      borderBottom: '1px solid #e2e8f0'
-                    }}>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 border-b border-slate-200">
                       {t('dueDate')}
                     </th>
-                    <th style={{
-                      padding: '12px 16px',
-                      textAlign: 'center',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: '#374151',
-                      borderBottom: '1px solid #e2e8f0'
-                    }}>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 border-b border-slate-200">
                       {t('daysPastDue')}
                     </th>
                   </tr>
@@ -765,85 +570,47 @@ export default function UnpaidPaymentsPage() {
                     return (
                       <tr
                         key={payment.id}
-                        style={{
-                          backgroundColor: isSelected ? '#f0f9ff' : 'white',
-                          borderBottom: '1px solid #f1f5f9'
-                        }}
+                        className={`border-b border-slate-100 ${
+                          isSelected ? 'bg-sky-50' : 'bg-white'
+                        }`}
                       >
-                        <td style={{ padding: '12px 16px' }}>
+                        <td className="px-4 py-3">
                           <input
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => toggleSelection(payment.id)}
-                            style={{ cursor: 'pointer' }}
+                            className="cursor-pointer"
                           />
                         </td>
-                        <td style={{ padding: '12px 16px' }}>
-                          <span style={{
-                            display: 'inline-block',
-                            padding: '2px 8px',
-                            fontSize: '12px',
-                            fontWeight: '500',
-                            borderRadius: '12px',
-                            backgroundColor: payment.type === 'onetime' ? '#fef3c7' : '#e0e7ff',
-                            color: payment.type === 'onetime' ? '#92400e' : '#3730a3'
-                          }}>
+                        <td className="px-4 py-3">
+                          <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded-full ${
+                            payment.type === 'onetime' 
+                              ? 'bg-amber-100 text-amber-800' 
+                              : 'bg-indigo-100 text-indigo-800'
+                          }`}>
                             {payment.type === 'onetime' ? t('onetime') : t('subscription')}
                           </span>
                         </td>
-                        <td style={{
-                          padding: '12px 16px',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          color: '#111827'
-                        }}>
+                        <td className="px-4 py-3 text-sm font-medium text-gray-900">
                           {payment.customerName}
                         </td>
-                        <td style={{
-                          padding: '12px 16px',
-                          fontSize: '14px',
-                          color: '#6b7280',
-                          maxWidth: '200px',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap'
-                        }}>
+                        <td className="px-4 py-3 text-sm text-gray-500 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
                           {payment.description || '-'}
                         </td>
-                        <td style={{
-                          padding: '12px 16px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          color: '#111827',
-                          textAlign: 'right'
-                        }}>
+                        <td className="px-4 py-3 text-sm font-semibold text-gray-900 text-right">
                           {formatCurrency(Number(payment.amount))}
                         </td>
-                        <td style={{
-                          padding: '12px 16px',
-                          fontSize: '14px',
-                          color: '#6b7280'
-                        }}>
+                        <td className="px-4 py-3 text-sm text-gray-500">
                           {formatDate(payment.dueDate)}
                         </td>
-                        <td style={{
-                          padding: '12px 16px',
-                          textAlign: 'center'
-                        }}>
-                          <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '4px'
-                          }}>
+                        <td className="px-4 py-3 text-center">
+                          <div className="flex items-center justify-center gap-1">
                             {daysPastDue > 0 && (
-                              <AlertCircle size={16} style={{ color: '#ef4444' }} />
+                              <AlertCircle size={16} className="text-red-500" />
                             )}
-                            <span style={{
-                              fontSize: '14px',
-                              fontWeight: '600',
-                              color: daysPastDue > 0 ? '#ef4444' : '#6b7280'
-                            }}>
+                            <span className={`text-sm font-semibold ${
+                              daysPastDue > 0 ? 'text-red-500' : 'text-gray-500'
+                            }`}>
                               {daysPastDue} days
                             </span>
                           </div>

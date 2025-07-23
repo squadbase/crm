@@ -28,16 +28,9 @@ interface TemplateTableProps {
 function StatusBadge({ isActive }: { isActive: boolean }) {
   const { t } = useClientI18n();
   return (
-    <span style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      padding: '2px 8px',
-      fontSize: '12px',
-      fontWeight: '500',
-      borderRadius: '9999px',
-      backgroundColor: isActive ? '#dcfce7' : '#fee2e2',
-      color: isActive ? '#166534' : '#991b1b'
-    }}>
+    <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${
+      isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+    }`}>
       {isActive ? t('active') : t('inactive')}
     </span>
   );
@@ -48,16 +41,9 @@ function PaymentTypeBadge({ paymentType }: { paymentType: 'onetime' | 'subscript
   const { t } = useClientI18n();
   const isSubscription = paymentType === 'subscription';
   return (
-    <span style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      padding: '2px 8px',
-      fontSize: '12px',
-      fontWeight: '500',
-      borderRadius: '9999px',
-      backgroundColor: isSubscription ? '#e0e7ff' : '#f3e8ff',
-      color: isSubscription ? '#3730a3' : '#6b21a8'
-    }}>
+    <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${
+      isSubscription ? 'bg-indigo-100 text-indigo-800' : 'bg-purple-100 text-purple-800'
+    }`}>
       {isSubscription ? t('subscriptionTemplate') : t('onetimeTemplate')}
     </span>
   );
@@ -77,31 +63,17 @@ export function TemplateTable({
   
   if (loading) {
     return (
-      <div style={{
-        padding: '40px',
-        textAlign: 'center',
-        backgroundColor: 'white',
-        border: '1px solid #e2e8f0',
-        borderRadius: '12px',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-      }}>
-        <div style={{ color: '#6b7280' }}>{t('loadingTemplates')}</div>
+      <div className="p-10 text-center bg-white border border-slate-200 rounded-xl shadow-sm">
+        <div className="text-gray-500">{t('loadingTemplates')}</div>
       </div>
     );
   }
 
   if (templates.length === 0) {
     return (
-      <div style={{
-        padding: '40px',
-        textAlign: 'center',
-        backgroundColor: 'white',
-        border: '1px solid #e2e8f0',
-        borderRadius: '12px',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-      }}>
-        <div style={{ color: '#6b7280', marginBottom: '8px' }}>{t('noTemplatesFound')}</div>
-        <div style={{ fontSize: '14px', color: '#9ca3af' }}>
+      <div className="p-10 text-center bg-white border border-slate-200 rounded-xl shadow-sm">
+        <div className="text-gray-500 mb-2">{t('noTemplatesFound')}</div>
+        <div className="text-sm text-gray-400">
           {t('noTemplatesFoundDescription')}
         </div>
       </div>
@@ -109,93 +81,30 @@ export function TemplateTable({
   }
 
   return (
-    <div style={{
-      backgroundColor: 'white',
-      border: '1px solid #e2e8f0',
-      borderRadius: '12px',
-      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-      overflow: 'hidden'
-    }}>
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ 
-          width: '100%', 
-          borderCollapse: 'collapse',
-          minWidth: '800px'
-        }}>
+    <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse min-w-[800px]">
           <thead>
-            <tr style={{ backgroundColor: '#f9fafb' }}>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'left',
-                fontSize: '12px',
-                fontWeight: '500',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
+            <tr className="bg-gray-50">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 border-b border-gray-200">
                 {t('templateName')}
               </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'left',
-                fontSize: '12px',
-                fontWeight: '500',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb',
-                minWidth: '140px',
-                whiteSpace: 'nowrap'
-              }}>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 border-b border-gray-200 min-w-[140px] whitespace-nowrap">
                 {t('paymentTypeTemplate')}
               </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'right',
-                fontSize: '12px',
-                fontWeight: '500',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
+              <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 border-b border-gray-200">
                 {t('amountTemplate')}
               </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'left',
-                fontSize: '12px',
-                fontWeight: '500',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 border-b border-gray-200">
                 {t('descriptionTemplate')}
               </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'center',
-                fontSize: '12px',
-                fontWeight: '500',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb',
-                minWidth: '140px',
-                whiteSpace: 'nowrap'
-              }}>
+              <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 border-b border-gray-200 min-w-[140px] whitespace-nowrap">
                 {t('statusTemplate')}
               </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'left',
-                fontSize: '12px',
-                fontWeight: '500',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 border-b border-gray-200">
                 {t('lastUpdatedTemplate')}
               </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'center',
-                fontSize: '12px',
-                fontWeight: '500',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
+              <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 border-b border-gray-200">
                 {t('actionsTemplate')}
               </th>
             </tr>
@@ -204,139 +113,56 @@ export function TemplateTable({
             {templates.map((template) => (
               <tr
                 key={template.templateId}
-                style={{
-                  backgroundColor: hoveredRow === template.templateId ? '#f9fafb' : 'white',
-                  transition: 'background-color 0.2s'
-                }}
+                className={`transition-colors duration-200 ${
+                  hoveredRow === template.templateId ? 'bg-gray-50' : 'bg-white'
+                }`}
                 onMouseEnter={() => setHoveredRow(template.templateId)}
                 onMouseLeave={() => setHoveredRow(null)}
               >
-                <td style={{
-                  padding: '12px 16px',
-                  borderBottom: '1px solid #f3f4f6',
-                  verticalAlign: 'middle'
-                }}>
-                  <div style={{
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    color: '#111827',
-                    marginBottom: '2px'
-                  }}>
+                <td className="px-4 py-3 border-b border-gray-100 align-middle">
+                  <div className="text-sm font-medium text-gray-900 mb-0.5">
                     {template.templateName}
                   </div>
                 </td>
-                <td style={{
-                  padding: '12px 16px',
-                  borderBottom: '1px solid #f3f4f6',
-                  verticalAlign: 'middle',
-                  minWidth: '140px',
-                  whiteSpace: 'nowrap'
-                }}>
+                <td className="px-4 py-3 border-b border-gray-100 align-middle min-w-[140px] whitespace-nowrap">
                   <PaymentTypeBadge paymentType={template.paymentType} />
                 </td>
-                <td style={{
-                  padding: '12px 16px',
-                  borderBottom: '1px solid #f3f4f6',
-                  textAlign: 'right',
-                  verticalAlign: 'middle'
-                }}>
-                  <span style={{
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#111827'
-                  }}>
+                <td className="px-4 py-3 border-b border-gray-100 text-right align-middle">
+                  <span className="text-sm font-semibold text-gray-900">
                     {formatCurrency(parseInt(template.amount))}
                   </span>
                 </td>
-                <td style={{
-                  padding: '12px 16px',
-                  borderBottom: '1px solid #f3f4f6',
-                  verticalAlign: 'middle'
-                }}>
-                  <div style={{
-                    fontSize: '14px',
-                    color: '#6b7280',
-                    maxWidth: '200px',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
-                  }}>
+                <td className="px-4 py-3 border-b border-gray-100 align-middle">
+                  <div className="text-sm text-gray-500 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
                     {template.description || '—'}
                   </div>
                 </td>
-                <td style={{
-                  padding: '12px 16px',
-                  borderBottom: '1px solid #f3f4f6',
-                  textAlign: 'center',
-                  verticalAlign: 'middle',
-                  minWidth: '140px',
-                  whiteSpace: 'nowrap'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <td className="px-4 py-3 border-b border-gray-100 text-center align-middle min-w-[140px] whitespace-nowrap">
+                  <div className="flex items-center justify-center gap-2">
                     <StatusBadge isActive={template.isActive} />
                     <button
                       onClick={() => onStatusToggle(template.templateId, !template.isActive)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        padding: '2px',
-                        display: 'flex',
-                        alignItems: 'center'
-                      }}
+                      className="bg-transparent border-none cursor-pointer p-0.5 flex items-center"
                       title={template.isActive ? t('deactivateTemplate') : t('activateTemplate')}
                     >
                       {template.isActive ? (
-                        <ToggleRight size={20} style={{ color: '#16a34a' }} />
+                        <ToggleRight size={20} className="text-green-600" />
                       ) : (
-                        <ToggleLeft size={20} style={{ color: '#9ca3af' }} />
+                        <ToggleLeft size={20} className="text-gray-400" />
                       )}
                     </button>
                   </div>
                 </td>
-                <td style={{
-                  padding: '12px 16px',
-                  borderBottom: '1px solid #f3f4f6',
-                  verticalAlign: 'middle'
-                }}>
-                  <span style={{
-                    fontSize: '14px',
-                    color: '#6b7280'
-                  }}>
+                <td className="px-4 py-3 border-b border-gray-100 align-middle">
+                  <span className="text-sm text-gray-500">
                     {formatDate(template.updatedAt)}
                   </span>
                 </td>
-                <td style={{
-                  padding: '12px 16px',
-                  borderBottom: '1px solid #f3f4f6',
-                  textAlign: 'center',
-                  verticalAlign: 'middle'
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '4px'
-                  }}>
+                <td className="px-4 py-3 border-b border-gray-100 text-center align-middle">
+                  <div className="flex items-center justify-center gap-1">
                     <button
                       onClick={() => onView(template)}
-                      style={{
-                        padding: '6px',
-                        background: 'none',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        color: '#6b7280',
-                        transition: 'all 0.2s'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#f3f4f6';
-                        e.currentTarget.style.color = '#2563eb';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = '#6b7280';
-                      }}
+                      className="p-1.5 bg-transparent border-none rounded cursor-pointer text-gray-500 transition-all duration-200 hover:bg-gray-100 hover:text-blue-600"
                       title={t('viewTemplate')}
                     >
                       <Eye size={16} />
@@ -345,28 +171,11 @@ export function TemplateTable({
                     <button
                       onClick={() => onUseTemplate(template)}
                       disabled={!template.isActive}
-                      style={{
-                        padding: '6px',
-                        background: 'none',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: template.isActive ? 'pointer' : 'not-allowed',
-                        color: template.isActive ? '#16a34a' : '#9ca3af',
-                        transition: 'all 0.2s',
-                        opacity: template.isActive ? 1 : 0.5
-                      }}
-                      onMouseEnter={(e) => {
-                        if (template.isActive) {
-                          e.currentTarget.style.backgroundColor = '#f3f4f6';
-                          e.currentTarget.style.color = '#15803d';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (template.isActive) {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = '#16a34a';
-                        }
-                      }}
+                      className={`p-1.5 bg-transparent border-none rounded transition-all duration-200 ${
+                        template.isActive
+                          ? 'cursor-pointer text-green-600 hover:bg-gray-100 hover:text-green-700'
+                          : 'cursor-not-allowed text-gray-400 opacity-50'
+                      }`}
                       title={t('useTemplate')}
                     >
                       <PlayCircle size={16} />
@@ -374,23 +183,7 @@ export function TemplateTable({
                     
                     <button
                       onClick={() => onEdit(template)}
-                      style={{
-                        padding: '6px',
-                        background: 'none',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        color: '#6b7280',
-                        transition: 'all 0.2s'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#f3f4f6';
-                        e.currentTarget.style.color = '#7c3aed';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = '#6b7280';
-                      }}
+                      className="p-1.5 bg-transparent border-none rounded cursor-pointer text-gray-500 transition-all duration-200 hover:bg-gray-100 hover:text-violet-600"
                       title={t('editTemplate')}
                     >
                       <Edit size={16} />
@@ -398,23 +191,7 @@ export function TemplateTable({
                     
                     <button
                       onClick={() => onDelete(template)}
-                      style={{
-                        padding: '6px',
-                        background: 'none',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        color: '#6b7280',
-                        transition: 'all 0.2s'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#f3f4f6';
-                        e.currentTarget.style.color = '#dc2626';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = '#6b7280';
-                      }}
+                      className="p-1.5 bg-transparent border-none rounded cursor-pointer text-gray-500 transition-all duration-200 hover:bg-gray-100 hover:text-red-600"
                       title={t('deleteTemplate')}
                     >
                       <Trash2 size={16} />

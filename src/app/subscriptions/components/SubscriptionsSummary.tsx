@@ -37,31 +37,10 @@ export function SubscriptionsSummary() {
 
   if (loading) {
     return (
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-        gap: '16px',
-        marginBottom: '20px'
-      }}>
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4 mb-5">
         {[1, 2, 3].map((i) => (
-          <div key={i} style={{
-            backgroundColor: 'white',
-            border: '1px solid #e2e8f0',
-            borderRadius: '12px',
-            padding: '20px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-            height: '100px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <div style={{
-              width: '60px',
-              height: '20px',
-              backgroundColor: '#f1f5f9',
-              borderRadius: '4px',
-              animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-            }} />
+          <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm h-25 flex items-center justify-center">
+            <div className="w-15 h-5 bg-slate-100 rounded animate-pulse" />
           </div>
         ))}
       </div>
@@ -89,35 +68,17 @@ export function SubscriptionsSummary() {
   ];
 
   return (
-    <div style={{ marginBottom: '20px' }}>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-        gap: '16px',
-        marginBottom: '20px'
-      }}>
+    <div className="mb-5">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4 mb-5">
         {summaryCards.map((card, index) => (
-          <div key={index} style={{
-            backgroundColor: 'white',
-            border: '1px solid #e2e8f0',
-            borderRadius: '12px',
-            padding: '20px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-          }}>
-            <div style={{
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#6b7280',
-              marginBottom: '8px'
-            }}>
+          <div key={index} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <div className="text-sm font-medium text-gray-500 mb-2">
               {card.title}
             </div>
-            <div style={{
-              fontSize: '24px',
-              fontWeight: '700',
-              color: card.color,
-              lineHeight: '1.2'
-            }}>
+            <div 
+              className="text-2xl font-bold leading-tight"
+              style={{ color: card.color }}
+            >
               {card.value}
             </div>
           </div>

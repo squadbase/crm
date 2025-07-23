@@ -166,19 +166,7 @@ export default function OrderTemplatesPage() {
   const headerActions = (
     <button
       onClick={handleAddTemplate}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        padding: '6px 12px',
-        fontSize: '13px',
-        fontWeight: '500',
-        color: 'white',
-        backgroundColor: '#2563eb',
-        border: 'none',
-        borderRadius: '6px',
-        cursor: 'pointer'
-      }}
+      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-blue-600 border-none rounded cursor-pointer"
     >
       <Plus size={16} />
       {t('addTemplate')}
@@ -186,24 +174,16 @@ export default function OrderTemplatesPage() {
   );
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      backgroundColor: 'white',
-      minHeight: '100vh'
-    }}>
+    <div className="flex flex-col bg-white min-h-screen">
       <PageHeader
         title={t('orderTemplates')}
         description={t('orderTemplateManagement')}
         actions={headerActions}
       />
 
-      <div style={{ 
-        padding: isMobile ? '12px 16px' : '16px 24px',
-        maxWidth: '1200px',
-        margin: '0 auto',
-        width: '100%'
-      }}>
+      <div className={`max-w-6xl mx-auto w-full ${
+        isMobile ? 'px-4 py-3' : 'px-6 py-4'
+      }`}>
         <TemplateTable
           templates={templates}
           loading={loading}
@@ -264,48 +244,29 @@ export default function OrderTemplatesPage() {
 
         {/* Pagination */}
         {pagination.totalPages > 1 && (
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: isMobile ? '4px' : '8px',
-            marginTop: '20px',
-            flexWrap: 'wrap'
-          }}>
+          <div className={`flex justify-center items-center mt-5 flex-wrap ${
+            isMobile ? 'gap-1' : 'gap-2'
+          }`}>
             <button
               onClick={() => setPagination(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
               disabled={pagination.page === 1}
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                backgroundColor: 'white',
-                cursor: pagination.page === 1 ? 'not-allowed' : 'pointer',
-                opacity: pagination.page === 1 ? 0.5 : 1
-              }}
+              className={`px-3 py-2 border border-gray-300 rounded bg-white ${
+                pagination.page === 1 ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+              }`}
             >
               {t('previous')}
             </button>
             
-            <span style={{
-              padding: '8px 16px',
-              fontSize: '14px',
-              color: '#374151'
-            }}>
+            <span className="px-4 py-2 text-sm text-gray-700">
               {pagination.page} / {pagination.totalPages}
             </span>
             
             <button
               onClick={() => setPagination(prev => ({ ...prev, page: Math.min(prev.totalPages, prev.page + 1) }))}
               disabled={pagination.page === pagination.totalPages}
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                backgroundColor: 'white',
-                cursor: pagination.page === pagination.totalPages ? 'not-allowed' : 'pointer',
-                opacity: pagination.page === pagination.totalPages ? 0.5 : 1
-              }}
+              className={`px-3 py-2 border border-gray-300 rounded bg-white ${
+                pagination.page === pagination.totalPages ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+              }`}
             >
               {t('next')}
             </button>

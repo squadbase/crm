@@ -21,126 +21,53 @@ export function CustomerList({ customers: customerStats, loading }: { customers:
   }, []);
 
   return (
-    <div style={{ 
-      backgroundColor: 'white', 
-      border: '1px solid #e2e8f0', 
-      borderRadius: '8px', 
-      padding: '16px',
-      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' 
-    }}>
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between', 
-        marginBottom: '12px' 
-      }}>
-        <h3 style={{ 
-          fontSize: '15px', 
-          fontWeight: '600', 
-          color: '#0f172a' 
-        }}>{t('topCustomers')}</h3>
+    <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-semibold text-slate-900">{t('topCustomers')}</h3>
         <button 
           onClick={() => window.location.href = '/customers'}
-          style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            padding: '6px 10px', 
-            fontSize: '13px', 
-            fontWeight: '500',
-            color: '#374151',
-            backgroundColor: 'transparent',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer'
-          }}
+          className="flex items-center px-2.5 py-1.5 text-xs font-medium text-gray-700 bg-transparent border-none rounded-md cursor-pointer hover:bg-gray-50 transition-colors"
         >
-{t('allCustomers')}
-          <ArrowUpRight style={{ height: '14px', width: '14px', marginLeft: '4px' }} />
+          {t('allCustomers')}
+          <ArrowUpRight className="h-3.5 w-3.5 ml-1" />
         </button>
       </div>
       
       {loading ? (
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          padding: '40px 0' 
-        }}>
-          <div style={{
-            width: '32px',
-            height: '32px',
-            border: '3px solid #f3f4f6',
-            borderTop: '3px solid #2563eb',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }} />
+        <div className="flex justify-center items-center py-10">
+          <div className="w-8 h-8 border-2 border-gray-100 border-t-blue-600 rounded-full animate-spin" />
         </div>
       ) : customerStats.length === 0 ? (
-        <div style={{ 
-          textAlign: 'center', 
-          padding: '40px 20px', 
-          color: '#6b7280' 
-        }}>
-          <p style={{ fontSize: '14px', margin: '0' }}>
+        <div className="text-center py-10 px-5 text-gray-500">
+          <p className="text-sm m-0">
             {t('noData')}
           </p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="flex flex-col gap-3">
           {customerStats.map((customer) => (
           <div
             key={customer.customerId}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '10px',
-              borderRadius: '8px',
-              border: '1px solid #e5e7eb',
-              transition: 'background-color 0.2s',
-              backgroundColor: 'transparent'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f9fafb';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
+            className="flex items-center justify-between p-2.5 rounded-lg border border-gray-200 transition-colors bg-transparent hover:bg-gray-50"
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                width: '28px', 
-                height: '28px', 
-                backgroundColor: '#dbeafe', 
-                borderRadius: '50%' 
-              }}>
-                <Building style={{ height: '14px', width: '14px', color: '#2563eb' }} />
+            <div className="flex items-center gap-2.5">
+              <div className="flex items-center justify-center w-7 h-7 bg-blue-50 rounded-full">
+                <Building className="h-3.5 w-3.5 text-blue-600" />
               </div>
-              <div style={{ flex: '1', minWidth: '0' }}>
-                <span style={{ 
-                  fontWeight: '500', 
-                  fontSize: '13px', 
-                  color: '#0f172a',
-                  display: 'block',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap'
-                }}>
+              <div className="flex-1 min-w-0">
+                <span className="font-medium text-xs text-slate-900 block overflow-hidden text-ellipsis whitespace-nowrap">
                   {customer.customerName}
                 </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '3px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <ShoppingBag style={{ height: '11px', width: '11px', color: '#6b7280' }} />
-                    <span style={{ fontSize: '11px', color: '#6b7280' }}>
+                <div className="flex items-center gap-3 mt-0.5">
+                  <div className="flex items-center gap-1">
+                    <ShoppingBag className="h-3 w-3 text-gray-500" />
+                    <span className="text-xs text-gray-500">
                       {customer.orderCount}{t('orders_unit')}
                     </span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Calendar style={{ height: '11px', width: '11px', color: '#6b7280' }} />
-                    <span style={{ fontSize: '11px', color: '#6b7280' }}>
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3 text-gray-500" />
+                    <span className="text-xs text-gray-500">
                       {mounted ? formatDate(customer.createdAt) : (() => {
                         const date = new Date(customer.createdAt);
                         const year = date.getFullYear();
@@ -153,18 +80,11 @@ export function CustomerList({ customers: customerStats, loading }: { customers:
                 </div>
               </div>
             </div>
-            <div style={{ textAlign: 'right' }}>
-              <p style={{ 
-                fontSize: '13px', 
-                fontWeight: '600', 
-                color: '#0f172a' 
-              }}>
+            <div className="text-right">
+              <p className="text-xs font-semibold text-slate-900 m-0">
                 {formatCurrency(customer.totalRevenue || 0)}
               </p>
-              <p style={{ 
-                fontSize: '11px', 
-                color: '#6b7280' 
-              }}>
+              <p className="text-xs text-gray-500 m-0">
                 {t('revenue')}
               </p>
             </div>

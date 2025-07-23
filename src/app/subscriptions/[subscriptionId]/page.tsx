@@ -364,32 +364,10 @@ export default function SubscriptionDetailPage({
   });
 
   const headerActions = (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: '12px'
-    }}>
+    <div className="flex items-center gap-3">
       <button
         onClick={handleBack}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          padding: '8px 16px',
-          fontSize: '14px',
-          fontWeight: '500',
-          color: '#374151',
-          backgroundColor: 'white',
-          border: '1px solid #d1d5db',
-          borderRadius: '6px',
-          cursor: 'pointer'
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = '#f9fafb';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = 'white';
-        }}
+        className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50"
       >
         <ArrowLeft size={16} />
         {t('back')}
@@ -399,50 +377,14 @@ export default function SubscriptionDetailPage({
         <>
           <button
             onClick={() => setShowAmountModal(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '8px 16px',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#374151',
-              backgroundColor: 'white',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              cursor: 'pointer'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f9fafb';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'white';
-            }}
+            className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50"
           >
             <DollarSign size={16} />
             {t('changeFee')}
           </button>
           <button
             onClick={() => setShowCancelModal(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '8px 16px',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#dc2626',
-              backgroundColor: 'white',
-              border: '1px solid #dc2626',
-              borderRadius: '6px',
-              cursor: 'pointer'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#fef2f2';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'white';
-            }}
+            className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-red-600 bg-white border border-red-600 rounded-md cursor-pointer hover:bg-red-50"
           >
             <X size={16} />
             {t('cancelSubscription')}
@@ -451,25 +393,7 @@ export default function SubscriptionDetailPage({
       ) : (
         <button
           onClick={() => setShowRestartModal(true)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '8px 16px',
-            fontSize: '14px',
-            fontWeight: '500',
-            color: '#059669',
-            backgroundColor: 'white',
-            border: '1px solid #059669',
-            borderRadius: '6px',
-            cursor: 'pointer'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#f0fdf4';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'white';
-          }}
+          className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-emerald-600 bg-white border border-emerald-600 rounded-md cursor-pointer hover:bg-emerald-50"
         >
           <Play size={16} />
           {t('restartSubscription')}
@@ -514,22 +438,11 @@ export default function SubscriptionDetailPage({
           description={t('errorLoadingSubscription')}
           actions={headerActions}
         />
-        <div style={{
-          padding: '40px',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontSize: '15px',
-            fontWeight: '600',
-            color: '#dc2626',
-            marginBottom: '8px'
-          }}>
+        <div className="py-10 px-10 text-center">
+          <div className="text-sm font-semibold text-red-600 mb-2">
             An error occurred
           </div>
-          <div style={{
-            fontSize: '14px',
-            color: '#6b7280'
-          }}>
+          <div className="text-sm text-gray-500">
             {error}
           </div>
         </div>
@@ -539,26 +452,14 @@ export default function SubscriptionDetailPage({
 
   if (!subscription) {
     return (
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: 'white'
-      }}>
+      <div className="flex flex-col bg-white">
         <PageHeader
           title={`${t('subscription')} - ${t('details')}`}
           description={t('subscriptionNotFound')}
           actions={headerActions}
         />
-        <div style={{
-          padding: '40px',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontSize: '15px',
-            fontWeight: '600',
-            color: '#111827',
-            marginBottom: '8px'
-          }}>
+        <div className="py-10 px-10 text-center">
+          <div className="text-sm font-semibold text-gray-900 mb-2">
             Subscription not found
           </div>
         </div>
@@ -567,87 +468,37 @@ export default function SubscriptionDetailPage({
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      backgroundColor: 'white'
-    }}>
+    <div className="flex flex-col bg-white">
       <PageHeader
         title={`${t('subscription')} - ${t('details')}`}
         description={`${t('subscriptionId')}: ${subscriptionId}`}
         actions={headerActions}
       />
 
-      <div style={{ padding: '24px' }}>
+      <div className="p-6">
         {/* Error message */}
         {error && (
-          <div style={{
-            backgroundColor: '#fef2f2',
-            border: '1px solid #fecaca',
-            borderRadius: '6px',
-            padding: '12px',
-            marginBottom: '20px'
-          }}>
-            <p style={{ color: '#dc2626', fontSize: '14px', margin: 0 }}>{error}</p>
+          <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-5">
+            <p className="text-red-600 text-sm m-0">{error}</p>
           </div>
         )}
 
         {/* Basic information */}
-        <div style={{
-          backgroundColor: 'white',
-          border: '1px solid #e2e8f0',
-          borderRadius: '12px',
-          padding: '24px',
-          marginBottom: '24px',
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-        }}>
-          <h3 style={{
-            fontSize: '15px',
-            fontWeight: '600',
-            color: '#0f172a',
-            marginBottom: '16px'
-          }}>
+        <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm">
+          <h3 className="text-sm font-semibold text-slate-900 mb-4">
             {t('basicInformation')}
           </h3>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '20px'
-          }}>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-5">
             {/* Customer information */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              padding: '16px',
-              backgroundColor: '#f8fafc',
-              borderRadius: '8px'
-            }}>
+            <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-lg">
               <User size={20} color="#2563eb" />
               <div>
-                <p style={{
-                  fontSize: '12px',
-                  color: '#6b7280',
-                  margin: '0 0 4px 0'
-                }}>
+                <p className="text-xs text-gray-500 m-0 mb-1">
                   {t('customer')}
                 </p>
-                <p style={{
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#2563eb',
-                  margin: 0,
-                  cursor: 'pointer',
-                  textDecoration: 'underline'
-                }}
+                <p className="text-sm font-medium text-blue-600 m-0 cursor-pointer underline hover:text-blue-800"
                   onClick={() => router.push(`/customers/${subscription.customerId}`)}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = '#1d4ed8';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = '#2563eb';
-                  }}
                 >
                   {subscription.customerName}
                 </p>
@@ -655,87 +506,43 @@ export default function SubscriptionDetailPage({
             </div>
 
             {/* Current monthly fee */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              padding: '16px',
-              backgroundColor: '#f0f9ff',
-              borderRadius: '8px'
-            }}>
+            <div className="flex items-center gap-3 p-4 bg-sky-50 rounded-lg">
               <DollarSign size={20} color="#0284c7" />
               <div>
-                <p style={{
-                  fontSize: '12px',
-                  color: '#6b7280',
-                  margin: '0 0 4px 0'
-                }}>
+                <p className="text-xs text-gray-500 m-0 mb-1">
                   {t('currentMonthlyFee')}
                 </p>
-                <p style={{
-                  fontSize: '15px',
-                  fontWeight: '600',
-                  color: '#0f172a',
-                  margin: 0
-                }}>
+                <p className="text-sm font-semibold text-slate-900 m-0">
                   {formatAmount(subscription.currentAmount)}
                 </p>
               </div>
             </div>
 
             {/* Status */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              padding: '16px',
-              backgroundColor: subscription.status === 'active' ? '#f0fdf4' : '#f3f4f6',
-              borderRadius: '8px'
-            }}>
+            <div className={`flex items-center gap-3 p-4 rounded-lg ${
+              subscription.status === 'active' ? 'bg-green-50' : 'bg-gray-100'
+            }`}>
               <CreditCard size={20} color={subscription.status === 'active' ? '#16a34a' : '#6b7280'} />
               <div>
-                <p style={{
-                  fontSize: '12px',
-                  color: '#6b7280',
-                  margin: '0 0 4px 0'
-                }}>
+                <p className="text-xs text-gray-500 m-0 mb-1">
                   {t('status')}
                 </p>
-                <p style={{
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: subscription.status === 'active' ? '#16a34a' : '#6b7280',
-                  margin: 0
-                }}>
+                <p className={`text-sm font-medium m-0 ${
+                  subscription.status === 'active' ? 'text-green-600' : 'text-gray-500'
+                }`}>
                   {subscription.status === 'active' ? t('active') : t('inactive')}
                 </p>
               </div>
             </div>
 
             {/* Created date */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              padding: '16px',
-              backgroundColor: '#fef9e7',
-              borderRadius: '8px'
-            }}>
+            <div className="flex items-center gap-3 p-4 bg-amber-50 rounded-lg">
               <Clock size={20} color="#d97706" />
               <div>
-                <p style={{
-                  fontSize: '12px',
-                  color: '#6b7280',
-                  margin: '0 0 4px 0'
-                }}>
+                <p className="text-xs text-gray-500 m-0 mb-1">
                   {t('created')}
                 </p>
-                <p style={{
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#0f172a',
-                  margin: 0
-                }}>
+                <p className="text-sm font-medium text-slate-900 m-0">
                   {formatDate(subscription.createdAt)}
                 </p>
               </div>
@@ -745,20 +552,8 @@ export default function SubscriptionDetailPage({
 
         {/* Description */}
         {subscription.description && (
-          <div style={{
-            backgroundColor: 'white',
-            border: '1px solid #e2e8f0',
-            borderRadius: '12px',
-            padding: '24px',
-            marginBottom: '24px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-          }}>
-            <h3 style={{
-              fontSize: '15px',
-              fontWeight: '600',
-              color: '#0f172a',
-              marginBottom: '16px'
-            }}>
+          <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm">
+            <h3 className="text-sm font-semibold text-slate-900 mb-4">
               {t('description')}
             </h3>
             <div style={{

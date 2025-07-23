@@ -25,161 +25,83 @@ export function AllCustomers({ customers: customerStats, onEdit, onDelete }: All
   const { t, formatCurrency, formatDate } = useClientI18n();
 
   return (
-    <div style={{ 
-      backgroundColor: 'white', 
-      border: '1px solid #e2e8f0', 
-      borderRadius: '8px', 
-      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' 
-    }}>
-      <div style={{ padding: '16px', borderBottom: '1px solid #e2e8f0' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#0f172a' }}>{t('allCustomers')}</h3>
-          <span style={{
-            fontSize: '11px',
-            fontWeight: '500',
-            padding: '3px 6px',
-            borderRadius: '4px',
-            backgroundColor: '#f1f5f9',
-            color: '#64748b'
-          }}>
+    <div className="bg-white border border-slate-200 rounded-lg shadow-sm">
+      <div className="p-4 border-b border-slate-200">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-semibold text-slate-900">{t('allCustomers')}</h3>
+          <span className="text-xs font-medium px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
             {customerStats.length}{t('people')}
           </span>
         </div>
       </div>
-      <div style={{ padding: '16px' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <div className="p-4">
+        <table className="w-full border-collapse">
           <thead>
-            <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
-              <th style={{ 
-                width: '300px', 
-                textAlign: 'left', 
-                padding: '8px 6px', 
-                fontSize: '13px', 
-                fontWeight: '500', 
-                color: '#6b7280' 
-              }}>{t('customerName')}</th>
+            <tr className="border-b border-slate-200">
+              <th className="w-[300px] text-left px-1.5 py-2 text-xs font-medium text-gray-500">{t('customerName')}</th>
               {typeof customerStats[0]?.onetimeRevenue !== 'undefined' && (
-                <th style={{ 
-                  textAlign: 'center', 
-                  padding: '8px 6px', 
-                  fontSize: '13px', 
-                  fontWeight: '500', 
-                  color: '#6b7280' 
-                }}>{t('onetimeRevenue')}</th>
+                <th className="text-center px-1.5 py-2 text-xs font-medium text-gray-500">{t('onetimeRevenue')}</th>
               )}
               {typeof customerStats[0]?.subscriptionRevenue !== 'undefined' && (
-                <th style={{ 
-                  textAlign: 'center', 
-                  padding: '8px 6px', 
-                  fontSize: '13px', 
-                  fontWeight: '500', 
-                  color: '#6b7280' 
-                }}>{t('subscriptionRevenue')}</th>
+                <th className="text-center px-1.5 py-2 text-xs font-medium text-gray-500">{t('subscriptionRevenue')}</th>
               )}
               {typeof customerStats[0]?.totalRevenue !== 'undefined' && (
-                <th style={{ 
-                  textAlign: 'center', 
-                  padding: '8px 6px', 
-                  fontSize: '13px', 
-                  fontWeight: '500', 
-                  color: '#6b7280' 
-                }}>{t('totalRevenue')}</th>
+                <th className="text-center px-1.5 py-2 text-xs font-medium text-gray-500">{t('totalRevenue')}</th>
               )}
               {typeof customerStats[0]?.lastOrderDate !== 'undefined' && (
-                <th style={{ 
-                  textAlign: 'center', 
-                  padding: '8px 6px', 
-                  fontSize: '13px', 
-                  fontWeight: '500', 
-                  color: '#6b7280' 
-                }}>{t('lastOrder')}</th>
+                <th className="text-center px-1.5 py-2 text-xs font-medium text-gray-500">{t('lastOrder')}</th>
               )}
-              <th style={{ 
-                textAlign: 'center', 
-                padding: '8px 6px', 
-                fontSize: '13px', 
-                fontWeight: '500', 
-                color: '#6b7280' 
-              }}>{t('created')}</th>
-              <th style={{ 
-                textAlign: 'right', 
-                padding: '8px 6px', 
-                fontSize: '13px', 
-                fontWeight: '500', 
-                color: '#6b7280' 
-              }}>{t('actions')}</th>
+              <th className="text-center px-1.5 py-2 text-xs font-medium text-gray-500">{t('created')}</th>
+              <th className="text-right px-1.5 py-2 text-xs font-medium text-gray-500">{t('actions')}</th>
             </tr>
           </thead>
           <tbody>
             {customerStats.map((customer) => (
-              <tr key={customer.customerId} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                <td style={{ padding: '8px 6px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center', 
-                      width: '32px', 
-                      height: '32px', 
-                      backgroundColor: '#dbeafe', 
-                      borderRadius: '50%' 
-                    }}>
-                      <Building style={{ height: '16px', width: '16px', color: '#2563eb' }} />
+              <tr key={customer.customerId} className="border-b border-slate-100">
+                <td className="px-1.5 py-2">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+                      <Building className="h-4 w-4 text-blue-600" />
                     </div>
                     <div>
                       <button
                         onClick={() => window.location.href = `/customers/${customer.customerId}`}
-                        style={{ 
-                          fontWeight: '500', 
-                          color: '#2563eb',
-                          fontSize: '13px',
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                          textDecoration: 'underline',
-                          padding: 0
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.color = '#1d4ed8';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.color = '#2563eb';
-                        }}
+                        className="font-medium text-blue-600 text-xs bg-none border-none cursor-pointer underline p-0 hover:text-blue-800"
                       >
                         {customer.customerName}
                       </button>
-                      <p style={{ fontSize: '11px', color: '#6b7280', margin: 0 }}>
+                      <p className="text-xs text-gray-500 m-0">
                         ID: {customer.customerId.slice(0, 8)}...
                       </p>
                     </div>
                   </div>
                 </td>
                 {typeof customer.onetimeRevenue !== 'undefined' && (
-                  <td style={{ padding: '12px 8px', textAlign: 'center' }}>
-                    <span style={{ fontWeight: '500' }}>
+                  <td className="px-2 py-3 text-center">
+                    <span className="font-medium">
                       {formatCurrency(customer.onetimeRevenue || 0)}
                     </span>
                   </td>
                 )}
                 {typeof customer.subscriptionRevenue !== 'undefined' && (
-                  <td style={{ padding: '12px 8px', textAlign: 'center' }}>
-                    <span style={{ fontWeight: '500' }}>
+                  <td className="px-2 py-3 text-center">
+                    <span className="font-medium">
                       {formatCurrency(customer.subscriptionRevenue || 0)}
                     </span>
                   </td>
                 )}
                 {typeof customer.totalRevenue !== 'undefined' && (
-                  <td style={{ padding: '12px 8px', textAlign: 'center' }}>
-                    <span style={{ fontWeight: '500' }}>
+                  <td className="px-2 py-3 text-center">
+                    <span className="font-medium">
                       {formatCurrency(customer.totalRevenue || 0)}
                     </span>
                   </td>
                 )}
                 {typeof customer.lastOrderDate !== 'undefined' && (
-                  <td style={{ padding: '12px 8px', textAlign: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                      <Calendar style={{ height: '14px', width: '14px', color: '#6b7280' }} />
-                      <span style={{ fontSize: '13px' }}>
+                  <td className="px-2 py-3 text-center">
+                    <div className="flex items-center justify-center gap-1">
+                      <Calendar className="h-3.5 w-3.5 text-gray-500" />
+                      <span className="text-xs">
                         {customer.lastOrderDate
                           ? formatDate(customer.lastOrderDate)
                           : '-'}
@@ -187,61 +109,27 @@ export function AllCustomers({ customers: customerStats, onEdit, onDelete }: All
                     </div>
                   </td>
                 )}
-                <td style={{ padding: '12px 8px', textAlign: 'center' }}>
-                  <span style={{ fontSize: '13px', color: '#6b7280' }}>
+                <td className="px-2 py-3 text-center">
+                  <span className="text-xs text-gray-500">
                     {formatDate(customer.createdAt)}
                   </span>
                 </td>
-                <td style={{ padding: '12px 8px', textAlign: 'right' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
+                <td className="px-2 py-3 text-right">
+                  <div className="flex items-center justify-end gap-1.5">
                     {onEdit && (
                       <button 
                         onClick={() => onEdit(customer)}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: '32px',
-                          height: '32px',
-                          borderRadius: '6px',
-                          backgroundColor: 'transparent',
-                          border: 'none',
-                          cursor: 'pointer',
-                          transition: 'background-color 0.2s'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = '#f3f4f6';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
+                        className="flex items-center justify-center w-8 h-8 rounded-md bg-transparent border-none cursor-pointer transition-colors hover:bg-gray-100"
                       >
-                        <Edit style={{ height: '14px', width: '14px', color: '#6b7280' }} />
+                        <Edit className="h-3.5 w-3.5 text-gray-500" />
                       </button>
                     )}
                     {onDelete && (
                       <button 
                         onClick={() => onDelete(customer)}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: '32px',
-                          height: '32px',
-                          borderRadius: '6px',
-                          backgroundColor: 'transparent',
-                          border: 'none',
-                          cursor: 'pointer',
-                          transition: 'background-color 0.2s'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = '#fef2f2';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
+                        className="flex items-center justify-center w-8 h-8 rounded-md bg-transparent border-none cursor-pointer transition-colors hover:bg-red-50"
                       >
-                        <Trash2 style={{ height: '14px', width: '14px', color: '#dc2626' }} />
+                        <Trash2 className="h-3.5 w-3.5 text-red-600" />
                       </button>
                     )}
                   </div>

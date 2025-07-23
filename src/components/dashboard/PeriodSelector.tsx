@@ -162,106 +162,43 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
   };
 
   return (
-    <div style={{
-      backgroundColor: 'white',
-      border: '1px solid #e2e8f0',
-      borderRadius: '12px',
-      padding: '20px',
-      marginBottom: '20px',
-      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-    }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: '16px'
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px'
-        }}>
-          <Calendar size={16} color="#6b7280" />
-          <h3 style={{
-            fontSize: '16px',
-            fontWeight: '600',
-            color: '#0f172a',
-            margin: 0
-          }}>
-{t('period')}
+    <div className="bg-white border border-gray-200 rounded-xl p-5 mb-5 shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Calendar size={16} className="text-gray-500" />
+          <h3 className="text-base font-semibold text-slate-900 m-0">
+            {t('period')}
           </h3>
         </div>
       </div>
 
       {/* Shortcut buttons */}
-      <div style={{
-        display: 'flex',
-        gap: '8px',
-        marginBottom: '16px',
-        flexWrap: 'wrap'
-      }}>
+      <div className="flex gap-2 mb-4 flex-wrap">
         <button
           onClick={() => setShortcutPeriod('halfYear')}
-          style={{
-            padding: '6px 12px',
-            fontSize: '12px',
-            fontWeight: '500',
-            color: '#374151',
-            backgroundColor: 'white',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            cursor: 'pointer'
-          }}
+          className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50 transition-colors"
         >
-{t('sixMonthsAgo')}
+          {t('sixMonthsAgo')}
         </button>
         <button
           onClick={() => setShortcutPeriod('oneYear')}
-          style={{
-            padding: '6px 12px',
-            fontSize: '12px',
-            fontWeight: '500',
-            color: '#374151',
-            backgroundColor: 'white',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            cursor: 'pointer'
-          }}
+          className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50 transition-colors"
         >
-{t('oneYearAgo')}
+          {t('oneYearAgo')}
         </button>
         <button
           onClick={() => setShortcutPeriod('all')}
-          style={{
-            padding: '6px 12px',
-            fontSize: '12px',
-            fontWeight: '500',
-            color: '#374151',
-            backgroundColor: 'white',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            cursor: 'pointer'
-          }}
+          className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50 transition-colors"
         >
-{t('allTime')}
+          {t('allTime')}
         </button>
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '16px'
-      }}>
+      <div className="grid grid-cols-2 gap-4">
         {/* Start date */}
-        <div style={{ minWidth: 0 }}>
-          <label style={{
-            display: 'block',
-            fontSize: '12px',
-            fontWeight: '500',
-            color: '#374151',
-            marginBottom: '6px'
-          }}>
-{t('startDate')}
+        <div className="min-w-0">
+          <label className="block text-xs font-medium text-gray-700 mb-1.5">
+            {t('startDate')}
           </label>
           <input
             type="date"
@@ -269,27 +206,14 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
             onChange={(e) => handlePeriodChange('startDate', e.target.value)}
             placeholder={t('dateFormatPlaceholder')}
             lang={getLanguage() === 'ja' ? 'ja' : 'en'}
-            style={{
-              width: '100%',
-              padding: '8px 10px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '12px',
-              boxSizing: 'border-box'
-            }}
+            className="w-full px-2.5 py-2 border border-gray-300 rounded-md text-xs box-border focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 
         {/* End date */}
-        <div style={{ minWidth: 0 }}>
-          <label style={{
-            display: 'block',
-            fontSize: '12px',
-            fontWeight: '500',
-            color: '#374151',
-            marginBottom: '6px'
-          }}>
-{t('endDate')}
+        <div className="min-w-0">
+          <label className="block text-xs font-medium text-gray-700 mb-1.5">
+            {t('endDate')}
           </label>
           <input
             type="date"
@@ -297,14 +221,7 @@ export function PeriodSelector({ onPeriodChange }: PeriodSelectorProps) {
             onChange={(e) => handlePeriodChange('endDate', e.target.value)}
             placeholder={t('dateFormatPlaceholder')}
             lang={getLanguage() === 'ja' ? 'ja' : 'en'}
-            style={{
-              width: '100%',
-              padding: '8px 10px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '12px',
-              boxSizing: 'border-box'
-            }}
+            className="w-full px-2.5 py-2 border border-gray-300 rounded-md text-xs box-border focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
       </div>

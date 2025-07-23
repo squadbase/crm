@@ -45,18 +45,8 @@ export function SubscriptionsTable({
 
   if (loading) {
     return (
-      <div style={{
-        backgroundColor: 'white',
-        border: '1px solid #e2e8f0',
-        borderRadius: '12px',
-        padding: '20px',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-        textAlign: 'center'
-      }}>
-        <div style={{
-          fontSize: '16px',
-          color: '#6b7280'
-        }}>
+      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm text-center">
+        <div className="text-base text-gray-500">
           {t('loadingSubscriptions')}
         </div>
       </div>
@@ -65,44 +55,16 @@ export function SubscriptionsTable({
 
   if (subscriptions.length === 0) {
     return (
-      <div style={{
-        backgroundColor: 'white',
-        border: '1px solid #e2e8f0',
-        borderRadius: '12px',
-        padding: '40px',
-        textAlign: 'center',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-      }}>
-        <div style={{
-          fontSize: '15px',
-          fontWeight: '600',
-          color: '#111827',
-          marginBottom: '8px'
-        }}>
+      <div className="bg-white border border-slate-200 rounded-xl p-10 text-center shadow-sm">
+        <div className="text-sm font-semibold text-gray-900 mb-2">
           {t('noSubscriptionsFound')}
         </div>
-        <div style={{
-          fontSize: '14px',
-          color: '#6b7280',
-          marginBottom: '20px'
-        }}>
+        <div className="text-sm text-gray-500 mb-5">
           {t('noSubscriptionsDescription')}
         </div>
         <button
           onClick={onCreateNew}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '8px 16px',
-            fontSize: '14px',
-            fontWeight: '500',
-            color: 'white',
-            backgroundColor: '#2563eb',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer'
-          }}
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-blue-600 border-0 rounded-md cursor-pointer hover:bg-blue-700"
         >
           <Plus size={16} />
           {t('createFirstSubscription')}
@@ -112,118 +74,41 @@ export function SubscriptionsTable({
   }
 
   return (
-    <div style={{
-      backgroundColor: 'white',
-      border: '1px solid #e2e8f0',
-      borderRadius: '12px',
-      overflow: 'hidden',
-      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-    }}>
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{
-          width: '100%',
-          borderCollapse: 'collapse'
-        }}>
+    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
           <thead>
-            <tr style={{ backgroundColor: '#f9fafb' }}>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'left',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
+            <tr className="bg-gray-50">
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-200">
                 {t('customerNameHeader')}
               </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'left',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b border-gray-200">
                 {t('serviceContent')}
               </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'right',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb',
-                position: 'relative'
-              }}>
+              <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 border-b border-gray-200 relative">
                 <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
+                  className="inline-flex items-center gap-1"
                   title={t('currentAndLatestFeeTooltip')}
                 >
                   {t('currentAndLatestFee')}
                 </div>
               </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'right',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
+              <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 border-b border-gray-200">
                 {t('totalPaid')}
               </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'right',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
+              <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 border-b border-gray-200">
                 {t('totalUnpaid')}
               </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'right',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
+              <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 border-b border-gray-200">
                 {t('totalFee')}
               </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'center',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
+              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-200">
                 {t('paymentStartDate')}
               </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'center',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
+              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-200">
                 {t('paymentEndDate')}
               </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'center',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#374151',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
+              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b border-gray-200">
                 {t('actions')}
               </th>
             </tr>
@@ -232,129 +117,46 @@ export function SubscriptionsTable({
             {subscriptions.map((subscription) => (
               <tr
                 key={subscription.subscriptionId}
-                style={{
-                  borderBottom: '1px solid #e5e7eb'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f9fafb';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
+                className="border-b border-gray-200 hover:bg-gray-50"
               >
-                <td style={{
-                  padding: '12px 16px',
-                  fontSize: '14px',
-                  color: '#111827'
-                }}>
+                <td className="px-4 py-3 text-sm text-gray-900">
                   {subscription.customerName}
                 </td>
-                <td style={{
-                  padding: '12px 16px',
-                  fontSize: '14px',
-                  color: '#6b7280'
-                }}>
+                <td className="px-4 py-3 text-sm text-gray-500">
                   {subscription.description || '-'}
                 </td>
-                <td style={{
-                  padding: '12px 16px',
-                  textAlign: 'right',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#111827'
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                    gap: '2px'
-                  }}>
-                    <div style={{
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      color: subscription.currentAmount > 0 ? '#111827' : '#6b7280'
-                    }}
+                <td className="px-4 py-3 text-right text-sm font-medium text-gray-900">
+                  <div className="flex flex-col items-end gap-0.5">
+                    <div className={`text-sm font-medium ${subscription.currentAmount > 0 ? 'text-gray-900' : 'text-gray-500'}`}
                     title={t('currentFeeTooltip')}>
                       {formatAmount(subscription.currentAmount)}
                     </div>
-                    <div style={{
-                      fontSize: '12px',
-                      color: '#6b7280',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '2px'
-                    }}
+                    <div className="text-xs text-gray-500 flex items-center gap-0.5"
                     title={t('latestFeeTooltip')}>
-                      <span style={{ fontSize: '10px' }}>{t('latestLabel')}</span>
+                      <span className="text-[10px]">{t('latestLabel')}</span>
                       {formatAmount(subscription.latestAmount)}
                     </div>
                   </div>
                 </td>
-                <td style={{
-                  padding: '12px 16px',
-                  textAlign: 'right',
-                  fontSize: '14px',
-                  color: '#059669'
-                }}>
+                <td className="px-4 py-3 text-right text-sm text-emerald-600">
                   {formatAmount(subscription.totalPaid)}
                 </td>
-                <td style={{
-                  padding: '12px 16px',
-                  textAlign: 'right',
-                  fontSize: '14px',
-                  color: '#dc2626'
-                }}>
+                <td className="px-4 py-3 text-right text-sm text-red-600">
                   {formatAmount(subscription.totalUnpaid)}
                 </td>
-                <td style={{
-                  padding: '12px 16px',
-                  textAlign: 'right',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#111827'
-                }}>
+                <td className="px-4 py-3 text-right text-sm font-medium text-gray-900">
                   {formatAmount(subscription.totalAmount)}
                 </td>
-                <td style={{
-                  padding: '12px 16px',
-                  textAlign: 'center',
-                  fontSize: '13px',
-                  color: '#6b7280'
-                }}>
+                <td className="px-4 py-3 text-center text-sm text-gray-500">
                   {subscription.startDate ? formatDateLocal(subscription.startDate) : '-'}
                 </td>
-                <td style={{
-                  padding: '12px 16px',
-                  textAlign: 'center',
-                  fontSize: '13px',
-                  color: '#6b7280'
-                }}>
+                <td className="px-4 py-3 text-center text-sm text-gray-500">
                   {subscription.endDate ? formatDateLocal(subscription.endDate) : t('continuing')}
                 </td>
-                <td style={{
-                  padding: '12px 16px',
-                  textAlign: 'center'
-                }}>
+                <td className="px-4 py-3 text-center">
                   <button
                     onClick={() => onView(subscription.subscriptionId)}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      padding: '4px 8px',
-                      fontSize: '12px',
-                      color: '#374151',
-                      backgroundColor: 'transparent',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '4px',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#f3f4f6';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }}
+                    className="inline-flex items-center gap-1 px-2 py-1 text-xs text-gray-700 bg-transparent border border-gray-300 rounded cursor-pointer hover:bg-gray-100"
                   >
                     <Eye size={12} />
                     {t('viewDetails')}

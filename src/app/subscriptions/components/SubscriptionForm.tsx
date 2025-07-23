@@ -183,97 +183,35 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
 
   return (
     <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-        padding: '16px'
-      }}
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000] p-4"
       onClick={handleOverlayClick}
     >
-      <div style={{
-        backgroundColor: 'white',
-        borderRadius: '12px',
-        padding: '24px',
-        width: '100%',
-        maxWidth: '600px',
-        maxHeight: '90vh',
-        overflowY: 'auto',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-      }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '24px'
-        }}>
-          <h2 style={{
-            fontSize: '18px',
-            fontWeight: '600',
-            color: '#0f172a',
-            margin: 0
-          }}>
+      <div className="bg-white rounded-xl p-6 w-full max-w-[600px] max-h-[90vh] overflow-y-auto shadow-xl">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-lg font-semibold text-slate-900 m-0">
             {t('newSubscription')}
           </h2>
           <button
             onClick={onClose}
-            style={{
-              padding: '8px',
-              border: 'none',
-              backgroundColor: 'transparent',
-              cursor: 'pointer',
-              borderRadius: '6px'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f3f4f6';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
+            className="p-2 border-0 bg-transparent cursor-pointer rounded-md hover:bg-gray-100"
           >
             <X size={20} color="#6b7280" />
           </button>
         </div>
 
         {error && (
-          <div style={{
-            backgroundColor: '#fef2f2',
-            border: '1px solid #fecaca',
-            borderRadius: '6px',
-            padding: '12px',
-            marginBottom: '20px'
-          }}>
-            <p style={{
-              color: '#dc2626',
-              fontSize: '14px',
-              margin: 0
-            }}>
+          <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-5">
+            <p className="text-red-600 text-sm m-0">
               {error}
             </p>
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
-          <div style={{
-            display: 'grid',
-            gap: '20px'
-          }}>
+          <div className="grid gap-5">
             {templates.length > 0 && (
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#374151',
-                  marginBottom: '6px'
-                }}>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
                   {t('planTemplate')}
                 </label>
                 <CustomSelect
@@ -291,14 +229,8 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
             )}
 
             <div>
-              <label style={{
-                display: 'block',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#374151',
-                marginBottom: '6px'
-              }}>
-                {t('customer')} <span style={{ color: '#dc2626' }}>*</span>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                {t('customer')} <span className="text-red-600">*</span>
               </label>
               <SearchableCustomerSelect
                 customers={customers}
@@ -310,14 +242,8 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
             </div>
 
             <div>
-              <label style={{
-                display: 'block',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#374151',
-                marginBottom: '6px'
-              }}>
-                {t('monthlyFeeRequired')} <span style={{ color: '#dc2626' }}>*</span>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                {t('monthlyFeeRequired')} <span className="text-red-600">*</span>
               </label>
               <AmountInput
                 value={formData.amount}
@@ -328,14 +254,8 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
             </div>
 
             <div>
-              <label style={{
-                display: 'block',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#374151',
-                marginBottom: '6px'
-              }}>
-                {t('startDateRequired')} <span style={{ color: '#dc2626' }}>*</span>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                {t('startDateRequired')} <span className="text-red-600">*</span>
               </label>
               <input
                 type="date"
@@ -344,96 +264,40 @@ export function SubscriptionForm({ isOpen, onClose, onSuccess }: SubscriptionFor
                 placeholder="開始日を選択"
                 lang={getLanguage() === 'ja' ? 'ja' : 'en'}
                 required
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  boxSizing: 'border-box'
-                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm box-border"
               />
             </div>
 
             <div>
-              <label style={{
-                display: 'block',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#374151',
-                marginBottom: '6px'
-              }}>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
                 {t('description')}
               </label>
               <textarea
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 rows={3}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm box-border resize-y"
                 placeholder={t('subscriptionDescriptionPlaceholder')}
               />
             </div>
           </div>
 
-          <div style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            gap: '12px',
-            marginTop: '32px'
-          }}>
+          <div className="flex justify-end gap-3 mt-8">
             <button
               type="button"
               onClick={onClose}
-              style={{
-                padding: '8px 16px',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: '#374151',
-                backgroundColor: 'white',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                cursor: 'pointer'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#f9fafb';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'white';
-              }}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50"
             >
               {t('cancel')}
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              style={{
-                padding: '8px 16px',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: 'white',
-                backgroundColor: isSubmitting ? '#9ca3af' : '#2563eb',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: isSubmitting ? 'not-allowed' : 'pointer'
-              }}
-              onMouseEnter={(e) => {
-                if (!isSubmitting) {
-                  e.currentTarget.style.backgroundColor = '#1d4ed8';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isSubmitting) {
-                  e.currentTarget.style.backgroundColor = '#2563eb';
-                }
-              }}
+              className={`px-4 py-2 text-sm font-medium text-white border-0 rounded-md ${
+                isSubmitting
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 cursor-pointer hover:bg-blue-700'
+              }`}
             >
               {isSubmitting ? t('creating') : t('create')}
             </button>

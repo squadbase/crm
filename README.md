@@ -1,6 +1,6 @@
-# Squadbase CRM
+<h1 align="center">Squadbase CRM</h1>
 
-An open-source Customer Relationship Management (CRM) system designed for easy deployment and customization with Claude Code.
+An open-source Customer Relationship Management (CRM) system designed for easy customization with Claude Code.
 
 ![Thumbnail](./assets/top.png)
 
@@ -21,6 +21,14 @@ PostgreSQL integrates with numerous ETL tools, making it easy to transfer data t
 Updates are as simple as updating the GitHub repository version. Your company data remains completely separate, so you can choose to stay on any version you prefer. No surprise price increases when AI features are added.
 
 The AI revolution is transforming CRM from something you configure to something everyone can build and freely customize. Let's embrace best practices instantly while maintaining self-hosted data and software freedom.
+
+## Features
+
+- Revenue analytics
+- Customer management
+- Order tracking
+- Subscription management
+- Unpaid management
 
 ## Deployment
 
@@ -83,51 +91,7 @@ CURRENCY=usd # Default: usd
 
 **Need additional language or currency support?** Please [open an issue](https://github.com/squadbase/crm/issues) to request new languages or currencies. We welcome community feedback and contributions!
 
-## Setup & Development
-
-This project is built with Next.js.
-
-```bash
-npm install
-```
-
-Start the local development server:
-
-```bash
-npm run dev
-```
-
-### Database
-
-The development environment uses docker-compose to install PostgreSQL. Use the following commands for database operations:
-
-```bash
-npm run db:up       # Start database
-npm run db:down     # Stop database
-npm run db:restart  # Restart database
-npm run db:migrate  # Run migrations
-npm run db:seed     # Insert seed data
-```
-
-### Using Claude Code
-
-Set up Claude Code to start using the system immediately.
-
-**MCP Servers in use:**
-- Playwright
-- Context7
-
-#### Claude Code Commands
-
-Use these custom slash commands to build databases following unified rules:
-
-```bash
-/project:db:spec    # Build database specifications (docs/database.md)
-/project:db:define  # Build database table definitions (src/lib/db/schema.ts)
-/project:db:migrate # Run migrations (drizzle-kit migrate)
-```
-
-## Technology Stack
+## Stack
 
 - **Next.js v15** - React framework with App Router
 - **TailwindCSS v4** - Utility-first CSS framework
@@ -135,17 +99,13 @@ Use these custom slash commands to build databases following unified rules:
 - **Drizzle ORM** - Type-safe database toolkit
 - **PostgreSQL** - Database
 
-## Features
-
-- Customer management
-- Order tracking
-- Subscription management
-- Revenue analytics
-- Multi-language support (English, Japanese, Spanish, French, Chinese, Korean)
-- Multi-currency support (USD, JPY, EUR, CNY, KRW)
-- Self-hosted deployment
-- Claude Code integration for easy customization
-
 ## License
 
-Apache License 2.0
+This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
+
+## Acknowledgments
+
+- [Squadbase](https://squadbase.dev/)
+- [Claude Code](https://www.anthropic.com/claude-code)
+- [Neon](https://neon.com/)
+

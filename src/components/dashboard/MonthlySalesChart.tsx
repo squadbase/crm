@@ -70,46 +70,19 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
 
   if (loading) {
     return (
-      <div style={{
-        backgroundColor: 'white',
-        border: '1px solid #e2e8f0',
-        borderRadius: '12px',
-        padding: '24px',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-        height: '400px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-        <div style={{
-          width: '40px',
-          height: '40px',
-          border: '4px solid #f3f4f6',
-          borderTop: '4px solid #2563eb',
-          borderRadius: '50%',
-          animation: 'spin 1s linear infinite'
-        }} />
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm h-96 flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-gray-100 border-t-blue-600 rounded-full animate-spin" />
       </div>
     );
   }
 
   if (!data || !data.monthlySales || data.monthlySales.length === 0) {
     return (
-      <div style={{
-        backgroundColor: 'white',
-        border: '1px solid #e2e8f0',
-        borderRadius: '12px',
-        padding: '24px',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-        height: '400px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-        <div style={{ textAlign: 'center', color: '#6b7280' }}>
-          <TrendingUp size={48} style={{ margin: '0 auto 16px', display: 'block' }} />
-          <p style={{ margin: 0, fontSize: '16px' }}>{t('noData')}</p>
-          <p style={{ margin: '8px 0 0', fontSize: '14px' }}>{t('noData')}</p>
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm h-96 flex items-center justify-center">
+        <div className="text-center text-gray-500">
+          <TrendingUp size={48} className="mx-auto mb-4 block" />
+          <p className="m-0 text-base">{t('noData')}</p>
+          <p className="mt-2 mb-0 text-sm">{t('noData')}</p>
         </div>
       </div>
     );
@@ -178,95 +151,53 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
   };
 
   return (
-    <div style={{
-      backgroundColor: 'white',
-      border: '1px solid #e2e8f0',
-      borderRadius: '12px',
-      padding: '24px',
-      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-    }}>
+    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
       {/* Header */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: '20px'
-      }}>
+      <div className="flex items-center justify-between mb-5">
         <div>
-          <h3 style={{
-            fontSize: '15px',
-            fontWeight: '600',
-            color: '#0f172a',
-            margin: '0 0 4px 0'
-          }}>
+          <h3 className="text-sm font-semibold text-slate-900 m-0 mb-1">
             {t('monthlySales')}
           </h3>
-          <p style={{
-            fontSize: '14px',
-            color: '#6b7280',
-            margin: 0
-          }}>
+          <p className="text-sm text-gray-500 m-0">
             {t('monthlySalesDescription')}
           </p>
         </div>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '20px'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{
-              width: '12px',
-              height: '12px',
-              backgroundColor: '#f97316',
-              borderRadius: '2px'
-            }} />
-            <span style={{ fontSize: '12px', color: '#374151' }}>{t('onetime')}</span>
+        <div className="flex items-center gap-5">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-orange-500 rounded-sm" />
+            <span className="text-xs text-gray-700">{t('onetime')}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{
-              width: '12px',
-              height: '12px',
-              backgroundColor: '#8b5cf6',
-              borderRadius: '2px'
-            }} />
-            <span style={{ fontSize: '12px', color: '#374151' }}>{t('subscription')}</span>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-violet-500 rounded-sm" />
+            <span className="text-xs text-gray-700">{t('subscription')}</span>
           </div>
         </div>
       </div>
 
       {/* Summary */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-        gap: '16px',
-        marginBottom: '24px',
-        padding: '16px',
-        backgroundColor: '#f8fafc',
-        borderRadius: '8px'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 4px 0' }}>{t('total')}</p>
-          <p style={{ fontSize: '14px', fontWeight: '600', color: '#2563eb', margin: 0 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 p-4 bg-slate-50 rounded-lg">
+        <div className="text-center">
+          <p className="text-xs text-gray-500 m-0 mb-1">{t('total')}</p>
+          <p className="text-sm font-semibold text-blue-600 m-0">
             {formatCurrency(summary.totalPeriodSales)}
           </p>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 4px 0' }}>{t('onetime')}</p>
-          <p style={{ fontSize: '14px', fontWeight: '600', color: '#f97316', margin: 0 }}>
+        <div className="text-center">
+          <p className="text-xs text-gray-500 m-0 mb-1">{t('onetime')}</p>
+          <p className="text-sm font-semibold text-orange-500 m-0">
             {formatCurrency(summary.totalOnetimeSales)}
           </p>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 4px 0' }}>{t('subscription')}</p>
-          <p style={{ fontSize: '14px', fontWeight: '600', color: '#8b5cf6', margin: 0 }}>
+        <div className="text-center">
+          <p className="text-xs text-gray-500 m-0 mb-1">{t('subscription')}</p>
+          <p className="text-sm font-semibold text-violet-500 m-0">
             {formatCurrency(summary.totalSubscriptionSales)}
           </p>
         </div>
       </div>
 
       {/* Graph */}
-      <div style={{ overflowX: 'auto', position: 'relative', width: '100%' }}>
+      <div className="overflow-x-auto relative w-full">
         <svg width="100%" height={chartHeight} style={{ display: 'block', minWidth: `${dynamicWidth}px` }} viewBox={`0 0 ${dynamicWidth} 350`} preserveAspectRatio="none">
           {/* Background grid */}
           <defs>
@@ -390,34 +321,24 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
         {/* Tooltip */}
         {hoveredBar && (
           <div
+            className="absolute bg-black/80 text-white px-3 py-2 rounded-md text-xs whitespace-nowrap pointer-events-none z-[1000] shadow-lg transform -translate-x-1/2"
             style={{
-              position: 'absolute',
               top: hoveredBar.barType === 'onetime' 
                 ? getBarY(monthlySales[hoveredBar.monthIndex]?.onetimeAmount || 0) - 80
                 : getBarY(monthlySales[hoveredBar.monthIndex]?.totalAmount || 0) + getBarHeight(monthlySales[hoveredBar.monthIndex]?.subscriptionAmount || 0) / 2 - 30,
               left: getBarX(hoveredBar.monthIndex) + barWidth / 2,
-              transform: 'translateX(-50%)',
-              backgroundColor: 'rgba(0, 0, 0, 0.8)',
-              color: 'white',
-              padding: '8px 12px',
-              borderRadius: '6px',
-              fontSize: '12px',
-              whiteSpace: 'nowrap',
-              pointerEvents: 'none',
-              zIndex: 1000,
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
             }}
           >
             {(() => {
               const tooltip = getTooltipContent(monthlySales[hoveredBar.monthIndex], hoveredBar.barType);
               return (
                 <div>
-                  <div style={{ marginBottom: '4px', fontWeight: '600' }}>{tooltip.month}</div>
-                  <div style={{ marginBottom: '2px' }}>
-                    <span style={{ marginRight: '8px' }}>{tooltip.label}:</span>
-                    <span style={{ fontWeight: '600' }}>{tooltip.value}</span>
+                  <div className="mb-1 font-semibold">{tooltip.month}</div>
+                  <div className="mb-0.5">
+                    <span className="mr-2">{tooltip.label}:</span>
+                    <span className="font-semibold">{tooltip.value}</span>
                   </div>
-                  <div style={{ fontSize: '11px', color: '#e5e7eb' }}>
+                  <div className="text-xs text-gray-300">
                     <span>Total: {tooltip.total}</span>
                   </div>
                 </div>
