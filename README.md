@@ -22,7 +22,7 @@ Result: zero license fees, total data control, and a CRM that fits your business
 
 Deploy your own Squadbase CRM instance with a single click. Squadbase automatically provides authentication and access control for secure CRM operations. You can start using it for free if you have less than 5 members.
 
-[![Deploy to Squadbase](https://app.squadbase.dev/button.svg)](https://app.squadbase.dev/new/clone?repository-url=https://github.com/squadbase/crm?env-vars=POSTGRES_HOST,POSTGRES_PORT,POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DATABASE,LANGUAGE,CURRENCY)
+[![Deploy to Squadbase](https://app.squadbase.dev/button.svg)](https://app.squadbase.dev/new/clone?repository-url=https://github.com/squadbase/crm?env-var-keys=POSTGRES_HOST,POSTGRES_PORT,POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DATABASE,LANGUAGE,CURRENCY)
 
 #### PostgreSQL Setup
 
