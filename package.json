@@ -1,7 +1,7 @@
 {
-  "name": "crm",
+  "name": "squadbase-crm",
   "version": "0.1.0",
-  "private": true,
+  "description": "Open-source customizable CRM with Claude Code",
   "scripts": {
     "dev": "next dev --turbopack -p 7777",
     "build": "drizzle-kit migrate && next build",
