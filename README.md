@@ -10,7 +10,7 @@ CRM systems are essential software tools for any business, yet they are often ex
 
 That's why we built an open-source, self-hostable CRM system that puts you in control of your data and operations.
 
-### The AI Revolution
+### Claude Code & Build over Buy
 
 Claude Code has made it possible to instantly develop and customize rich applications regardless of your technical stack. Squadbase CRM is designed not only for immediate deployment but also for easy customization using Claude Code, allowing anyone familiar with any technology stack to adapt it to their needs.
 
@@ -50,8 +50,6 @@ Please configure the following IP addresses:
 
 After deployment, check the Allow IPs screen and add them to your PostgreSQL IP address whitelist.
 [Details here.](https://www.squadbase.dev/en/docs/features/fixed-ip-addresses)
-
-![Deployment Environment](https://www.squadbase.dev/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fdoc_fixed_ip_address.9aca05ba.png&w=1080&q=75&dpl=dpl_7r2P88SXW6uFSJiGPEdJaaj2Pma5)
 
 ### Environment Variables
 
