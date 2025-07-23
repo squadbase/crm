@@ -76,9 +76,9 @@ We have a [Roadmap](./docs/roadmap.md) for the future features. Feedback and fea
 - **Drizzle ORM** - Database toolkit
 - **PostgreSQL** - Database
 
-## Acknowledgments
+## Recommended Tools to Use Together
 
-- Deploy on [Squadbase](https://squadbase.dev/) with Authentication and Access Control.
+- Deploy on [Squadbase](https://squadbase.dev/) for Authentication and Access Control.
 - Host PostgreSQL on [Neon](https://neon.com/) for easy deployment.
 - Build with [Claude Code](https://www.anthropic.com/claude-code) for AI-powered customization.
 
