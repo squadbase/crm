@@ -372,7 +372,7 @@ export function CustomerDetail({ customerId }: CustomerDetailProps) {
                     </thead>
                     <tbody>
                       {(data.subscriptions || []).filter(sub => sub && sub.year && sub.month && sub.amount).map((subscription, index) => (
-                        <tr key={`${subscription.subscriptionId}-${subscription.year}-${subscription.month}-${subscription.paidCreatedAt || index}`} className="border-b border-slate-100">
+                        <tr key={`${subscription.subscriptionId}-${subscription.year}-${subscription.month}-${subscription.paidCreatedAt || 'na'}-${index}`} className="border-b border-slate-100">
                           <td className="py-3 px-1.5">
                             <div>
                               <p 

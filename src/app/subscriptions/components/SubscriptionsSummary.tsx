@@ -39,7 +39,7 @@ export function SubscriptionsSummary() {
     return (
       <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4 mb-5">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm h-25 flex items-center justify-center">
+          <div key={`loading-summary-${i}`} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm h-25 flex items-center justify-center">
             <div className="w-15 h-5 bg-slate-100 rounded animate-pulse" />
           </div>
         ))}
@@ -71,7 +71,7 @@ export function SubscriptionsSummary() {
     <div className="mb-5">
       <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4 mb-5">
         {summaryCards.map((card, index) => (
-          <div key={index} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+          <div key={`summary-card-${index}`} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
             <div className="text-sm font-medium text-gray-500 mb-2">
               {card.title}
             </div>

@@ -56,8 +56,8 @@ export function AllCustomers({ customers: customerStats, onEdit, onDelete }: All
             </tr>
           </thead>
           <tbody>
-            {customerStats.map((customer) => (
-              <tr key={customer.customerId} className="border-b border-slate-100">
+            {customerStats.map((customer, index) => (
+              <tr key={`customer-${customer.customerId}-${index}`} className="border-b border-slate-100">
                 <td className="px-1.5 py-2">
                   <div className="flex items-center gap-2.5">
                     <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">

@@ -65,12 +65,12 @@ export function Pagination({ currentPage, totalPages, totalCount, onPageChange }
         <div className="flex items-center gap-1 mx-1.5">
           {visiblePages.map((page, index) => (
             page === '...' ? (
-              <span key={index} className="px-2.5 py-1.5 text-xs text-gray-400">
+              <span key={`dots-${index}`} className="px-2.5 py-1.5 text-xs text-gray-400">
                 ...
               </span>
             ) : (
               <button
-                key={index}
+                key={`page-${page}-${index}`}
                 onClick={() => onPageChange(Number(page))}
                 className={`px-2.5 py-1.5 text-xs font-medium border border-gray-300 rounded-md cursor-pointer transition-colors min-w-[32px] ${
                   currentPage === page 

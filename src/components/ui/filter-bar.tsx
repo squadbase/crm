@@ -86,9 +86,9 @@ export function FilterBar({
           {/* Sort Options */}
           {sortOptions.length > 0 && (
             <div className="flex items-center gap-1">
-              {sortOptions.map((option) => (
+              {sortOptions.map((option, index) => (
                 <Button
-                  key={option.id}
+                  key={`sort-${option.id}-${index}`}
                   variant={currentSort === option.id ? "default" : "outline"}
                   size="sm"
                   onClick={() => onSortChange?.(option.id)}
@@ -114,9 +114,9 @@ export function FilterBar({
         <div className="flex items-center gap-2 px-4">
           <span className="text-small text-muted-foreground">{t('activeFilters')}</span>
           <div className="flex items-center gap-2 flex-wrap">
-            {filters.map((filter) => (
+            {filters.map((filter, index) => (
               <Badge
-                key={filter.id}
+                key={`filter-${filter.id}-${index}`}
                 variant={filter.color || 'secondary'}
                 className="gap-1"
               >

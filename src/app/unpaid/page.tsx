@@ -353,7 +353,7 @@ export default function UnpaidPaymentsPage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
               >
                 {Array.from({ length: calculationYear === currentYear ? currentMonth : 12 }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>
+                  <option key={`month-${calculationYear}-${i + 1}`} value={i + 1}>
                     {getMonthName(i + 1)}
                   </option>
                 ))}
@@ -398,7 +398,7 @@ export default function UnpaidPaymentsPage() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                   >
                     {Array.from({ length: endYear === currentYear ? currentMonth : 12 }, (_, i) => (
-                      <option key={i + 1} value={i + 1}>
+                      <option key={`end-month-${endYear}-${i + 1}`} value={i + 1}>
                         {getMonthName(i + 1)}
                       </option>
                     ))}
@@ -563,13 +563,13 @@ export default function UnpaidPaymentsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {unpaidPayments && unpaidPayments.map((payment) => {
+                  {unpaidPayments && unpaidPayments.map((payment, index) => {
                     const daysPastDue = getDaysPastDue(payment.dueDate);
                     const isSelected = selectedItems.has(payment.id);
 
                     return (
                       <tr
-                        key={payment.id}
+                        key={`unpaid-${payment.id}-${index}`}
                         className={`border-b border-slate-100 ${
                           isSelected ? 'bg-sky-50' : 'bg-white'
                         }`}

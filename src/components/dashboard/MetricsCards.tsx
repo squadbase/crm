@@ -155,7 +155,7 @@ export function MetricsCards({ period }: MetricsCardsProps) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-25 flex items-center justify-center">
+          <div key={`loading-metric-${i}`} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-25 flex items-center justify-center">
             <div className="w-10 h-10 border-4 border-gray-100 border-t-blue-600 rounded-full animate-spin" />
           </div>
         ))}
@@ -166,8 +166,8 @@ export function MetricsCards({ period }: MetricsCardsProps) {
   if (!data) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
-        {metricsConfig.map((config) => (
-          <div key={config.key} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-25 flex items-center justify-center">
+        {metricsConfig.map((config, index) => (
+          <div key={`no-data-${config.key}-${index}`} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-25 flex items-center justify-center">
             <div className="text-center text-gray-500">
               <p className="m-0 text-sm">{t('noData')}</p>
             </div>
@@ -181,12 +181,12 @@ export function MetricsCards({ period }: MetricsCardsProps) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
-      {metricsConfig.map((config) => {
+      {metricsConfig.map((config, index) => {
         const metric = data.metrics[config.key];
         const Icon = config.icon;
         
         return (
-          <div key={config.key} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm min-h-[100px]">
+          <div key={`metric-${config.key}-${index}`} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm min-h-[100px]">
             <div className="flex items-center justify-between mb-2">
               <div>
                 <p className="text-xs font-medium text-gray-500 m-0">

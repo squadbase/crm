@@ -71,7 +71,7 @@ export function SalesSummary({ period }: SalesSummaryProps) {
         marginBottom: '20px'
       }}>
         {[1, 2].map((i) => (
-          <div key={i} style={{
+          <div key={`loading-sales-${i}`} style={{
             backgroundColor: 'white',
             border: '1px solid #e2e8f0',
             borderRadius: '12px',
@@ -123,7 +123,7 @@ export function SalesSummary({ period }: SalesSummaryProps) {
         marginBottom: '20px'
       }}>
         {summaryCards.map((card, index) => (
-          <div key={index} style={{
+          <div key={`sales-card-${index}`} style={{
             backgroundColor: 'white',
             border: '1px solid #e2e8f0',
             borderRadius: '12px',

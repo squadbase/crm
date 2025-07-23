@@ -18,7 +18,7 @@ export function PageLoader() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[...Array(4)].map((_, i) => (
-          <Skeleton key={i} className="h-40 w-full rounded-lg" />
+          <Skeleton key={`skeleton-card-${i}`} className="h-40 w-full rounded-lg" />
         ))}
       </div>
       
@@ -26,7 +26,7 @@ export function PageLoader() {
         <Skeleton className="h-6 w-1/4" />
         <div className="space-y-2">
           {[...Array(8)].map((_, i) => (
-            <Skeleton key={i} className="h-16 w-full rounded-lg" />
+            <Skeleton key={`skeleton-row-${i}`} className="h-16 w-full rounded-lg" />
           ))}
         </div>
       </div>

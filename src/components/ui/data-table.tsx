@@ -52,11 +52,11 @@ export function DataTable<TData>({
         >
           <table className="w-full caption-bottom text-sm">
             <thead className="sticky top-0 bg-gray-50 border-b border-gray-200">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
+              {table.getHeaderGroups().map((headerGroup, groupIndex) => (
+                <tr key={`header-group-${headerGroup.id}-${groupIndex}`}>
+                  {headerGroup.headers.map((header, headerIndex) => (
                     <th
-                      key={header.id}
+                      key={`header-${header.id}-${headerIndex}`}
                       className="h-12 px-4 text-left align-middle font-semibold text-gray-900 text-xs [&:has([role=checkbox])]:pr-0"
                     >
                       {header.isPlaceholder
@@ -70,11 +70,11 @@ export function DataTable<TData>({
             </thead>
           </table>
           
-          {virtualizer.getVirtualItems().map((virtualRow) => {
+          {virtualizer.getVirtualItems().map((virtualRow, virtualIndex) => {
             const row = rows[virtualRow.index];
             return (
               <div
-                key={row.id}
+                key={`virtual-row-${row.id}-${virtualIndex}`}
                 className="absolute w-full"
                 style={{
                   height: `${virtualRow.size}px`,
@@ -84,9 +84,9 @@ export function DataTable<TData>({
                 <table className="w-full caption-bottom text-sm">
                   <tbody className="bg-white [&_tr:last-child]:border-0">
                     <tr className="border-b border-gray-100 transition-colors hover:bg-gray-50/50 data-[state=selected]:bg-blue-50/50">
-                      {row.getVisibleCells().map((cell) => (
+                      {row.getVisibleCells().map((cell, cellIndex) => (
                         <td
-                          key={cell.id}
+                          key={`cell-${cell.id}-${cellIndex}`}
                           className="px-4 py-3 align-middle text-gray-900 [&:has([role=checkbox])]:pr-0"
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -212,7 +212,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
             const y = padding.top + graphHeight - (ratio * graphHeight);
             const value = yAxisMax * ratio;
             return (
-              <g key={index}>
+              <g key={`y-axis-${index}`}>
                 <line
                   x1={padding.left}
                   y1={y}
@@ -267,7 +267,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
             
             return (
               <text
-                key={index}
+                key={`x-label-${index}`}
                 x={centerX}
                 y={chartHeight - 20}
                 textAnchor="middle"
@@ -288,7 +288,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
             const subscriptionY = getBarY(item.totalAmount);
             
             return (
-              <g key={index}>
+              <g key={`bar-group-${index}`}>
                 {/* Subscription bar (bottom) */}
                 <rect
                   x={x}

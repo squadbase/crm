@@ -280,8 +280,8 @@ export function OrdersTable({
             </tr>
           </thead>
           <tbody>
-            {orders.map((order) => (
-              <tr key={order.orderId} style={{
+            {orders.map((order, index) => (
+              <tr key={`order-${order.orderId}-${index}`} style={{
                 borderBottom: '1px solid #f3f4f6'
               }}>
                 <td style={{ padding: '12px 16px' }}>

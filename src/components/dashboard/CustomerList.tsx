@@ -45,9 +45,9 @@ export function CustomerList({ customers: customerStats, loading }: { customers:
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          {customerStats.map((customer) => (
+          {customerStats.map((customer, index) => (
           <div
-            key={customer.customerId}
+            key={`customer-stat-${customer.customerId}-${index}`}
             className="flex items-center justify-between p-2.5 rounded-lg border border-gray-200 transition-colors bg-transparent hover:bg-gray-50"
           >
             <div className="flex items-center gap-2.5">

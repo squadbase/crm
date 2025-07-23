@@ -48,9 +48,9 @@ export function RecentOrders({ orders: recentOrders, loading }: { orders: Order[
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          {recentOrders.map((order) => (
+          {recentOrders.map((order, index) => (
           <div
-            key={order.orderId}
+            key={`recent-order-${order.orderId}-${index}`}
             className="flex items-center justify-between p-2.5 rounded-lg border border-gray-200 transition-colors bg-transparent hover:bg-gray-50"
           >
             <div className="flex-1 min-w-0">

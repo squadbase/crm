@@ -111,8 +111,8 @@ export function SidebarNavigation() {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4">
         <div className="flex flex-col gap-5">
-          {navigationSections.map((section) => (
-            <div key={section.title}>
+          {navigationSections.map((section, sectionIndex) => (
+            <div key={`section-${sectionIndex}`}>
               {/* Section Header */}
               <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 pl-4">
                 {section.title}
@@ -120,9 +120,9 @@ export function SidebarNavigation() {
 
               {/* Section Items */}
               <div className="flex flex-col gap-1">
-                {section.items.map((item) => (
+                {section.items.map((item, itemIndex) => (
                   <SidebarItem
-                    key={item.name}
+                    key={`item-${item.href}-${itemIndex}`}
                     item={item}
                     isActive={pathname === item.href}
                   />

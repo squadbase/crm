@@ -210,7 +210,7 @@ export function CustomSelect({
         >
           {options.map((option, index) => (
             <div
-              key={option.value}
+              key={`option-${option.value}-${index}`}
               role="option"
               aria-selected={option.value === value}
               onClick={() => handleOptionClick(option.value)}

@@ -196,9 +196,9 @@ export function SearchableCustomerSelect({
             overflowY: 'auto'
           }}>
             {filteredCustomers.length > 0 ? (
-              filteredCustomers.map((customer) => (
+              filteredCustomers.map((customer, index) => (
                 <div
-                  key={customer.customerId}
+                  key={`customer-${customer.customerId}-${index}`}
                   onClick={() => handleSelect(customer.customerId)}
                   style={{
                     padding: '10px 12px',

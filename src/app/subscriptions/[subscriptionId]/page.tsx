@@ -663,9 +663,9 @@ export default function SubscriptionDetailPage({
                   </tr>
                 </thead>
                 <tbody>
-                  {amounts.map((amount) => (
+                  {amounts.map((amount, index) => (
                     <tr
-                      key={amount.amountId}
+                      key={`amount-${amount.amountId}-${index}`}
                       style={{
                         borderBottom: '1px solid #e5e7eb'
                       }}
@@ -841,9 +841,9 @@ export default function SubscriptionDetailPage({
                   </tr>
                 </thead>
                 <tbody>
-                  {payments.map((payment) => (
+                  {payments.map((payment, index) => (
                     <tr
-                      key={payment.paidId}
+                      key={`payment-${payment.paidId}-${index}`}
                       style={{
                         borderBottom: '1px solid #e5e7eb'
                       }}

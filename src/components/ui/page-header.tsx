@@ -40,7 +40,7 @@ export function PageHeader({
         {breadcrumbs && breadcrumbs.length > 0 && (
           <nav className="flex items-center space-x-2 text-small">
             {breadcrumbs.map((item, index) => (
-              <div key={index} className="flex items-center space-x-2">
+              <div key={`breadcrumb-${index}`} className="flex items-center space-x-2">
                 {index > 0 && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
                 <span
                   className={
@@ -136,7 +136,7 @@ export function PageHeaderStats({ stats, className = "" }: PageHeaderStatsProps)
   return (
     <div className={`flex items-center gap-6 ${className}`}>
       {stats.map((stat, index) => (
-        <div key={index} className="flex items-center gap-2">
+        <div key={`stat-${index}`} className="flex items-center gap-2">
           <span className="text-small text-muted-foreground">{stat.label}</span>
           <Badge 
             variant={stat.color === 'primary' ? 'default' : 'secondary'}

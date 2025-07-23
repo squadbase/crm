@@ -110,9 +110,9 @@ export function TemplateTable({
             </tr>
           </thead>
           <tbody>
-            {templates.map((template) => (
+            {templates.map((template, index) => (
               <tr
-                key={template.templateId}
+                key={`template-${template.templateId}-${index}`}
                 className={`transition-colors duration-200 ${
                   hoveredRow === template.templateId ? 'bg-gray-50' : 'bg-white'
                 }`}
