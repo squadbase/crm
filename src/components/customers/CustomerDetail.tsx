@@ -371,8 +371,8 @@ export function CustomerDetail({ customerId }: CustomerDetailProps) {
                       </tr>
                     </thead>
                     <tbody>
-                      {(data.subscriptions || []).filter(sub => sub && sub.year && sub.month && sub.amount).map((subscription) => (
-                        <tr key={`${subscription.subscriptionId}-${subscription.year}-${subscription.month}`} className="border-b border-slate-100">
+                      {(data.subscriptions || []).filter(sub => sub && sub.year && sub.month && sub.amount).map((subscription, index) => (
+                        <tr key={`${subscription.subscriptionId}-${subscription.year}-${subscription.month}-${subscription.paidCreatedAt || index}`} className="border-b border-slate-100">
                           <td className="py-3 px-1.5">
                             <div>
                               <p 

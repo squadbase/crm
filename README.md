@@ -2,110 +2,86 @@
 
 An open-source Customer Relationship Management (CRM) system designed for easy customization with Claude Code.
 
-![Thumbnail](./assets/top.png)
+![Thumbnail](./assets/squadbase-crm.gif)
 
-## Vision
+## Ready to customize your CRM with Claude Code?
 
-CRM systems are essential software tools for any business, yet they are often extremely expensive. Most CRM solutions come with customization limitations or require learning proprietary languages.
+CRM is vital but usually overpriced and hard to bend to your process.
 
-That's why we built an open-source, self-hostable CRM system that puts you in control of your data and operations.
+Our open‑source, self‑hosted CRM pairs with Claude Code, letting anyone refactor fields, workflows, and automations in plain language—no vendor lock‑in or proprietary scripts.
 
-### Claude Code & Build over Buy
+Result: zero license fees, total data control, and a CRM that fits your business in hours, not months.
 
-Claude Code has made it possible to instantly develop and customize rich applications regardless of your technical stack. Squadbase CRM is designed not only for immediate deployment but also for easy customization using Claude Code, allowing anyone familiar with any technology stack to adapt it to their needs.
+## Installation
 
-While we actively develop this repository, you can easily customize it to build operations perfectly suited to your business. All you need is PostgreSQL - no vendor lock-in, complete data freedom.
+🖥️ [Local Setup](./docs/localSetup.md)
 
-PostgreSQL integrates with numerous ETL tools, making it easy to transfer data to other SaaS platforms or data warehouses for analysis. You're never locked into any particular tool.
-
-Updates are as simple as updating the GitHub repository version. Your company data remains completely separate, so you can choose to stay on any version you prefer. No surprise price increases when AI features are added.
-
-The AI revolution is transforming CRM from something you configure to something everyone can build and freely customize. Let's embrace best practices instantly while maintaining self-hosted data and software freedom.
-
-## Features
-
-- Revenue analytics
-- Customer management
-- Order tracking
-- Subscription management
-- Unpaid management
-
-## Deployment
+🗣️💰 [Internationalization](./docs/i18n.md)
 
 ### One-click Deployment
 
-Deploy your own Squadbase CRM instance with a single click. Squadbase automatically provides authentication and access control for secure CRM operations.
+Deploy your own Squadbase CRM instance with a single click. Squadbase automatically provides authentication and access control for secure CRM operations. You can start using it for free if you have less than 5 members.
 
 [![Deploy to Squadbase](https://app.squadbase.dev/button.svg)](https://app.squadbase.dev/new/clone?repository-url=https://github.com/squadbase/crm?env-vars=POSTGRES_HOST,POSTGRES_PORT,POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DATABASE,LANGUAGE,CURRENCY)
 
 #### PostgreSQL Setup
 
 Squadbase CRM requires only PostgreSQL.
+[Neon](https://neon.com/) is our recommended PostgreSQL hosting service where you can easily deploy your own PostgreSQL instance.
 
-We recommend using Neon for easy and affordable PostgreSQL hosting:
-https://neon.com/
+Database migrations are handled automatically via `npm run build`.
+This command will be triggered in squadbase when you push to the repository.
 
-Database migrations are handled automatically via commands. For Squadbase's build and deployment environments, allow IP communication to automatically configure the database on Postgres and launch the CRM.
+For Squadbase's build and deployment environments, allow IP communication to automatically configure the database on Postgres and launch the CRM.
 
-Please configure the following IP addresses:
+Please configure the following IP addresses in your PostgreSQL whitelist:
 
-**Build Server:**
-```
-54.150.149.0
-```
+- **Build Server:** `54.150.149.0`
+- **App Server:**
+After deployment, check the Allow IPs screen and configure the IP addresses.
+[Details here](https://www.squadbase.dev/en/docs/features/fixed-ip-addresses).
 
-**Deployment Environment:**
 
-After deployment, check the Allow IPs screen and add them to your PostgreSQL IP address whitelist.
-[Details here.](https://www.squadbase.dev/en/docs/features/fixed-ip-addresses)
+## Features
 
-### Environment Variables
+- [Revenue analytics](#revenue-analytics)
+- [Onetime order tracking](#onetime-order-tracking)
+- [Subscription management](#subscription-management)
+- [Unpaid management](#unpaid-management)
 
-Configure the following environment variables during deployment:
+We have a [Roadmap](./docs/roadmap.md) for the future features. Feedback and feature requests are welcome!
 
-```bash
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=password
-POSTGRES_DATABASE=crm_db
+### Revenue Analytics
 
-LANGUAGE=en # Default: en
-CURRENCY=usd # Default: usd
-```
+![Revenue Analytics](./assets/revenue-analytics.png)
 
-#### Supported Languages
-- `en` - English
-- `ja` - Japanese (日本語)
-- `es` - Spanish (Español)
-- `fr` - French (Français)
-- `zh` - Chinese (中文)
-- `ko` - Korean (한국어)
+### Onetime order tracking
 
-#### Supported Currencies
-- `usd` - US Dollar ($)
-- `jpy` - Japanese Yen (¥)
-- `eur` - Euro (€)
-- `cny` - Chinese Yuan (¥)
-- `krw` - Korean Won (₩)
+![Onetime orders](./assets/onetime-orders.png)
 
-**Need additional language or currency support?** Please [open an issue](https://github.com/squadbase/crm/issues) to request new languages or currencies. We welcome community feedback and contributions!
+### Subscription management
+
+![Subscription](./assets/subscription.png)
+
+### Unpaid management
+
+![Unpaid](./assets/unpaid.png)
 
 ## Stack
 
-- **Next.js v15** - React framework with App Router
-- **TailwindCSS v4** - Utility-first CSS framework
+- **Next.js v15** - React framework
+- **TypeScript** - Type safety
+- **TailwindCSS v4** - Styling
 - **shadcn/ui** - Component library
-- **Drizzle ORM** - Type-safe database toolkit
+- **Drizzle ORM** - Database toolkit
 - **PostgreSQL** - Database
+
+## Acknowledgments
+
+- Deploy on [Squadbase](https://squadbase.dev/) with Authentication and Access Control.
+- Host PostgreSQL on [Neon](https://neon.com/) for easy deployment.
+- Build with [Claude Code](https://www.anthropic.com/claude-code) for AI-powered customization.
 
 ## License
 
 This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
-
-## Acknowledgments
-
-- [Squadbase](https://squadbase.dev/)
-- [Claude Code](https://www.anthropic.com/claude-code)
-- [Neon](https://neon.com/)
-

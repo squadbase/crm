@@ -2,19 +2,49 @@
 
 ## Quick Start
 
-This project is built with Next.js.
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/squadbase/crm.git
+cd crm
+```
+
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-Start the local development server:
+### 3. Set up environment variables
 
 ```bash
-npm run dev
+cp .env.example .env
 ```
 
-### Database
+Edit the `.env` file to set up the environment variables.
+
+```bash
+# These are the default value the docker-compose.yml file uses.
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=password
+POSTGRES_DATABASE=crm_db
+
+LANGUAGE=en
+CURRENCY=usd
+```
+
+For more information about language and currency, see [Internationalization](./i18n.md).
+
+### 4. Run the development server
+
+```bash
+npm run db:up # Start database
+npm run dev # Start the development server
+```
+
+## Database Operations
 
 The development environment uses docker-compose to install PostgreSQL. Use the following commands for database operations:
 
