@@ -64,9 +64,26 @@ POSTGRES_USER=postgres
 POSTGRES_PASSWORD=password
 POSTGRES_DATABASE=crm_db
 
-LANGUAGE=en # en | ja | es | fr | zh | ko (default: en)
-CURRENCY=usd # usd | jpy | eur | cny | krw (default: usd)
+LANGUAGE=en # Default: en
+CURRENCY=usd # Default: usd
 ```
+
+#### Supported Languages
+- `en` - English
+- `ja` - Japanese (日本語)
+- `es` - Spanish (Español)
+- `fr` - French (Français)
+- `zh` - Chinese (中文)
+- `ko` - Korean (한국어)
+
+#### Supported Currencies
+- `usd` - US Dollar ($)
+- `jpy` - Japanese Yen (¥)
+- `eur` - Euro (€)
+- `cny` - Chinese Yuan (¥)
+- `krw` - Korean Won (₩)
+
+**Need additional language or currency support?** Please [open an issue](https://github.com/squadbase/crm/issues) to request new languages or currencies. We welcome community feedback and contributions!
 
 ## Setup & Development
 
