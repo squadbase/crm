@@ -2,7 +2,7 @@
 
 An open-source Customer Relationship Management (CRM) system designed for easy customization with Claude Code.
 
-![Thumbnail](./assets/squadbase-crm.gif)
+![Thumbnail](./assets/top.gif)
 
 ## Ready to customize your CRM with Claude Code?
 
