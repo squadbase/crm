@@ -196,6 +196,46 @@ export const translations = {
     zh: '订阅',
     ko: '구독',
   },
+  onetimePaid: {
+    ja: '一回払い（支払済）',
+    en: 'Onetime (Paid)',
+    es: 'Único (Pagado)',
+    fr: 'Unique (Payé)',
+    zh: '一次性（已付费）',
+    ko: '일회성 (결제완료)',
+  },
+  onetimeUnpaid: {
+    ja: '一回払い（未払い）',
+    en: 'Onetime (Unpaid)',
+    es: 'Único (No pagado)',
+    fr: 'Unique (Non payé)',
+    zh: '一次性（未付费）',
+    ko: '일회성 (미결제)',
+  },
+  subscriptionPaid: {
+    ja: 'サブスク（支払済）',
+    en: 'Subscription (Paid)',
+    es: 'Suscripción (Pagado)',
+    fr: 'Abonnement (Payé)',
+    zh: '订阅（已付费）',
+    ko: '구독 (결제완료)',
+  },
+  subscriptionUnpaid: {
+    ja: 'サブスク（未払い）',
+    en: 'Subscription (Unpaid)',
+    es: 'Suscripción (No pagado)',
+    fr: 'Abonnement (Non payé)',
+    zh: '订阅（未付费）',
+    ko: '구독 (미결제)',
+  },
+  futureSubscription: {
+    ja: 'サブスク（予想）',
+    en: 'Subscription (Projected)',
+    es: 'Suscripción (Proyectado)',
+    fr: 'Abonnement (Projeté)',
+    zh: '订阅（预测）',
+    ko: '구독 (예상)',
+  },
 
   // Customer Management
   customers: {

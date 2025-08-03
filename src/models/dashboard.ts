@@ -41,6 +41,12 @@ export interface MonthlySalesData {
   onetimeSales: number;
   subscriptionSales: number;
   totalSales: number;
+  // Detailed breakdown
+  onetimePaidSales: number;
+  onetimeUnpaidSales: number;
+  subscriptionPaidSales: number;
+  subscriptionUnpaidSales: number;
+  futureSubscriptionSales: number;
 }
 
 /**
@@ -343,12 +349,14 @@ export async function getMonthlySalesData(
       current.setMonth(current.getMonth() + 1);
     }
 
-    // Get onetime sales data
+    // Get onetime sales data with paid/unpaid breakdown
     const onetimeResult = await db.execute(sql`
       SELECT
         EXTRACT(YEAR FROM ${orders.salesAt}) as year,
         EXTRACT(MONTH FROM ${orders.salesAt}) as month,
-        COALESCE(SUM(${orders.amount}), 0) as amount
+        COALESCE(SUM(CASE WHEN ${orders.isPaid} = true THEN ${orders.amount} ELSE 0 END), 0) as paid_amount,
+        COALESCE(SUM(CASE WHEN ${orders.isPaid} = false THEN ${orders.amount} ELSE 0 END), 0) as unpaid_amount,
+        COALESCE(SUM(${orders.amount}), 0) as total_amount
       FROM ${orders}
       WHERE ${orders.salesAt} >= ${start.toISOString().split('T')[0]}
       AND ${orders.salesAt} <= ${end.toISOString().split('T')[0]}
@@ -357,14 +365,14 @@ export async function getMonthlySalesData(
     })
     `);
 
-    // Get subscription sales data (past)
+    // Get subscription sales data (past) with paid/unpaid breakdown
     const subscriptionResult = await db.execute(sql`
       SELECT
         ${subscriptionPaid.year} as year,
         ${subscriptionPaid.month} as month,
-        COALESCE(SUM(CASE WHEN ${subscriptionPaid.isPaid} = true THEN ${
-      subscriptionPaid.amount
-    } ELSE 0 END), 0) as amount
+        COALESCE(SUM(CASE WHEN ${subscriptionPaid.isPaid} = true THEN ${subscriptionPaid.amount} ELSE 0 END), 0) as paid_amount,
+        COALESCE(SUM(CASE WHEN ${subscriptionPaid.isPaid} = false THEN ${subscriptionPaid.amount} ELSE 0 END), 0) as unpaid_amount,
+        COALESCE(SUM(${subscriptionPaid.amount}), 0) as total_amount
       FROM ${subscriptionPaid}
       WHERE ${subscriptionPaid.year} >= ${start.getFullYear()}
       AND ${subscriptionPaid.year} <= ${end.getFullYear()}
@@ -392,26 +400,36 @@ export async function getMonthlySalesData(
       AND ${subscriptionAmounts.startDate} <= ${end.toISOString().split('T')[0]}
     `);
 
-    // Create maps for quick lookup
-    const onetimeMap = new Map<string, number>();
-    const subscriptionMap = new Map<string, number>();
+    // Create maps for quick lookup with detailed breakdown
+    const onetimeMap = new Map<string, { paid: number; unpaid: number; total: number }>();
+    const subscriptionMap = new Map<string, { paid: number; unpaid: number; total: number }>();
 
     (
-      onetimeResult.rows as { year: string; month: string; amount: string }[]
+      onetimeResult.rows as { year: string; month: string; paid_amount: string; unpaid_amount: string; total_amount: string }[]
     ).forEach((row) => {
       const key = `${row.year}-${row.month}`;
-      onetimeMap.set(key, Number(row.amount));
+      onetimeMap.set(key, {
+        paid: Number(row.paid_amount),
+        unpaid: Number(row.unpaid_amount),
+        total: Number(row.total_amount)
+      });
     });
 
     (
       subscriptionResult.rows as {
         year: string;
         month: string;
-        amount: string;
+        paid_amount: string;
+        unpaid_amount: string;
+        total_amount: string;
       }[]
     ).forEach((row) => {
       const key = `${row.year}-${row.month}`;
-      subscriptionMap.set(key, Number(row.amount));
+      subscriptionMap.set(key, {
+        paid: Number(row.paid_amount),
+        unpaid: Number(row.unpaid_amount),
+        total: Number(row.total_amount)
+      });
     });
 
     // Calculate total active subscription amount for future months
@@ -419,26 +437,35 @@ export async function getMonthlySalesData(
       activeSubscriptionsResult.rows as { amount: string }[]
     ).reduce((sum, row) => sum + Number(row.amount), 0);
 
-    // Generate result data
+    // Generate result data with detailed breakdown
     const result: MonthlySalesData[] = months.map(({ year, month }) => {
       const key = `${year}-${month}`;
       const monthDate = new Date(year, month - 1, 1);
       const isCurrentOrPast = monthDate <= now;
 
-      const onetimeSales = onetimeMap.get(key) || 0;
-      const subscriptionSales = isCurrentOrPast
-        ? subscriptionMap.get(key) || 0
-        : monthDate > now
-        ? totalActiveSubscriptionAmount
-        : 0; // Project active subscriptions only into future
-
+      const onetimeData = onetimeMap.get(key) || { paid: 0, unpaid: 0, total: 0 };
+      const subscriptionData = subscriptionMap.get(key) || { paid: 0, unpaid: 0, total: 0 };
+      
+      // Future subscription amount (only for future months)
+      const futureSubscriptionAmount = monthDate > now ? totalActiveSubscriptionAmount : 0;
+      
+      // For past/current months, use actual data. For future months, use projection
+      const subscriptionSales = isCurrentOrPast ? subscriptionData.total : 0;
+      const onetimeSales = onetimeData.total;
+      
       return {
         month: `${year}-${String(month).padStart(2, '0')}`,
         year,
         monthNum: month,
         onetimeSales,
         subscriptionSales,
-        totalSales: onetimeSales + subscriptionSales,
+        totalSales: onetimeSales + subscriptionSales + futureSubscriptionAmount,
+        // Detailed breakdown
+        onetimePaidSales: onetimeData.paid,
+        onetimeUnpaidSales: onetimeData.unpaid,
+        subscriptionPaidSales: isCurrentOrPast ? subscriptionData.paid : 0,
+        subscriptionUnpaidSales: isCurrentOrPast ? subscriptionData.unpaid : 0,
+        futureSubscriptionSales: futureSubscriptionAmount,
       };
     });
 
@@ -470,20 +497,31 @@ export async function getMonthlySalesData(
 
       const isCurrentOrPast = i <= 0;
 
+      const onetimeAmount = isCurrentOrPast ? Math.floor(Math.random() * 1000000) + 500000 : 0;
+      const onetimePaid = onetimeAmount * 0.8; // 80% paid
+      const onetimeUnpaid = onetimeAmount * 0.2; // 20% unpaid
+      const subscriptionPaid = baseSubscriptionAmount * 0.9; // 90% paid  
+      const subscriptionUnpaid = baseSubscriptionAmount * 0.1; // 10% unpaid
+      const futureSubscription = i > 0 ? baseSubscriptionAmount : 0; // Future months only
+
       sampleData.push({
         month: `${targetYear}-${String(normalizedMonth).padStart(2, '0')}`,
         year: targetYear,
         monthNum: normalizedMonth,
-        onetimeSales: isCurrentOrPast
-          ? Math.floor(Math.random() * 1000000) + 500000
-          : 0,
-        subscriptionSales: baseSubscriptionAmount, // Subscriptions continue into the future
-        totalSales: 0,
+        onetimeSales: onetimeAmount,
+        subscriptionSales: isCurrentOrPast ? baseSubscriptionAmount : 0,
+        totalSales: 0, // Will be calculated below
+        // Detailed breakdown
+        onetimePaidSales: onetimePaid,
+        onetimeUnpaidSales: onetimeUnpaid,
+        subscriptionPaidSales: isCurrentOrPast ? subscriptionPaid : 0,
+        subscriptionUnpaidSales: isCurrentOrPast ? subscriptionUnpaid : 0,
+        futureSubscriptionSales: futureSubscription,
       });
     }
 
     sampleData.forEach((item) => {
-      item.totalSales = item.onetimeSales + item.subscriptionSales;
+      item.totalSales = item.onetimeSales + item.subscriptionSales + item.futureSubscriptionSales;
     });
 
     return sampleData;

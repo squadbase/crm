@@ -11,6 +11,12 @@ interface MonthlySalesData {
   subscriptionAmount: number;
   year: number;
   monthNum: number;
+  // Detailed breakdown
+  onetimePaidAmount: number;
+  onetimeUnpaidAmount: number;
+  subscriptionPaidAmount: number;
+  subscriptionUnpaidAmount: number;
+  futureSubscriptionAmount: number;
 }
 
 interface MonthlySalesResponse {
@@ -19,6 +25,11 @@ interface MonthlySalesResponse {
     totalPeriodSales: number;
     totalOnetimeSales: number;
     totalSubscriptionSales: number;
+    totalOnetimePaidSales: number;
+    totalOnetimeUnpaidSales: number;
+    totalSubscriptionPaidSales: number;
+    totalSubscriptionUnpaidSales: number;
+    totalFutureSubscriptionSales: number;
     monthCount: number;
   };
 }
@@ -36,7 +47,7 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
   const [loading, setLoading] = useState(true);
   const [hoveredBar, setHoveredBar] = useState<{
     monthIndex: number;
-    barType: 'onetime' | 'subscription';
+    barType: 'onetimePaid' | 'onetimeUnpaid' | 'subscriptionPaid' | 'subscriptionUnpaid' | 'futureSubscription';
   } | null>(null);
 
   useEffect(() => {
@@ -120,27 +131,42 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
   const getBarY = (amount: number) => padding.top + graphHeight - (amount / yAxisMax) * graphHeight;
   const getBarHeight = (amount: number) => (amount / yAxisMax) * graphHeight;
 
-  const getBarColor = (baseColor: string, monthIndex: number, barType: 'onetime' | 'subscription') => {
-    const isHovered = hoveredBar?.monthIndex === monthIndex && hoveredBar?.barType === barType;
-    if (isHovered) {
-      // Brighten on hover
-      const colors = {
-        '#f97316': '#fb923c', // Orange series
-        '#8b5cf6': '#a78bfa', // Purple series
-      };
-      return colors[baseColor as keyof typeof colors] || baseColor;
-    }
-    return baseColor;
+  // Color definitions for each category
+  const colors = {
+    onetimePaid: '#f97316',       // Orange-500 (paid onetime)
+    onetimeUnpaid: '#fed7aa',     // Orange-200 (unpaid onetime)
+    subscriptionPaid: '#8b5cf6',  // Violet-500 (paid subscription)
+    subscriptionUnpaid: '#c4b5fd', // Violet-300 (unpaid subscription)
+    futureSubscription: '#3b82f6', // Blue-500 (future subscription)
   };
 
-  const getTooltipContent = (item: MonthlySalesData, barType: 'onetime' | 'subscription') => {
+  const hoverColors = {
+    onetimePaid: '#fb923c',       // Orange-400 (hover)
+    onetimeUnpaid: '#fbbf24',     // Orange-400 (hover)
+    subscriptionPaid: '#a78bfa',  // Violet-400 (hover)
+    subscriptionUnpaid: '#ddd6fe', // Violet-200 (hover)
+    futureSubscription: '#60a5fa', // Blue-400 (hover)
+  };
+
+  const getBarColor = (barType: 'onetimePaid' | 'onetimeUnpaid' | 'subscriptionPaid' | 'subscriptionUnpaid' | 'futureSubscription', monthIndex: number) => {
+    const isHovered = hoveredBar?.monthIndex === monthIndex && hoveredBar?.barType === barType;
+    return isHovered ? hoverColors[barType] : colors[barType];
+  };
+
+  const getTooltipContent = (item: MonthlySalesData, barType: 'onetimePaid' | 'onetimeUnpaid' | 'subscriptionPaid' | 'subscriptionUnpaid' | 'futureSubscription') => {
     const values = {
-      onetime: item.onetimeAmount,
-      subscription: item.subscriptionAmount
+      onetimePaid: item.onetimePaidAmount,
+      onetimeUnpaid: item.onetimeUnpaidAmount,
+      subscriptionPaid: item.subscriptionPaidAmount,
+      subscriptionUnpaid: item.subscriptionUnpaidAmount,
+      futureSubscription: item.futureSubscriptionAmount,
     };
     const labels = {
-      onetime: t('onetime'),
-      subscription: t('subscription')
+      onetimePaid: t('onetimePaid'),
+      onetimeUnpaid: t('onetimeUnpaid'),
+      subscriptionPaid: t('subscriptionPaid'),
+      subscriptionUnpaid: t('subscriptionUnpaid'),
+      futureSubscription: t('futureSubscription'),
     };
     return {
       label: labels[barType],
@@ -162,20 +188,32 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
             {t('monthlySalesDescription')}
           </p>
         </div>
-        <div className="flex items-center gap-5">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-orange-500 rounded-sm" />
-            <span className="text-xs text-gray-700">{t('onetime')}</span>
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: colors.onetimePaid }} />
+            <span className="text-xs text-gray-700">{t('onetimePaid')}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-violet-500 rounded-sm" />
-            <span className="text-xs text-gray-700">{t('subscription')}</span>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: colors.onetimeUnpaid }} />
+            <span className="text-xs text-gray-700">{t('onetimeUnpaid')}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: colors.subscriptionPaid }} />
+            <span className="text-xs text-gray-700">{t('subscriptionPaid')}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: colors.subscriptionUnpaid }} />
+            <span className="text-xs text-gray-700">{t('subscriptionUnpaid')}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: colors.futureSubscription }} />
+            <span className="text-xs text-gray-700">{t('futureSubscription')}</span>
           </div>
         </div>
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 p-4 bg-slate-50 rounded-lg">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-6 p-4 bg-slate-50 rounded-lg">
         <div className="text-center">
           <p className="text-xs text-gray-500 m-0 mb-1">{t('total')}</p>
           <p className="text-sm font-semibold text-blue-600 m-0">
@@ -183,15 +221,33 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
           </p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-500 m-0 mb-1">{t('onetime')}</p>
-          <p className="text-sm font-semibold text-orange-500 m-0">
-            {formatCurrency(summary.totalOnetimeSales)}
+          <p className="text-xs text-gray-500 m-0 mb-1">{t('onetimePaid')}</p>
+          <p className="text-sm font-semibold m-0" style={{ color: colors.onetimePaid }}>
+            {formatCurrency(summary.totalOnetimePaidSales)}
           </p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-500 m-0 mb-1">{t('subscription')}</p>
-          <p className="text-sm font-semibold text-violet-500 m-0">
-            {formatCurrency(summary.totalSubscriptionSales)}
+          <p className="text-xs text-gray-500 m-0 mb-1">{t('onetimeUnpaid')}</p>
+          <p className="text-sm font-semibold m-0" style={{ color: colors.onetimeUnpaid }}>
+            {formatCurrency(summary.totalOnetimeUnpaidSales)}
+          </p>
+        </div>
+        <div className="text-center">
+          <p className="text-xs text-gray-500 m-0 mb-1">{t('subscriptionPaid')}</p>
+          <p className="text-sm font-semibold m-0" style={{ color: colors.subscriptionPaid }}>
+            {formatCurrency(summary.totalSubscriptionPaidSales)}
+          </p>
+        </div>
+        <div className="text-center">
+          <p className="text-xs text-gray-500 m-0 mb-1">{t('subscriptionUnpaid')}</p>
+          <p className="text-sm font-semibold m-0" style={{ color: colors.subscriptionUnpaid }}>
+            {formatCurrency(summary.totalSubscriptionUnpaidSales)}
+          </p>
+        </div>
+        <div className="text-center">
+          <p className="text-xs text-gray-500 m-0 mb-1">{t('futureSubscription')}</p>
+          <p className="text-sm font-semibold m-0" style={{ color: colors.futureSubscription }}>
+            {formatCurrency(summary.totalFutureSubscriptionSales)}
           </p>
         </div>
       </div>
@@ -279,40 +335,105 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
             );
           })}
 
-          {/* Bar chart (stack format) */}
+          {/* Bar chart (stack format with 5 categories) */}
           {monthlySales && monthlySales.map((item, index) => {
             const x = getBarX(index);
-            const onetimeHeight = getBarHeight(item.onetimeAmount);
-            const subscriptionHeight = getBarHeight(item.subscriptionAmount);
-            const onetimeY = getBarY(item.onetimeAmount);
-            const subscriptionY = getBarY(item.totalAmount);
+            
+            // Calculate heights for each segment
+            const onetimePaidHeight = getBarHeight(item.onetimePaidAmount);
+            const onetimeUnpaidHeight = getBarHeight(item.onetimeUnpaidAmount);
+            const subscriptionPaidHeight = getBarHeight(item.subscriptionPaidAmount);
+            const subscriptionUnpaidHeight = getBarHeight(item.subscriptionUnpaidAmount);
+            const futureSubscriptionHeight = getBarHeight(item.futureSubscriptionAmount);
+            
+            // Calculate Y positions (stacked from bottom to top)
+            let currentY = getBarY(item.totalAmount);
+            const futureSubscriptionY = currentY;
+            currentY += futureSubscriptionHeight;
+            const subscriptionUnpaidY = currentY;
+            currentY += subscriptionUnpaidHeight;
+            const subscriptionPaidY = currentY;
+            currentY += subscriptionPaidHeight;
+            const onetimeUnpaidY = currentY;
+            currentY += onetimeUnpaidHeight;
+            const onetimePaidY = currentY;
             
             return (
               <g key={`bar-group-${index}`}>
-                {/* Subscription bar (bottom) */}
-                <rect
-                  x={x}
-                  y={subscriptionY}
-                  width={barWidth}
-                  height={subscriptionHeight}
-                  fill={getBarColor('#8b5cf6', index, 'subscription')}
-                  rx="2"
-                  style={{ cursor: 'pointer', transition: 'fill 0.2s ease' }}
-                  onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'subscription' })}
-                  onMouseLeave={() => setHoveredBar(null)}
-                />
-                {/* One-time bar (top) */}
-                <rect
-                  x={x}
-                  y={onetimeY}
-                  width={barWidth}
-                  height={onetimeHeight}
-                  fill={getBarColor('#f97316', index, 'onetime')}
-                  rx="2"
-                  style={{ cursor: 'pointer', transition: 'fill 0.2s ease' }}
-                  onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'onetime' })}
-                  onMouseLeave={() => setHoveredBar(null)}
-                />
+                {/* Future Subscription (bottom) */}
+                {item.futureSubscriptionAmount > 0 && (
+                  <rect
+                    x={x}
+                    y={futureSubscriptionY}
+                    width={barWidth}
+                    height={futureSubscriptionHeight}
+                    fill={getBarColor('futureSubscription', index)}
+                    rx="2"
+                    style={{ cursor: 'pointer', transition: 'fill 0.2s ease' }}
+                    onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'futureSubscription' })}
+                    onMouseLeave={() => setHoveredBar(null)}
+                  />
+                )}
+                
+                {/* Subscription Unpaid */}
+                {item.subscriptionUnpaidAmount > 0 && (
+                  <rect
+                    x={x}
+                    y={subscriptionUnpaidY}
+                    width={barWidth}
+                    height={subscriptionUnpaidHeight}
+                    fill={getBarColor('subscriptionUnpaid', index)}
+                    rx="2"
+                    style={{ cursor: 'pointer', transition: 'fill 0.2s ease' }}
+                    onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'subscriptionUnpaid' })}
+                    onMouseLeave={() => setHoveredBar(null)}
+                  />
+                )}
+                
+                {/* Subscription Paid */}
+                {item.subscriptionPaidAmount > 0 && (
+                  <rect
+                    x={x}
+                    y={subscriptionPaidY}
+                    width={barWidth}
+                    height={subscriptionPaidHeight}
+                    fill={getBarColor('subscriptionPaid', index)}
+                    rx="2"
+                    style={{ cursor: 'pointer', transition: 'fill 0.2s ease' }}
+                    onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'subscriptionPaid' })}
+                    onMouseLeave={() => setHoveredBar(null)}
+                  />
+                )}
+                
+                {/* Onetime Unpaid */}
+                {item.onetimeUnpaidAmount > 0 && (
+                  <rect
+                    x={x}
+                    y={onetimeUnpaidY}
+                    width={barWidth}
+                    height={onetimeUnpaidHeight}
+                    fill={getBarColor('onetimeUnpaid', index)}
+                    rx="2"
+                    style={{ cursor: 'pointer', transition: 'fill 0.2s ease' }}
+                    onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'onetimeUnpaid' })}
+                    onMouseLeave={() => setHoveredBar(null)}
+                  />
+                )}
+                
+                {/* Onetime Paid (top) */}
+                {item.onetimePaidAmount > 0 && (
+                  <rect
+                    x={x}
+                    y={onetimePaidY}
+                    width={barWidth}
+                    height={onetimePaidHeight}
+                    fill={getBarColor('onetimePaid', index)}
+                    rx="2"
+                    style={{ cursor: 'pointer', transition: 'fill 0.2s ease' }}
+                    onMouseEnter={() => setHoveredBar({ monthIndex: index, barType: 'onetimePaid' })}
+                    onMouseLeave={() => setHoveredBar(null)}
+                  />
+                )}
               </g>
             );
           })}
@@ -323,9 +444,30 @@ export function MonthlySalesChart({ period }: MonthlySalesChartProps) {
           <div
             className="absolute bg-black/80 text-white px-3 py-2 rounded-md text-xs whitespace-nowrap pointer-events-none z-[1000] shadow-lg transform -translate-x-1/2"
             style={{
-              top: hoveredBar.barType === 'onetime' 
-                ? getBarY(monthlySales[hoveredBar.monthIndex]?.onetimeAmount || 0) - 80
-                : getBarY(monthlySales[hoveredBar.monthIndex]?.totalAmount || 0) + getBarHeight(monthlySales[hoveredBar.monthIndex]?.subscriptionAmount || 0) / 2 - 30,
+              top: (() => {
+                const item = monthlySales[hoveredBar.monthIndex];
+                let currentY = getBarY(item?.totalAmount || 0);
+                
+                // Calculate the middle position of the hovered bar segment
+                switch (hoveredBar.barType) {
+                  case 'futureSubscription':
+                    return currentY + getBarHeight(item?.futureSubscriptionAmount || 0) / 2 - 30;
+                  case 'subscriptionUnpaid':
+                    currentY += getBarHeight(item?.futureSubscriptionAmount || 0);
+                    return currentY + getBarHeight(item?.subscriptionUnpaidAmount || 0) / 2 - 30;
+                  case 'subscriptionPaid':
+                    currentY += getBarHeight(item?.futureSubscriptionAmount || 0) + getBarHeight(item?.subscriptionUnpaidAmount || 0);
+                    return currentY + getBarHeight(item?.subscriptionPaidAmount || 0) / 2 - 30;
+                  case 'onetimeUnpaid':
+                    currentY += getBarHeight(item?.futureSubscriptionAmount || 0) + getBarHeight(item?.subscriptionUnpaidAmount || 0) + getBarHeight(item?.subscriptionPaidAmount || 0);
+                    return currentY + getBarHeight(item?.onetimeUnpaidAmount || 0) / 2 - 30;
+                  case 'onetimePaid':
+                    currentY += getBarHeight(item?.futureSubscriptionAmount || 0) + getBarHeight(item?.subscriptionUnpaidAmount || 0) + getBarHeight(item?.subscriptionPaidAmount || 0) + getBarHeight(item?.onetimeUnpaidAmount || 0);
+                    return currentY + getBarHeight(item?.onetimePaidAmount || 0) / 2 - 30;
+                  default:
+                    return currentY - 80;
+                }
+              })(),
               left: getBarX(hoveredBar.monthIndex) + barWidth / 2,
             }}
           >
